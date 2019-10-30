@@ -1,0 +1,39 @@
+[en]
+PUG_DESC_HP 	= Health of other players.
+PUG_DESC_DMG 	= Damage done to other players.
+PUG_DESC_RDMG 	= Show recived damage.
+PUG_DESC_SUM 	= Round summary.
+
+PUG_HP_NONE 	= No one is alive.
+PUG_HP_CMD 	= %s with %i HP (%i AP)
+
+PUG_DMG_SELF 	= Hit self %i time(s) (Damage %i)
+PUG_DMG 	= Hit %s %i time(s) (Damage %i)
+PUG_NODMG 	= You do not hit anyone in this round.
+
+PUG_RDMG_SELF 	= Hit self %i time(s) (Damage %i)
+PUG_RDMG 	= Hit by %s %i time(s) (Damage %i)
+PUG_NORDMG 	= You were not reached in this round.
+
+PUG_SUM 	= (%i dmg / %i hits) damage (%i dmg / %i hits) by %s (%i HP)
+PUG_NOSUM 	= No stats in this round.
+
+[bp]
+PUG_DESC_HP 	= Mostra o HP do time adversario.
+PUG_DESC_DMG 	= Dano causado no round.
+PUG_DESC_RDMG 	= Mostra o dano recebido no round.
+PUG_DESC_SUM 	= Mostra o resumo do round.
+
+PUG_HP_NONE 	= Ninguem esta vivo.
+PUG_HP_CMD 	= %s tem %i HP (%i AP)
+
+PUG_DMG_SELF 	= Se acertou %i veze(s) (Dano %i)
+PUG_DMG 	= Acertou %s %i veze(s) (Dano %i)
+PUG_NODMG 	= Voce nao acertou ninguem nesse round.
+
+PUG_RDMG_SELF 	= Se acertou %i veze(s) (Dano %i)
+PUG_RDMG 	= Dano por %s %i veze(s) (Dano %i)
+PUG_NORDMG 	= Voce nao foi atingido nesse round.
+
+PUG_SUM 	= (%i dmg / %i hits) dano (%i dmg / %i hits) por %s (%i HP)
+PUG_NOSUM 	= Nehum stats nesse round.

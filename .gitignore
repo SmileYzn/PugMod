@@ -1,0 +1,15 @@
+# Extensions
+.dll
+.so
+.amxx
+.log
+
+.vault
+.dat
+
+# Mod Generated Files
+.htm
+cmdaccess.ini
+
+# Maintain these files
+cssstats.amxx

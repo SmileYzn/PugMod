@@ -1,0 +1,31 @@
+[en]
+PUG_DESC_READY 		= Tells the server the Player is ready.
+PUG_DESC_NOTREADY 	= Tells the server the Player is not ready.
+
+PUG_DESC_FORCEREADY 	= <Player> - Force a Player to ready up status.
+PUG_FORCE_READY 	= ADMIN: Forced %s to be ready.
+
+PUG_READY 		= %s is ready.
+PUG_NOTREADY 		= %s is not ready.
+
+PUG_READY_START 	= Say .ready to continue
+PUG_ALL_READY 		= All playres are ready.
+
+PUG_LIST_NOTREADY 	= Not Ready (%i of %i):
+PUG_LIST_READY 		= Ready (%i of %i):
+
+[bp]
+PUG_DESC_READY 		= Jogador esta pronto para o jogo.
+PUG_DESC_NOTREADY 	= Jogador nao esta mais pronto.
+
+PUG_DESC_FORCEREADY 	= <Player> - Forca o jogador a ficar pronto.
+PUG_FORCE_READY 	= ADMIN: Forcou %s a estar pronto.
+
+PUG_READY 		= %s esta pronto.
+PUG_NOTREADY 		= %s nao esta pronto.
+
+PUG_READY_START 	= Say .ready para continuar.
+PUG_ALL_READY 		= Todos estao prontos!
+
+PUG_LIST_NOTREADY 	= Aquecendo (%i de %i):
+PUG_LIST_READY 		= Prontos (%i de %i):

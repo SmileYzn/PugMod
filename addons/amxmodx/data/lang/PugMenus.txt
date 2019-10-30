@@ -1,0 +1,73 @@
+﻿[en]
+PUG_DESC_VOTEKICK 	= Vote to kick an team player.
+
+PUG_HUD_MAP 		= Choose the map:
+PUG_HUD_TEAM 		= Game Mode:
+
+PUG_TEAM_TYPE_VOTE 	= Pug Vote
+PUG_TEAM_TYPE_CAPTAIN 	= Captain Sorted
+PUG_TEAM_TYPE_AUTO 	= Random
+PUG_TEAM_TYPE_NONE 	= Not Sorted
+PUG_TEAM_TYPE_SKILL 	= Skill Sorted
+
+PUG_VOTEMAP_NEXTMAP 	= Changing map to %s...
+PUG_VOTEMAP_START 	= Choose the start map.
+PUG_NOVOTES 		= No votes.
+PUG_VOTE_CHOOSED 	= %s choosed %s
+PUG_VOTEMAP_FAIL 	= The map choice has failed:
+
+PUG_TEAMVOTE_START 	= Select teams started.
+PUG_TEAMVOTE_FAIL 	= The choice of the teams failed:
+
+PUG_CAPTAINS_ARE 	= The leaders are: %s Terrorists, %s CTs
+PUG_TEAMS_RANDOM 	= Mixing teams now.
+PUG_TEAMS_SAME 		= The teams will remain the same.
+PUG_TEAMS_SKILL 	= Balancing teams by skills.
+
+PUG_VOTEKICK_BLOCK 	= Votekick can not be used now.
+PUG_VOTEKICK_ALREADY 	= You already voted on %s.
+PUG_VOTEKICK_VOTED 	= %s vote on %s (%i of %i votes needed)
+PUG_VOTEKICK_MSG 	= Kicked duo Vote Kick
+PUG_VOTEKICK_KICKED 	= %s Kicked: (%i of %i votes)
+
+PUG_CAPTAINS_NEW_T 	= %s is the new captain of Terrorists
+PUG_CAPTAINS_NEW_CT 	= %s is the new captain of CTs
+PUG_CAPTAINS_PICK 	= %s choosed %s
+PUG_CAPTAINS_UNASSIGNED = Unassigned
+
+[bp]
+PUG_DESC_VOTEKICK 	= Vota para kickar um jogador do seu time.
+
+PUG_HUD_MAP 		= Escolha do mapa:
+PUG_HUD_TEAM 		= Modo de times:
+
+PUG_TEAM_TYPE_VOTE 	= Votacao
+PUG_TEAM_TYPE_CAPTAIN 	= Capitaes
+PUG_TEAM_TYPE_AUTO 	= Automatico
+PUG_TEAM_TYPE_NONE 	= Sem Sorteio
+PUG_TEAM_TYPE_SKILL 	= Balancear Skill
+
+PUG_VOTEMAP_NEXTMAP 	= O proximo mapa sera %s...
+PUG_VOTEMAP_START 	= Escolha do mapa iniciada.
+PUG_NOVOTES 		= Nenhum voto.
+PUG_VOTE_CHOOSED 	= %s escolheu %s
+PUG_VOTEMAP_FAIL 	= A escolha do mapa falhou:
+
+PUG_TEAMVOTE_START 	= Escolha dos times iniciada.
+PUG_TEAMVOTE_FAIL 	= A escolha dos times falhou:
+
+PUG_CAPTAINS_ARE 	= Os capitaes sao: %s Terroristas, %s CTs
+PUG_TEAMS_RANDOM 	= Misturando times automaticamente.
+PUG_TEAMS_SAME 		= Os times serao os mesmos.
+PUG_TEAMS_SKILL 	= Balanceando times por sua skill.
+
+PUG_VOTEKICK_BLOCK 	= O VoteKick nao pode ser usado agora.
+PUG_VOTEKICK_ALREADY 	= Voce ja votou em %s.
+PUG_VOTEKICK_VOTED 	= %s vote on %s (%i de %i votos)
+PUG_VOTEKICK_MSG 	= Kicked duo Vote Kick
+PUG_VOTEKICK_KICKED 	= %s Kickado: (%i de %i votos)
+
+PUG_CAPTAINS_NEW_T 	= %s e o novo capitao do time Terroristas
+PUG_CAPTAINS_NEW_CT 	= %s e o novo capitao do time CTs
+PUG_CAPTAINS_PICK 	= %s escolheu %s
+PUG_CAPTAINS_UNASSIGNED = Espectadores
