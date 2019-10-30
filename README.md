@@ -2,9 +2,9 @@
 Counter-Strike 1.6 Pickup Game Play for Amx Mod X 
 
 # Description
-This mod allows the server to run a full match without any admin connected.
-Players must be choose a team, say .ready in chat and wait for server start the match.
-At the end, server will start a vote map to changelevel to next map automatically.
+This mod allows the server to run a full match without any admin connected.<br>
+Players must be choose a team, say .ready in chat and wait for server start the match.<br>
+At the end, server will start a vote map to changelevel to next map automatically.<br>
 
 # Features
 - Automatic Ready System
@@ -33,9 +33,9 @@ At the end, server will start a vote map to changelevel to next map automaticall
 Other changes like a good HLTV system, stats and some in-game commands will be added.
 
 # Why CS 1.6 it's sucks
-In first place, You're welcome!
-Actually we have CS:GO a more modern version of the game. 
-But we can still have fun with a game like Counter-Strike that have been played more than 20 years.
+In first place, You're welcome!<br>
+Actually we have CS:GO a more modern version of the game. <br>
+But we can still have fun with a game like Counter-Strike that have been played more than 20 years.<br>
 
 # Help
 Visit your [wiki](https://github.com/SmileYzn/PugMod/wiki) to know what more you can do with Pug Mod
