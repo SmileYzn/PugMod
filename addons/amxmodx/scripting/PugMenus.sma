@@ -139,7 +139,7 @@ public PugEvent(State)
 			
 			if(Type)
 			{
-				ChangeTeams(Type);
+				set_task(1.0,"ChangeTeams",Type);
 			}
 			else
 			{
@@ -389,7 +389,7 @@ TeamVoteCount()
 	return g_TeamVotes[Winner];
 }
 
-ChangeTeams(Type)
+public ChangeTeams(Type)
 {
 	switch(Type)
 	{
