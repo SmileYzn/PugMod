@@ -19,7 +19,7 @@
                             </div>
                             <div class="media-body">
                                 <h4 class="media-heading">Melhor do primeiro tempo</h4>
-                                SmileY
+                                <span id="player1">Jogador 1<span>
                             </div>
                         </div>
                     </div>                  
@@ -29,7 +29,7 @@
                         <div class="media">
                             <div class="media-body text-right">
                                 <h4 class="media-heading">Melhor do segundo tempo</h4>
-                                SmileY
+                                <span id="player2">Jogador 2<span>
                             </div>
                             <div class="media-right">
                                 <img class="media-object img img-thumbnail" src="https://i.imgur.com/OS4eM0S.png" width="64">
@@ -44,5 +44,14 @@
                 </div>
             </div>
         </div>
+        <script>
+        window.onload = function()
+        {
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(a,name,value)
+            {
+                var Players[name] = value;
+            });  
+        };
+        </script>
     </body>
 </html>
