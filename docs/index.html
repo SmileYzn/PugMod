@@ -47,9 +47,10 @@
         <script>
         window.onload = function()
         {
-            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(a, name, value)
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(a, player1, player2)
             {
-                alert(name + value);
+                document.getElementById('player1').innerHTML = player1;
+                document.getElementById('player1').innerHTML = player2;
             });  
         };
         </script>
