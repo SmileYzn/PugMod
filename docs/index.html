@@ -47,9 +47,9 @@
         <script>
         window.onload = function()
         {
-            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(a,name,value)
+            window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(a, name, value)
             {
-                var Players[name] = value;
+                alert(name + value);
             });  
         };
         </script>
