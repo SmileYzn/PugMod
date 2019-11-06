@@ -49,8 +49,8 @@
         {
             window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(a, player1, player2)
             {
-                document.getElementById('player1').innerHTML = player1;
-                document.getElementById('player2').innerHTML = player2;
+                document.getElementById('player1').innerHTML = decodeURI(player1);
+                document.getElementById('player2').innerHTML = decodeURI(player2);
             });  
         };
         </script>
