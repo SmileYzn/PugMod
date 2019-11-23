@@ -1,0 +1,11 @@
+[en]
+PUG_VOTEKICK_DESC 		= Vote to pick an player.
+PUG_VOTEKICK_NEED_PLAYERS	= Need ^3%i^1 players to execute vote kick.
+PUG_VOTEKICK_KICK_MESSAGE	= ^3%s^1 Kicked: ^4%i^1 votes reached.
+PUG_VOTEKICK_NEED_MESSAGE	= ^3%s^1 voted to kick %s: Need ^4%i^1 votes to kick.
+
+[bp]
+PUG_VOTEKICK_DESC 		= Vote para kickar um jogador.
+PUG_VOTEKICK_NEED_PLAYERS	= Necessario mais ^3%i^1 jogadores para usar o vote kick.
+PUG_VOTEKICK_KICK_MESSAGE	= ^3%s^1 Kickado: ^4%i^1 votos alcancados.
+PUG_VOTEKICK_NEED_MESSAGE	= ^3%s^1 votou em %s: Mais ^4%i^1 votos para kickar.

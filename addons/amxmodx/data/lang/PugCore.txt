@@ -23,10 +23,10 @@ PUG_CMD_ERROR 		= Unable to use this command now.
 PUG_CMD_OK 		= The action %s has been executed.
 PUG_CMD_FAIL 		= The action %s has failed.
 
-PUG_END_WONALL 		= Game Over! The %s have won the game: %i-%i
+PUG_END_WONALL 		= Game Over! The ^3%s^1 have won the game: %i-%i
 PUG_END_TIED 		= Game Over! Score is tied: %i-%i
 
-PUG_SCORE 		= The %s are winning: %i-%i
+PUG_SCORE 		= The ^3%s^1 are winning: %i-%i
 PUG_SCORE_TIED 		= Score is tied: %i-%i
 
 PUG_HELP_TITLE 		= Pug Mod Command List
