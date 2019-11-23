@@ -12,7 +12,7 @@
 	#pragma loadlib "PugCore"
 #endif
 
-#define PUG_VERSION	"3.0.3"
+#define PUG_VERSION	"3.0.4"
 #define PUG_AUTHOR 	"SmileY"
 #define PUG_HEADER	"^4[PUG]^1"
 
