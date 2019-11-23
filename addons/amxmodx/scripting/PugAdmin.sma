@@ -6,7 +6,7 @@
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Manager)",AMXX_VERSION_STR,"SmileY");
+	register_plugin("Pug Mod (Admin)",PUG_VERSION,"SmileY");
 	
 	register_dictionary("common.txt");
 	register_dictionary("PugAdmin.txt");
@@ -21,6 +21,8 @@ public plugin_init()
 
 public plugin_cfg()
 {
+	remove_user_flags(0,read_flags("z"));
+	
 	new Path[64];
 	PugGetFilePath("admins.rc",Path,charsmax(Path));
 	
@@ -36,8 +38,6 @@ public plugin_cfg()
 		
 		SMC_DestroyParser(Handle);
 	}
-	
-	remove_user_flags(0,read_flags("z"));
 }
 
 public SMCResult:OnKeyValue(SMCParser:handle,const Key[],const Value[],any:data)
@@ -48,14 +48,14 @@ public SMCResult:OnKeyValue(SMCParser:handle,const Key[],const Value[],any:data)
 
 public client_authorized(id)
 {
-	new Steam[35],Auth[35];
-	get_user_authid(id,Steam,charsmax(Steam));
+	new Auth[2][MAX_AUTHID_LENGTH];
+	get_user_authid(id,Auth[0],charsmax(Auth[]));
 	
 	for(new i;i < admins_num();i++)
 	{
-		admins_lookup(i,AdminProp_Auth,Auth,charsmax(Auth));
+		admins_lookup(i,AdminProp_Auth,Auth[1],charsmax(Auth[]));
 		
-		if(equali(Steam,Auth))
+		if(equali(Auth[0],Auth[1]))
 		{
 			set_user_flags(id,admins_lookup(i,AdminProp_Access));
 			return PLUGIN_CONTINUE;
@@ -164,7 +164,7 @@ public Msg(id,Level)
 			new Name[MAX_NAME_LENGTH];
 			get_user_name(id,Name,charsmax(Name));
 			
-			client_print_color(0,print_team_red,"%s ^3(%s) ^1%s",g_Head,Name,Text);
+			client_print_color(0,print_team_red,"%s ^3(%s) ^1%s",PUG_HEADER,Name,Text);
 		}
 	}
 	

@@ -1,5 +1,6 @@
 #include <amxmodx>
 #include <amxmisc>
+#include <cstrike>
 #include <fakemeta>
 
 #include <PugCore>
@@ -119,7 +120,7 @@ public Ready(id)
 				new Name[MAX_NAME_LENGTH];
 				get_user_name(id,Name,charsmax(Name));
 				
-				client_print_color(0,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_READY",Name);
+				client_print_color(0,print_team_red,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_READY",Name);
 				
 				return CheckReady();
 			}
@@ -149,7 +150,7 @@ public NotReady(id)
 				new Name[MAX_NAME_LENGTH];
 				get_user_name(id,Name,charsmax(Name));
 				
-				client_print_color(0,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_NOTREADY",Name);
+				client_print_color(0,print_team_red,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_NOTREADY",Name);
 				
 				return PLUGIN_HANDLED;
 			}

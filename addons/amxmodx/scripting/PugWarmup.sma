@@ -82,7 +82,7 @@ public MsgMoney(Msg,Dest,id)
 	{
 		if(is_user_alive(id))
 		{
-			cs_set_user_money(id,16000,0);
+			set_ent_data(id,"CBasePlayer","m_iAccount",16000);
 		}
 
 		return PLUGIN_HANDLED;

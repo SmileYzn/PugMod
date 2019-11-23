@@ -166,6 +166,51 @@ stock PugSwapTeams(Time = 0)
 }
 
  /**
+ * Check if player is alone in his team
+ *
+ * @param id		Player Index to check
+ *
+ * @return		Return true or false
+ */
+stock bool:PugIsPlayerAlone(id)
+{
+	if(is_user_alive(id))
+	{
+		new Team[12];
+		
+		if(1 <= get_user_team(id,Team,charsmax(Team)) <= 2)
+		{
+			new Players[MAX_PLAYERS],Num;
+			get_players(Players,Num,"ae",Team);
+			
+			return (Num == 1);
+		}
+	}
+
+	return false;
+}
+
+ /**
+ * Return the alive enemies of player
+ *
+ * @param id		Player Index to check
+ *
+ * @return		The count of alive enemies
+ */
+stock PugGetAliveEnemies(id)
+{
+	if(is_user_alive(id))
+	{
+		new Players[MAX_PLAYERS],Enemies;
+		get_players(Players,Enemies,"ae",(cs_get_user_team(id) == CS_TEAM_T) ? "CT" : "TERRORIST");
+	
+		return Enemies;
+	}
+
+	return 0;
+}
+
+ /**
  * Allow or block map objectives
  *
  * @param Block		If true, map objectives will be blocked

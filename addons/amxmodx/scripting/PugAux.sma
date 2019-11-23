@@ -1,19 +1,12 @@
 #include <amxmodx>
 #include <fakemeta>
-#include <cstrike>
 #include <csx>
 
 #include <PugCore>
 #include <PugStocks>
 #include <PugCS>
 
-new g_Hits[MAX_PLAYERS+1][MAX_PLAYERS+1];
-new g_Damage[MAX_PLAYERS+1][MAX_PLAYERS+1];
-
 new bool:g_Live;
-new bool:g_Round;
-
-new g_FM_Voice_SetClientListening;
 
 public plugin_init()
 {
@@ -23,89 +16,39 @@ public plugin_init()
 	register_dictionary("PugAux.txt");
 
 	PugRegCommand("hp","HP",ADMIN_ALL,"PUG_DESC_HP");
-	PugRegCommand("dmg","Damage",ADMIN_ALL,"PUG_DESC_DMG");
-	PugRegCommand("rdmg","RecivedDamage",ADMIN_ALL,"PUG_DESC_RDMG");
+	PugRegCommand("dmg","DamageDone",ADMIN_ALL,"PUG_DESC_DMG");
+	PugRegCommand("rdmg","DamageReceived",ADMIN_ALL,"PUG_DESC_RDMG");
 	PugRegCommand("sum","Summary",ADMIN_ALL,"PUG_DESC_SUM");
-	
-	register_logevent("RoundStart",2,"1=Round_Start");
-	register_logevent("RoundEnd",2,"1=Round_End");
 }
 
 public PugEvent(State)
 {
 	g_Live = (State == STATE_FIRSTHALF || State == STATE_SECONDHALF || State == STATE_OVERTIME);
-	
-	if(g_Live)
-	{
-		g_FM_Voice_SetClientListening = register_forward(FM_Voice_SetClientListening,"FMVoiceSetClientListening",false);
-	}
-	else
-	{		
-		unregister_forward(FM_Voice_SetClientListening,g_FM_Voice_SetClientListening,false);
-	}
-}
-
-public client_putinserver(id)
-{
-	for(new i;i < MAX_PLAYERS;i++)
-	{
-		g_Hits[i][id] = 0;
-		g_Damage[i][id] = 0;
-	}
-}
-
-public client_damage(Attacker,Victim,AttackDamage)
-{
-	g_Hits[Attacker][Victim]++;
-	g_Damage[Attacker][Victim] += AttackDamage;
-}
-
-public RoundStart()
-{
-	g_Round = true;
-	
-	for(new i;i < MAX_PLAYERS;i++)
-	{
-		arrayset(g_Hits[i],0,sizeof(g_Hits));
-		arrayset(g_Damage[i],0,sizeof(g_Damage));	
-	}
-}
-
-public RoundEnd()
-{
-	g_Round = false;
 }
 
 public HP(id)
 {
-	if(g_Live)
+	if(g_Live && JoinedTeam(id) && (!is_user_alive(id) || get_gamerules_int("CHalfLifeMultiplay","m_bRoundTerminating")))
 	{
-		if((is_user_alive(id) && g_Round) || !JoinedTeam(id))
+		new Players[MAX_PLAYERS],Num;
+		get_players(Players,Num,"aeh",(get_user_team(id) == 1) ? "CT" : "TERRORIST");
+		
+		if(Num)
 		{
-			PugMsg(id,"PUG_CMD_ERROR");
+			new Name[MAX_NAME_LENGTH],Player;
+			
+			for(new i;i < Num;i++)
+			{
+				Player = Players[i];
+			
+				get_user_name(Player,Name,charsmax(Name));
+				
+				client_print_color(id,Player,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_HP_CMD",Name,get_user_health(Player),get_user_armor(Player));
+			}
 		}
 		else
 		{
-			new Players[MAX_PLAYERS],Num;
-			get_players(Players,Num,"aeh",(get_user_team(id) == 1) ? "CT" : "TERRORIST");
-			
-			if(Num)
-			{
-				new Name[MAX_NAME_LENGTH],Player;
-				
-				for(new i;i < Num;i++)
-				{
-					Player = Players[i];
-				
-					get_user_name(Player,Name,charsmax(Name));
-					
-					client_print_color(id,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_HP_CMD",Name,get_user_health(Player),get_user_armor(Player));
-				}
-			}
-			else
-			{
-				PugMsg(id,"PUG_HP_NONE");
-			}
+			PugMsg(id,"PUG_HP_NONE");
 		}
 	}
 	else
@@ -116,47 +59,39 @@ public HP(id)
 	return PLUGIN_HANDLED;
 }
 
-public Damage(id)
+public DamageDone(id)
 {
-	if(g_Live)
+	if(g_Live && JoinedTeam(id) && (!is_user_alive(id) || get_gamerules_int("CHalfLifeMultiplay","m_bRoundTerminating")))
 	{
-		if((is_user_alive(id) && g_Round) || !JoinedTeam(id))
+		new Name[MAX_NAME_LENGTH];
+		new Stats[STATSX_MAX_STATS],BodyHits[MAX_BODYHITS];
+		
+		new bool:HasStats = false;
+		
+		new Players[MAX_PLAYERS],Num,Player;
+		get_players(Players,Num,"e",(get_user_team(id) == 1) ? "CT" : "TERRORIST");
+		
+		for(new i;i < Num;i++)
 		{
-			PugMsg(id,"PUG_CMD_ERROR");
-		}
-		else
-		{
-			new Players[MAX_PLAYERS],Num,Player;
-			get_players(Players,Num,"h");
+			Player = Players[i];
 			
-			new Name[MAX_NAME_LENGTH],bool:HaveHits;
+			arrayset(Stats,0,sizeof(Stats));
 			
-			for(new i;i < Num;i++)
-			{
-				Player = Players[i];
+			if(get_user_vstats(id,Player,Stats,BodyHits))
+			{				
+				HasStats = true;
 				
-				if(g_Hits[id][Player])
-				{
-					HaveHits = true;
-					
-					if(Player == id)
-					{
-						client_print_color(id,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_DMG_SELF",g_Hits[id][Player],g_Damage[id][Player]);
-					}
-					else
-					{
-						get_user_name(Player,Name,charsmax(Name));
-						
-						client_print_color(id,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_DMG",Name,g_Hits[id][Player],g_Damage[id][Player]);
-					}
-				}
-			}
-			
-			if(!HaveHits)
-			{
-				PugMsg(id,"PUG_NODMG");
+				get_user_name(Player,Name,charsmax(Name));
+
+				client_print_color(id,Player,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_DMG",Name,Stats[STATSX_HITS],Stats[STATSX_DAMAGE]);
 			}
 		}
+		
+		if(!HasStats)
+		{
+			PugMsg(id,"PUG_NODMG");
+		}
+		
 	}
 	else
 	{
@@ -166,47 +101,38 @@ public Damage(id)
 	return PLUGIN_HANDLED;
 }
 
-public RecivedDamage(id)
+public DamageReceived(id)
 {
-	if(g_Live)
+	if(g_Live && JoinedTeam(id) && (!is_user_alive(id) || get_gamerules_int("CHalfLifeMultiplay","m_bRoundTerminating")))
 	{
-		if((is_user_alive(id) && g_Round) || !JoinedTeam(id))
+		new Name[MAX_NAME_LENGTH];
+		new Stats[STATSX_MAX_STATS],BodyHits[MAX_BODYHITS];
+		
+		new bool:HasStats = false;
+		
+		new Players[MAX_PLAYERS],Num,Player;
+		get_players(Players,Num,"e",(get_user_team(id) == 1) ? "CT" : "TERRORIST");
+		
+		for(new i;i < Num;i++)
 		{
-			PugMsg(id,"PUG_CMD_ERROR");
-		}
-		else
-		{
-			new Players[MAX_PLAYERS],Num,Player;
-			get_players(Players,Num,"h");
+			Player = Players[i];
 			
-			new Name[MAX_NAME_LENGTH],bool:HaveHits;
+			arrayset(Stats,0,sizeof(Stats));
 			
-			for(new i;i < Num;i++)
+			if(get_user_astats(id,Player,Stats,BodyHits))
 			{
-				Player = Players[i];
+				HasStats = true;
 				
-				if(g_Hits[Player][id])
-				{
-					HaveHits = true;
-					
-					if(Player == id)
-					{
-						client_print_color(id,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_RDMG_SELF",g_Hits[Player][id],g_Damage[Player][id]);
-					}
-					else
-					{
-						get_user_name(Player,Name,charsmax(Name));	
-						
-						client_print_color(id,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_RDMG",Name,g_Hits[Player][id],g_Damage[Player][id]);
-					}
-				}
-			}
-			
-			if(!HaveHits)
-			{
-				PugMsg(id,"PUG_NORDMG");
+				get_user_name(Player,Name,charsmax(Name));
+				
+				client_print_color(id,Player,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_RDMG",Name,Stats[STATSX_HITS],Stats[STATSX_DAMAGE]);
 			}
 		}
+		
+		if(!HasStats)
+		{
+			PugMsg(id,"PUG_NORDMG");
+		}		
 	}
 	else
 	{
@@ -218,42 +144,36 @@ public RecivedDamage(id)
 
 public Summary(id)
 {
-	if(g_Live)
+	if(g_Live && JoinedTeam(id) && (!is_user_alive(id) || get_gamerules_int("CHalfLifeMultiplay","m_bRoundTerminating")))
 	{
-		if((is_user_alive(id) && g_Round) || !JoinedTeam(id))
-		{
-			PugMsg(id,"PUG_CMD_ERROR");
-		}
-		else
-		{
-			new Players[MAX_PLAYERS],Num,Player;
-			get_players(Players,Num,"h");
-			
-			new Name[MAX_NAME_LENGTH],bool:HaveHits;
-			
-			for(new i;i < Num;i++)
-			{
-				Player = Players[i];
-				
-				if(id == Player)
-				{
-					continue;
-				}
-				
-				if(g_Hits[id][Player] || g_Hits[Player][id])
-				{
-					HaveHits = true;
-
-					get_user_name(Player,Name,charsmax(Name));
-					
-					client_print_color(id,print_team_red,"%s %L",g_Head,LANG_SERVER,"PUG_SUM",g_Damage[id][Player],g_Hits[id][Player],g_Damage[Player][id],g_Hits[id][Player],Name,get_user_health(Player));
-				}
-			}
+		new Name[MAX_NAME_LENGTH];
+		new Stats[2][STATSX_MAX_STATS],BodyHits[2][MAX_BODYHITS];
 		
-			if(!HaveHits)
+		new bool:HasStats = false;
+		
+		new Players[MAX_PLAYERS],Num,Player;
+		get_players(Players,Num,"e",(get_user_team(id) == 1) ? "CT" : "TERRORIST");
+		
+		for(new i;i < Num;i++)
+		{
+			Player = Players[i];
+			
+			arrayset(Stats[0],0,sizeof(Stats[]));
+			arrayset(Stats[1],0,sizeof(Stats[]));
+			
+			if(get_user_vstats(id,Player,Stats[0],BodyHits[0]) || get_user_astats(id,Player,Stats[1],BodyHits[1]))
 			{
-				PugMsg(id,"PUG_NOSUM");
+				HasStats = true;
+				
+				get_user_name(Player,Name,charsmax(Name));
+				
+				client_print_color(id,Player,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_SUM",Stats[0][STATSX_DAMAGE],Stats[0][STATSX_HITS],Stats[1][STATSX_DAMAGE],Stats[1][STATSX_HITS],Name,is_user_alive(Player) ? get_user_health(Player) : 0);
 			}
+		}
+		
+		if(!HasStats)
+		{
+			PugMsg(id,"PUG_NOSUM");
 		}
 	}
 	else
@@ -262,21 +182,4 @@ public Summary(id)
 	}
 	
 	return PLUGIN_HANDLED;
-}
-
-public FMVoiceSetClientListening(Recv,Sender,bool:Listen)
-{
-	if(g_Live && (Recv != Sender))
-	{
-		if(is_user_connected(Recv) && is_user_connected(Sender))
-		{
-			if(get_user_team(Recv) == get_user_team(Sender))
-			{
-				engfunc(EngFunc_SetClientListening,Recv,Sender,true);
-				return FMRES_SUPERCEDE;
-			}
-		}
-	}
-	
-	return FMRES_IGNORED;
 }

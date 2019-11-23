@@ -15,6 +15,9 @@ public plugin_init()
 	register_clcmd("say_team","Filter");
 	register_clcmd("jointeam","Filter");
 	register_clcmd("chooseteam","Filter");
+
+	register_clcmd("vote","Block");
+	register_clcmd("votemap","Block");
 }
 
 public Filter(id)
@@ -25,7 +28,7 @@ public Filter(id)
 	{
 		if(g_Flood[id] >= MAX_FLOOD_REPEAT)
 		{
-			g_Flooding[id] = NexTime + MIN_FLOOD_TIME + MIN_FLOOD_NEXT_TIME;
+			g_Flooding[id] = (NexTime + MIN_FLOOD_TIME + MIN_FLOOD_NEXT_TIME);
 			return PLUGIN_HANDLED;
 		}
 
@@ -39,4 +42,9 @@ public Filter(id)
 	g_Flooding[id] = NexTime + MIN_FLOOD_TIME;
 
 	return PLUGIN_CONTINUE;
+}
+
+public Block()
+{
+	return PLUGIN_HANDLED;
 }

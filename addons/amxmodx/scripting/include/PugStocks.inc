@@ -15,7 +15,7 @@
  */
 stock PugMsg(id,Lang[])
 {
-	client_print_color(id,print_team_red,"%s %L",g_Head,LANG_SERVER,Lang);
+	client_print_color(id,id,"%s %L",PUG_HEADER,LANG_SERVER,Lang);
 }
 
 /**
@@ -103,10 +103,10 @@ stock PugCommandClient(id,Command[],Lang[],Target,Check)
 		new Name[MAX_NAME_LENGTH];
 		get_user_name(Target,Name,charsmax(Name));
 	
-		client_print_color(0,print_team_red,"%s %L",g_Head,LANG_SERVER,Lang,Name);
+		client_print_color(0,print_team_red,"%s %L",PUG_HEADER,LANG_SERVER,Lang,Name);
 	}
 	
-	client_print_color(id,print_team_red,"%s %L",g_Head,LANG_PLAYER,Check ? "PUG_CMD_OK" : "PUG_CMD_FAIL",Command);
+	client_print_color(id,print_team_red,"%s %L",PUG_HEADER,LANG_PLAYER,Check ? "PUG_CMD_OK" : "PUG_CMD_FAIL",Command);
 }
 
 /**
@@ -128,10 +128,10 @@ stock PugCommand(id,Command[],Lang[],Check)
 		new Name[MAX_NAME_LENGTH];
 		get_user_name(id,Name,charsmax(Name));
 		
-		client_print_color(0,print_team_red,"%s %L",g_Head,LANG_SERVER,Lang,Name,Command);
+		client_print_color(0,print_team_red,"%s %L",PUG_HEADER,LANG_SERVER,Lang,Name,Command);
 	}
 	
-	client_print_color(id,print_team_red,"%s %L",g_Head,LANG_PLAYER,Check ? "PUG_CMD_OK" : "PUG_CMD_FAIL",Command);
+	client_print_color(id,print_team_red,"%s %L",PUG_HEADER,LANG_PLAYER,Check ? "PUG_CMD_OK" : "PUG_CMD_FAIL",Command);
 }
 
 /**

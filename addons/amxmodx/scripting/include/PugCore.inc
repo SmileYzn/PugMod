@@ -12,10 +12,9 @@
 	#pragma loadlib "PugCore"
 #endif
 
-#define PUG_VERSION	"3.0.2"
+#define PUG_VERSION	"3.0.3"
 #define PUG_AUTHOR 	"SmileY"
-
-stock const g_Head[] = "^4[PUG]^1";
+#define PUG_HEADER	"^4[PUG]^1"
 
 enum _:States
 {
