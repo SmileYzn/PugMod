@@ -14,6 +14,7 @@
 #define MAX_MAPS 		32
 #define MAX_TEAM 		5
 #define MIN_PLAYERS_CAPTAIN 	4
+#define MIN_PLAYERS_VOTEKICK	3
 
 new g_VoteDelay;
 new g_MapVoteType;
@@ -33,6 +34,9 @@ new g_TeamVotes[MAX_TEAM];
 
 new g_Captain[2];
 
+new g_VoteKickNeed[MAX_TEAM];
+new bool:g_VoteKickVotes[MAX_PLAYERS+1][MAX_PLAYERS+1];
+
 public plugin_init()
 {
 	register_plugin("Pug Mod (Menus System)",PUG_VERSION,PUG_AUTHOR);
@@ -44,6 +48,8 @@ public plugin_init()
 	g_MapVoteType		= create_cvar("pug_vote_map_enabled","1",FCVAR_NONE,"Active vote map in pug (0 Disable, 1 Enable, 2 Random map)");
 	g_MapVote		= create_cvar("pug_vote_map","0",FCVAR_NONE,"Determine if current map will have the vote map (Not used at Pug config file)");
 	g_TeamEnforcement	= create_cvar("pug_teams_enforcement","0",FCVAR_NONE,"The teams method for assign teams (0 Vote, 1 Captains, 2 Random, 3 None, 4 Skill Balanced)");
+	
+	PugRegCommand("votekick","VoteKick",ADMIN_ALL,"PUG_VOTEKICK_DESC",true);
 }
 
 public plugin_cfg()
@@ -69,6 +75,15 @@ public plugin_cfg()
 	menu_additem(g_MenuTeams,g_TeamTypes[4],"4");
 	
 	menu_setprop(g_MenuTeams,MPROP_EXIT,MEXIT_NEVER);
+}
+
+public client_putinserver(id)
+{
+	for(new i;i <= MaxClients;i++)
+	{
+		g_VoteKickVotes[i][id] = false;
+		g_VoteKickVotes[id][i] = false;
+	}
 }
 
 public PugEvent(State)
@@ -635,4 +650,110 @@ public HudListTeams()
 		set_hudmessage(255,255,255,0.75,0.28,0,0.0,99.0,0.0,0.0,4);
 		show_hudmessage(0,"^n%s",List[2]);
 	}
+}
+
+
+public VoteKick(id)
+{
+	new Team[12];
+	new TeamIndex = get_user_team(id,Team,charsmax(Team));
+	
+	if(1 <= TeamIndex <= 2)
+	{
+		new Players[MAX_PLAYERS],PlayersCount,Player;
+		get_players(Players,PlayersCount,"e",Team);
+		
+		if(PlayersCount > MIN_PLAYERS_VOTEKICK)
+		{
+			new Menu = menu_create("Vote Kick:","MenuVoteKickHandle");
+			
+			new Option[MAX_NAME_LENGTH];
+			
+			g_VoteKickNeed[TeamIndex] = 0;
+			
+			for(new i;i < PlayersCount;i++)
+			{
+				Player = Players[i];
+				
+				if(Player != id && !access(Player,ADMIN_IMMUNITY))
+				{
+					get_user_name(Player,Option,charsmax(Option));				
+	
+					menu_additem
+					(
+						Menu,
+						Option,
+						fmt("%d",Player), 
+						.callback = g_VoteKickVotes[id][Player] ? menu_makecallback("MenuVoteKickHandleDisabled") : -1
+					);
+					
+					g_VoteKickNeed[TeamIndex]++;
+				}
+			}
+			
+			menu_display(id,Menu);
+		}
+		else
+		{
+			client_print_color(id,id,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_VOTEKICK_NEED_PLAYERS",MIN_PLAYERS_VOTEKICK);
+		}
+	}
+	
+	return PLUGIN_HANDLED;
+}
+
+public MenuVoteKickHandleDisabled(id,Menu,Key)
+{
+	return ITEM_DISABLED;
+}
+
+public MenuVoteKickHandle(id,Menu,Key)
+{
+	if(Key != MENU_EXIT)
+	{
+		new Info[3],Option[MAX_NAME_LENGTH];
+		menu_item_getinfo(Menu,Key,_,Info,charsmax(Info),Option,charsmax(Option));
+		
+		new Player = str_to_num(Info);
+		
+		if(is_user_connected(Player))
+		{
+			g_VoteKickVotes[id][Player] = true;		
+
+			new VoteCount = GetVoteKickCount(Player);
+			new VotesNeed = g_VoteKickNeed[get_user_team(id)];
+			new VotesLack = (VotesNeed - VoteCount);
+		
+			if(!VotesLack)
+			{
+				server_cmd("kick #%i ^"%L^"",get_user_userid(Player),LANG_SERVER,"PUG_VOTEKICK_KICK_MESSAGE");
+				
+				client_print_color(0,Player,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_VOTEKICK_KICK_MESSAGE",Option,VotesNeed);
+			}
+			else
+			{
+				new Name[MAX_NAME_LENGTH];
+				get_user_name(id,Name,charsmax(Name));
+				
+				client_print_color(0,id,"%s %L",PUG_HEADER,LANG_SERVER,"PUG_VOTEKICK_NEED_MESSAGE",Name,Option,VotesLack);
+			}
+		}
+	}
+	
+	return PLUGIN_HANDLED;
+}
+
+GetVoteKickCount(Player)
+{
+	new Count = 0;
+	
+	for(new i;i <= MaxClients;i++)
+	{
+		if(g_VoteKickVotes[i][Player])
+		{
+			Count++;
+		}
+	}
+	
+	return Count;
 }
