@@ -25,9 +25,9 @@ new g_FMCmdStart;
 public plugin_init()
 {
 	register_plugin("Pug Mod (Warmup)",PUG_VERSION,PUG_AUTHOR);
-
-	g_HamKilled = RegisterHamPlayer(Ham_Killed,"HamKilled",true);
-	g_HamSpawn = RegisterHamPlayer(Ham_Spawn,"HamSpawn",true);
+	
+	g_HamKilled 	= RegisterHamPlayer(Ham_Killed,"HamKilled",true);
+	g_HamSpawn 	= RegisterHamPlayer(Ham_Spawn,"HamSpawn",true);
 	
 	register_clcmd("joinclass","JoinClass");
 	register_clcmd("menuselect","JoinClass");
