@@ -6,7 +6,7 @@
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Admin)",PUG_VERSION,"SmileY");
+	register_plugin("Pug Mod (Admin)",PUG_VERSION,PUG_AUTHOR);
 	
 	register_dictionary("common.txt");
 	register_dictionary("PugAdmin.txt");
