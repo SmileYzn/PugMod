@@ -7,6 +7,7 @@
 #include <PugCS>
 
 new bool:g_Live;
+new g_FM_Voice;
 
 public plugin_init()
 {
@@ -14,7 +15,7 @@ public plugin_init()
 
 	register_dictionary("PugCore.txt");
 	register_dictionary("PugAux.txt");
-
+	
 	PugRegCommand("hp","HP",ADMIN_ALL,"PUG_DESC_HP");
 	PugRegCommand("dmg","DamageDone",ADMIN_ALL,"PUG_DESC_DMG");
 	PugRegCommand("rdmg","DamageReceived",ADMIN_ALL,"PUG_DESC_RDMG");
@@ -24,6 +25,32 @@ public plugin_init()
 public PugEvent(State)
 {
 	g_Live = (State == STATE_FIRSTHALF || State == STATE_SECONDHALF || State == STATE_OVERTIME);
+	
+	if(g_Live)
+	{
+		g_FM_Voice = register_forward(FM_Voice_SetClientListening,"FMVoiceSetClientListening",false);
+	}
+	else
+	{
+		unregister_forward(FM_Voice_SetClientListening,g_FM_Voice,false);
+	}
+}
+
+public FMVoiceSetClientListening(Recv,Sender,bool:Listen)
+{
+	if(Recv != Sender)
+	{
+		if(is_user_connected(Recv) && is_user_connected(Sender))
+		{
+			if(get_ent_data(Recv,"CBasePlayer","m_iTeam") == get_ent_data(Sender,"CBasePlayer","m_iTeam"))
+			{
+				engfunc(EngFunc_SetClientListening,Recv,Sender,true);
+				return FMRES_SUPERCEDE;
+			}
+		}
+	}
+	
+	return FMRES_IGNORED;
 }
 
 public HP(id)
