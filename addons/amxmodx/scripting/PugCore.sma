@@ -24,7 +24,7 @@ new g_BanLeaver;
 
 new g_Round;
 new g_Score[CsTeams];
-new g_Teams[CsTeams][32] = {"Unassigned","Terrorists","Counter-Terrorists","Spectators"};
+new g_Teams[CsTeams][MAX_NAME_LENGTH] = {"Unassigned","Terrorists","Counter-Terrorists","Spectators"};
 new g_Frags[MAX_PLAYERS+1][2];
 
 public plugin_init()
@@ -404,9 +404,13 @@ public RoundRestart()
 		g_Round 		= 0;
 		g_Score[CS_TEAM_T] 	= 0;
 		g_Score[CS_TEAM_CT] 	= 0;
+		
+		for(new i;i <= MaxClients;i++)
+		{
+			arrayset(g_Frags[i],0,sizeof(g_Frags[]));
+		}
 	}
-	
-	if(STATE_HALFTIME <= g_State <= STATE_OVERTIME)
+	else if(STATE_HALFTIME <= g_State <= STATE_OVERTIME)
 	{
 		new Players[MAX_PLAYERS],Num,Player;
 		get_players(Players,Num,"h");
@@ -430,9 +434,12 @@ public ScoreInfo(Msg,Dest)
 			if(get_msg_arg_int(5)) 
 			{
 				new id = get_msg_arg_int(1); 
-			
-				set_msg_arg_int(2,ARG_SHORT,get_msg_arg_int(2) + g_Frags[id][0]);
-				set_msg_arg_int(3,ARG_SHORT,get_msg_arg_int(3) + g_Frags[id][1]);
+				
+				if(is_user_connected(id))
+				{
+					set_msg_arg_int(2,ARG_SHORT,get_msg_arg_int(2) + g_Frags[id][0]);
+					set_msg_arg_int(3,ARG_SHORT,get_msg_arg_int(3) + g_Frags[id][1]);
+				}
 			}
 		}	
 	}
@@ -455,6 +462,9 @@ public SwapTeams()
 	
 	g_Score[CS_TEAM_T] = g_Score[CS_TEAM_CT];
 	g_Score[CS_TEAM_CT] = Temp;
+	
+	get_pcvar_string(g_TagCTs,g_Teams[CS_TEAM_T],charsmax(g_Teams[]));
+	get_pcvar_string(g_TagTRs,g_Teams[CS_TEAM_CT],charsmax(g_Teams[]));
 	
 	PugSwapTeams(1);
 	
