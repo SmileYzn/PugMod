@@ -64,19 +64,16 @@ public PugEvent(State)
 		{
 			ReadySystem(true);
 		}
-		case STATE_START:
-		{
-			if(g_ReadySystem)
-			{
-				ReadySystem(false);
-			}
-		}
 		case STATE_HALFTIME:
 		{
-			if(PugGetPlayersNum(true) < get_pcvar_num(g_PlayersMin))
+			if(PugGetPlayersNum(false) < get_pcvar_num(g_PlayersMin))
 			{
 				ReadySystem(true);
 			}
+		}
+		default:
+		{
+			ReadySystem(false);
 		}
 	}
 }
