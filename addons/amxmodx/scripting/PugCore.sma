@@ -245,7 +245,16 @@ public PugEvent(State)
 			PugMsg(0,"PUG_LIVE_1ST");
 		}
 		case STATE_HALFTIME:
-		{													
+		{
+			for(new Player;Player <= MaxClients;Player++)
+			{
+				if(is_user_connected(Player))
+				{
+					g_Frags[Player][0] += get_user_frags(Player);
+					g_Frags[Player][1] += get_user_deaths(Player);
+				}
+			}
+		
 			PugMsg(0,"PUG_HALFTIME");
 			set_task(get_pcvar_float(g_HandleTime),"SwapTeams");
 		}
@@ -410,24 +419,11 @@ public RoundRestart()
 			arrayset(g_Frags[i],0,sizeof(g_Frags[]));
 		}
 	}
-	else if(STATE_HALFTIME <= g_State <= STATE_OVERTIME)
-	{
-		new Players[MAX_PLAYERS],Num,Player;
-		get_players(Players,Num,"h");
-		
-		for(new i;i < Num;i++)
-		{
-			Player = Players[i];
-			
-			g_Frags[Player][0] += get_user_frags(Player);
-			g_Frags[Player][1] += get_user_deaths(Player);
-		}
-	}
 }
 
 public ScoreInfo(Msg,Dest)
 {
-	if(STATE_HALFTIME <= g_State <= STATE_END)
+	if(g_State == STATE_FIRSTHALF || g_State == STATE_SECONDHALF || g_State == STATE_OVERTIME || g_State == STATE_END)
 	{
 		if(Dest == MSG_ALL || Dest == MSG_BROADCAST)
 		{
@@ -447,7 +443,7 @@ public ScoreInfo(Msg,Dest)
 
 public TeamScore()
 {
-	if(STATE_HALFTIME <= g_State <= STATE_END)
+	if(g_State == STATE_FIRSTHALF || g_State == STATE_SECONDHALF || g_State == STATE_OVERTIME || g_State == STATE_END)
 	{
 		new Team[2];
 		get_msg_arg_string(1,Team,charsmax(Team));
@@ -470,7 +466,7 @@ public SwapTeams()
 
 	PugSwapTeams(1);
 	
-	if(PugGetPlayersNum(true) >= get_pcvar_num(g_PlayersMin))
+	if(PugGetPlayersNum(false) >= get_pcvar_num(g_PlayersMin))
 	{
 		NextState();
 	}
