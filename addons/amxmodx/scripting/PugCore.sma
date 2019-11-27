@@ -458,14 +458,16 @@ public TeamScore()
 
 public SwapTeams()
 {
-	new Temp = g_Score[CS_TEAM_T];
+	new ScoreT 		= g_Score[CS_TEAM_T];
+	g_Score[CS_TEAM_T] 	= g_Score[CS_TEAM_CT];
+	g_Score[CS_TEAM_CT] 	= ScoreT;
 	
-	g_Score[CS_TEAM_T] = g_Score[CS_TEAM_CT];
-	g_Score[CS_TEAM_CT] = Temp;
+	new Name[MAX_NAME_LENGTH];
+	copy(Name,charsmax(Name),g_Teams[CS_TEAM_T]);
 	
-	get_pcvar_string(g_TagCTs,g_Teams[CS_TEAM_T],charsmax(g_Teams[]));
-	get_pcvar_string(g_TagTRs,g_Teams[CS_TEAM_CT],charsmax(g_Teams[]));
-	
+	copy(g_Teams[CS_TEAM_T],charsmax(g_Teams[]),g_Teams[CS_TEAM_CT]);
+	copy(g_Teams[CS_TEAM_CT],charsmax(g_Teams[]),Name);
+
 	PugSwapTeams(1);
 	
 	if(PugGetPlayersNum(true) >= get_pcvar_num(g_PlayersMin))
