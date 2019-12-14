@@ -4,51 +4,19 @@
 #define _PugStocks_included
 
 /**
- * Display an message into chat
- *
- * @note This is useful for display messages that not require extra parameters.
- *
- * @param id		Client index or 0 (All users)
- * @param Lang		Language line
- *
- * @noreturn
- */
-stock PugMsg(id,Lang[])
-{
-	client_print_color(id,id,"%s %L",PUG_HEADER,LANG_SERVER,Lang);
-}
-
-/**
  * Get Pug Mod configuration directory
  *
  * @note This is useful for get configs directory based on Amx Mod X.
  *
- * @param Patch		Buffer to copy patch to
- * @param Len		Maximum buffer size
+ * @param szPatch	Buffer to copy patch to
+ * @param iLen		Maximum buffer size
  *
  * @noreturn
  */
-stock PugGetPath(Path[],Len)
+stock PUG_GetFilePath(const szFile[],szPath[],iLen)
 {
-	get_localinfo("amxx_configsdir",Path,Len);
-	add(Path,Len,"/pug");
-}
-
-/**
- * Get Pug Mod configuration file path
- *
- * @note This is useful for get relative file paths
- *
- * @param File		File to include on complete path
- * @param Path		Buffer to copy patch to
- * @param Len		Maximum buffer size
- *
- * @noreturn
- */
-stock PugGetFilePath(const File[],Path[],Len)
-{
-	get_localinfo("amxx_configsdir",Path,Len);
-	formatex(Path,Len,"%s/pug/%s",Path,File);
+	get_localinfo("amxx_configsdir",szPath,iLen);
+	formatex(szPath,iLen,"%s/pug/%s",szPath,szFile);
 }
 
 /**
@@ -57,29 +25,29 @@ stock PugGetFilePath(const File[],Path[],Len)
  * @note This is useful for register command using translation system,
  * 	 If command have admin flags, will be registred as !%s, if not as .%s
  *
- * @param Command		Command to register
- * @param Function		Function callback
- * @param Flags			Admin flags needed
- * @param Info			Information string
- * @param Translate		Translate information string
+ * @param szCommand		Command to register
+ * @param szFunction		Function callback
+ * @param iFlags		Admin flags needed
+ * @param szInfo		Information string
+ * @param bTranslate		Translate information string
  *
- * @return              	Command id, 0 on failure
+ * @noreturn
  */
-stock PugRegCommand(const Command[],const Function[],Flags = 0,const Info[] = "",bool:Translate = true)
+stock PUG_RegCommand(const szCommand[],const szFunction[],iFlags = 0,const szInfo[] = "",bool:bTranslate = true)
 {
-	new Buffer[16];
-	formatex(Buffer,charsmax(Buffer),(Flags == ADMIN_ALL) ? ".%s" : "!%s",Command);
+	new szBuffer[16];
+	formatex(szBuffer,charsmax(szBuffer),(iFlags == ADMIN_ALL) ? ".%s" : "!%s",szCommand);
 	
-	if(Info[0] && Translate)
+	if(szInfo[0] && bTranslate)
 	{
-		new Key[64];
-		format(Key,charsmax(Key),"%L",LANG_SERVER,Info);
+		new szKey[64];
+		format(szKey,charsmax(szKey),"%L",LANG_SERVER,szInfo);
 
-		register_clcmd(Buffer,Function,Flags,Key);
+		register_clcmd(szBuffer,szFunction,iFlags,szKey);
 	}
 	else
 	{
-		register_clcmd(Buffer,Function,Flags,Info);
+		register_clcmd(szBuffer,szFunction,iFlags,szInfo);
 	}
 }
 
@@ -96,17 +64,17 @@ stock PugRegCommand(const Command[],const Function[],Flags = 0,const Info[] = ""
  *
  * @noreturn
  */
-stock PugCommandClient(id,Command[],Lang[],Target,Check)
+stock PUG_CommandClient(id,szCommand[],szLang[],iClient,iCheck)
 {
-	if(Check)
+	if(iCheck)
 	{
-		new Name[MAX_NAME_LENGTH];
-		get_user_name(Target,Name,charsmax(Name));
+		new szName[MAX_NAME_LENGTH];
+		get_user_name(iClient,szName,charsmax(szName));
 	
-		client_print_color(0,print_team_red,"%s %L",PUG_HEADER,LANG_SERVER,Lang,Name);
+		client_print_color(0,iClient,"%s %L",PUG_MOD_HEADER,LANG_SERVER,szLang,szName);
 	}
 	
-	client_print_color(id,print_team_red,"%s %L",PUG_HEADER,LANG_PLAYER,Check ? "PUG_CMD_OK" : "PUG_CMD_FAIL",Command);
+	client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_PLAYER,iCheck ? "PUG_CMD_OK" : "PUG_CMD_FAIL",szCommand);
 }
 
 /**
@@ -121,17 +89,58 @@ stock PugCommandClient(id,Command[],Lang[],Target,Check)
  *
  * @noreturn
  */
-stock PugCommand(id,Command[],Lang[],Check)
+stock PUG_ExecuteCommand(id,szCommand[],szLang[],bCheck)
 {
-	if(Check)
+	if(bCheck)
 	{
-		new Name[MAX_NAME_LENGTH];
-		get_user_name(id,Name,charsmax(Name));
+		new szName[MAX_NAME_LENGTH];
+		get_user_name(id,szName,charsmax(szName));
 		
-		client_print_color(0,print_team_red,"%s %L",PUG_HEADER,LANG_SERVER,Lang,Name,Command);
+		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,szLang,szName,szCommand);
 	}
 	
-	client_print_color(id,print_team_red,"%s %L",PUG_HEADER,LANG_PLAYER,Check ? "PUG_CMD_OK" : "PUG_CMD_FAIL",Command);
+	client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_PLAYER,bCheck ? "PUG_CMD_OK" : "PUG_CMD_FAIL",szCommand);
+}
+
+/**
+ * Get Pug Map List
+ *
+ * @note This is used to build maps menu for votes
+ *
+ * @param Data			2D data array returned from function
+ * @param Len			Size of Data Array
+ *
+ * @return              	Maps Loaded count
+ */
+public PUG_GetMapList(szData[][],iLen)
+{
+	new szPath[PLATFORM_MAX_PATH];
+	PUG_GetFilePath("maps.rc",szPath,charsmax(szPath));
+	
+	if(file_exists(szPath))
+	{
+		new iFile = fopen(szPath,"rb");
+		new szLine[MAX_NAME_LENGTH],iCount;
+		
+		new szMap[MAX_NAME_LENGTH];
+		get_mapname(szMap,charsmax(szMap));
+	
+		while(!feof(iFile) && (iCount < iLen))
+		{
+			fgets(iFile,szLine,charsmax(szLine));
+			trim(szLine);
+			
+			if(is_map_valid(szLine) && !equali(szMap,szLine))
+			{
+				copy(szData[iCount++],iLen,szLine);
+			}
+		}
+		
+		fclose(iFile);
+		return iCount;
+	}
+	
+	return 0;
 }
 
 /**
@@ -145,36 +154,36 @@ stock PugCommand(id,Command[],Lang[],Check)
  *
  * @noreturn
  */
-stock PugBuildHelpFile(Level)
+stock PUG_BuildHelpFile(iLevel)
 {
-	new Path[64];	
-	PugGetFilePath((Level == ADMIN_ALL) ? "help.htm" : "admin.htm",Path,charsmax(Path));
+	new szPath[64];	
+	PUG_GetFilePath((iLevel == ADMIN_ALL) ? "help.htm" : "admin.htm",szPath,charsmax(szPath));
 	
-	if(!file_exists(Path))
+	if(!file_exists(szPath))
 	{
-		new Commands = get_concmdsnum(Level);
+		new iCommands = get_concmdsnum(iLevel);
 		
-		if(Commands)
+		if(iCommands)
 		{
-			new File = fopen(Path,"wt");
-			fputs(File,"<style type='text/css'>body{background:#000;margin:2px;color:#FFB000;font-family:Tahoma}</style><table width='100%%'>");
+			new iFile = fopen(szPath,"wt");
+			fputs(iFile,"<style type='text/css'>body{background:#000;margin:2px;color:#FFB000;font-family:Tahoma}</style><table width='100%%'>");
 			
-			new String[MAX_NAME_LENGTH],Flag,Info[128];
+			new szString[MAX_NAME_LENGTH],iFlag,szInfo[128];
 			
-			for(new i;i < Commands;i++)
+			for(new i;i < iCommands;i++)
 			{
-				get_concmd(i,String,charsmax(String),Flag,Info,charsmax(Info),Level);
+				get_concmd(i,szString,charsmax(szString),iFlag,szInfo,charsmax(szInfo),iLevel);
 				
-				if((String[0] == ((Level == ADMIN_ALL) ? '.' : '!')) && Info[0])
+				if((szString[0] == ((iLevel == ADMIN_ALL) ? '.' : '!')) && szInfo[0])
 				{
-					replace_all(Info,sizeof(Info),"<","&#60;");
-					replace_all(Info,sizeof(Info),">","&#62;");
-				
-					fprintf(File,"<tr><td>%s</td><td>%s</td></tr>",String,Info);
+					replace_all(szInfo,sizeof(szInfo),"<","&#60;");
+					replace_all(szInfo,sizeof(szInfo),">","&#62;");
+					
+					fprintf(iFile,"<tr><td>%s</td><td>%s</td></tr>",szString,szInfo);
 				}
 			}
 			
-			fclose(File);
+			fclose(iFile);
 		}
 	}
 }
@@ -188,101 +197,50 @@ stock PugBuildHelpFile(Level)
  * @param Help			Build file as html to help admins
  * @noreturn
  */
-stock PugBuildCvarsFile(File[],bool:Help)
+stock PUG_BuildCvarsFile(szFile[],bool:bHelp)
 {
-	new Path[64];
-	PugGetFilePath(File,Path,charsmax(Path));
+	new szPath[64];	
+	PUG_GetFilePath(szFile,szPath,charsmax(szPath));
 	
-	if(!file_exists(Path))
+	if(!file_exists(szPath))
 	{
-		new CvarsNum = get_plugins_cvarsnum();
+		new iCvarsNum = get_plugins_cvarsnum();
 		
-		if(CvarsNum)
+		if(iCvarsNum)
 		{
-			new File = fopen(Path,"wt");
+			new iFile = fopen(szPath,"wt");
 			
-			if(Help)
+			if(bHelp)
 			{
-				fputs(File,"<style type='text/css'>body{background:#000;margin:2px;color:#FFB000;font-family:Tahoma}</style><table width='100%%'>");
+				fputs(iFile,"<style type='text/css'>body{background:#000;margin:2px;color:#FFB000;font-family:Tahoma}</style><table width='100%%'>");
 			}
 			
-			new Name[MAX_NAME_LENGTH],Flag,Plugin,Handle,Desc[128],Value[MAX_NAME_LENGTH];
+			new szName[MAX_NAME_LENGTH],iFlag,iPlugin,iHandle,szDesc[128],szValue[MAX_NAME_LENGTH];
 			
-			for(new i;i < CvarsNum;i++)
+			for(new i;i < iCvarsNum;i++)
 			{
-				if(get_plugins_cvar(i,Name,charsmax(Name),Flag,Plugin,Handle,Desc,charsmax(Desc)))
+				if(get_plugins_cvar(i,szName,charsmax(szName),iFlag,iPlugin,iHandle,szDesc,charsmax(szDesc)))
 				{
-					if((Name[0] == 'p') && (Name[1] == 'u') && (Name[2] == 'g'))
+					if((szName[0] == 'p') && (szName[1] == 'u') && (szName[2] == 'g'))
 					{
-						if(Help)
+						if(bHelp)
 						{
-							replace_all(Desc,sizeof(Desc),"<","&#60;");
-							replace_all(Desc,sizeof(Desc),">","&#62;");
+							replace_all(szDesc,sizeof(szDesc),"<","&#60;");
+							replace_all(szDesc,sizeof(szDesc),">","&#62;");
 							
-							fprintf(File,"<tr><td>%s</td><td>%s</td></tr>",Name,Desc);
+							fprintf(iFile,"<tr><td>%s</td><td>%s</td></tr>",szName,szDesc);
 						}
 						else
 						{
-							get_pcvar_string(Handle,Value,charsmax(Value));
+							get_pcvar_string(iHandle,szValue,charsmax(szValue));
 							
-							fprintf(File,"%s		^"%s^"			// %s^n",Name,Value,Desc);
+							fprintf(iFile,"%s		^"%s^"			// %s^n",szName,szValue,szDesc);
 						}
 					}
 				}
 			}
 			
-			fclose(File);
+			fclose(iFile);
 		}
 	}
-}
-
-/**
- * Build the maps menu
- *
- * @note This is used to build maps menu for votes
- *
- * @param Title			Title of menu
- * @param Handler		Function handler of menu
- * @param Menu 			The Variable to store the menu
- * @param Data			Data array returned from function
- * @param Len			Size of Data Array
- *
- * @return              	Maps Loaded count
- */
-stock PugBuildMapsMenu(Title[],Handler[],Menu,Data[][],Len)
-{
-	new Path[64];
-	PugGetFilePath("maps.rc",Path,charsmax(Path));
-	
-	if(file_exists(Path))
-	{
-		new File = fopen(Path,"rb");
-		new Line[32],Num[3],Count;
-		
-		Menu = menu_create(Title,Handler);
-		menu_setprop(Menu,MPROP_EXIT,MEXIT_NEVER);
-		
-		new Map[32];
-		get_mapname(Map,charsmax(Map));
-	
-		while(!feof(File) && (Count < Len))
-		{
-			fgets(File,Line,charsmax(Line));
-			trim(Line);
-			
-			if(is_map_valid(Line) && !equali(Map,Line))
-			{
-				copy(Data[Count],Len,Line);
-				num_to_str(Count,Num,charsmax(Num));
-				
-				menu_additem(Menu,Line,Num);
-				Count++;
-			}
-		}
-		
-		fclose(File);
-		return Count;
-	}
-	
-	return 0;
 }

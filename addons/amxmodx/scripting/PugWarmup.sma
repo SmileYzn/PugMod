@@ -1,71 +1,65 @@
-#include <amxmodx>
-#include <amxmisc>
-#include <fakemeta>
-#include <hamsandwich>
-#include <cstrike>
-
 #include <PugCore>
 #include <PugStocks>
 #include <PugCS>
 
-new bool:g_Warmup;
+new bool:g_bWarmup;
 
-new g_MsgMoney;
-new g_MsgHideWeapon;
+new g_iMsgMoney;
+new g_iMsgHideWeapon;
 
-new HamHook:g_HamKilled;
-new HamHook:g_HamSpawn;
+new HamHook:g_hHamKilled;
+new HamHook:g_hHamSpawn;
 
-new g_FMSetModel;
-new g_FMCmdStart;
+new g_iFMSetModel;
+new g_iFMCmdStart;
 
 #define HUD_HIDE_TIMER (1<<4)
 #define HUD_HIDE_MONEY (1<<5)
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Warmup)",PUG_VERSION,PUG_AUTHOR);
+	register_plugin("Pug Mod (Warmup)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
 	
-	g_HamKilled 	= RegisterHamPlayer(Ham_Killed,"HamKilled",true);
-	g_HamSpawn 	= RegisterHamPlayer(Ham_Spawn,"HamSpawn",true);
+	DisableHamForward(g_hHamKilled = RegisterHamPlayer(Ham_Killed,"PUG_HamKilled",true));
+	DisableHamForward(g_hHamSpawn = RegisterHamPlayer(Ham_Spawn,"PUG_HamSpawn",true));
 	
-	register_clcmd("joinclass","JoinClass");
-	register_clcmd("menuselect","JoinClass");
+	register_clcmd("joinclass","HOOK_JoinedClass");
+	register_clcmd("menuselect","HOOK_JoinedClass");
 }
 
-public PugEvent(State)
+public PUG_Event(iState)
 {
-	g_Warmup = (State == STATE_WARMUP || State == STATE_HALFTIME);
+	g_bWarmup = (iState == STATE_WARMUP || iState == STATE_HALFTIME);
 	
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
-		g_MsgMoney = register_message(get_user_msgid("Money"),"MsgMoney");
-		g_MsgHideWeapon = register_message(get_user_msgid("HideWeapon"),"MsgHideWeapon");
+		g_iMsgMoney = register_message(get_user_msgid("Money"),"PUG_MsgMoney");
+		g_iMsgHideWeapon = register_message(get_user_msgid("HideWeapon"),"PUG_MsgHideWeapon");
 		
-		EnableHamForward(g_HamKilled);
-		EnableHamForward(g_HamSpawn);
+		EnableHamForward(g_hHamKilled);
+		EnableHamForward(g_hHamSpawn);
 		
-		g_FMSetModel = register_forward(FM_SetModel,"SetModel",true);
-		g_FMCmdStart = register_forward(FM_CmdStart,"CmdStart",true);
+		g_iFMSetModel = register_forward(FM_SetModel,"PUG_SetModel",true);
+		g_iFMCmdStart = register_forward(FM_CmdStart,"PUG_CmdStart",true);
 	}
-	else if(State == STATE_START)
+	else if(iState == STATE_START)
 	{
-		unregister_message(get_user_msgid("Money"),g_MsgMoney);
-		unregister_message(get_user_msgid("HideWeapon"),g_MsgHideWeapon);
+		unregister_message(get_user_msgid("Money"),g_iMsgMoney);
+		unregister_message(get_user_msgid("HideWeapon"),g_iMsgHideWeapon);
 		
-		DisableHamForward(g_HamKilled);
-		DisableHamForward(g_HamSpawn);
+		DisableHamForward(g_hHamKilled);
+		DisableHamForward(g_hHamSpawn);
 		
-		unregister_forward(FM_SetModel,g_FMSetModel,true);
-		unregister_forward(FM_CmdStart,g_FMCmdStart,true);
+		unregister_forward(FM_SetModel,g_iFMSetModel,true);
+		unregister_forward(FM_CmdStart,g_iFMCmdStart,true);
 	}
 	
-	PugSetMapObjectives(g_Warmup);
+	PUG_SetMapObjectives(g_bWarmup);
 }
 
 public CS_OnBuy(id,Weapon)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
 		if(cs_get_weapon_class(Weapon) == CS_WEAPONCLASS_GRENADE || Weapon == CSW_SHIELDGUN)
 		{
@@ -76,13 +70,13 @@ public CS_OnBuy(id,Weapon)
 	return PLUGIN_CONTINUE;
 }
 
-public MsgMoney(Msg,Dest,id)
+public PUG_MsgMoney(iMsg,iDest,id)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
 		if(is_user_alive(id))
 		{
-			set_ent_data(id,"CBasePlayer","m_iAccount",16000);
+			cs_set_user_money(id,16000,0);
 		}
 
 		return PLUGIN_HANDLED;
@@ -91,36 +85,36 @@ public MsgMoney(Msg,Dest,id)
 	return PLUGIN_CONTINUE;
 }
 
-public MsgHideWeapon()
+public PUG_MsgHideWeapon()
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
 		set_msg_arg_int(1,ARG_BYTE,get_msg_arg_int(1)|HUD_HIDE_TIMER|HUD_HIDE_MONEY);
 	}
 }
 
-public HamKilled(id)
+public PUG_HamKilled(id)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
-		set_task(0.75,"Respawn",id);
+		set_task(0.75,"PUG_Respawn",id);
 	}
 }
 
-public Respawn(id)
+public PUG_Respawn(id)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
-		if(is_user_connected(id) && !is_user_alive(id) && JoinedTeam(id))
+		if(is_user_connected(id) && PUG_PLAYER_IN_TEAM(id) && !is_user_alive(id))
 		{
 			ExecuteHamB(Ham_CS_RoundRespawn,id);
 		}
 	}
 }
 
-public HamSpawn(id)
+public PUG_HamSpawn(id)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
 		if(is_user_alive(id))
 		{
@@ -129,13 +123,13 @@ public HamSpawn(id)
 	}
 }
 
-public CmdStart(id,Handle,Seed)
+public PUG_CmdStart(id,hHandle,iSeed)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
 		if(is_user_alive(id))
 		{
-			if(get_uc(Handle,UC_Buttons) & (IN_FORWARD|IN_BACK|IN_MOVELEFT|IN_MOVERIGHT|IN_ATTACK|IN_ATTACK2))
+			if(get_uc(hHandle,UC_Buttons) & (IN_FORWARD|IN_BACK|IN_MOVELEFT|IN_MOVERIGHT|IN_ATTACK|IN_ATTACK2))
 			{
 				if(pev(id,pev_takedamage) == DAMAGE_NO)
 				{
@@ -146,44 +140,44 @@ public CmdStart(id,Handle,Seed)
 	}
 }
 
-public SetModel(Ent)
+public PUG_SetModel(iEntity)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
-		if(pev_valid(Ent))
+		if(pev_valid(iEntity))
 		{
-			new Name[MAX_NAME_LENGTH];
-			pev(Ent,pev_classname,Name,charsmax(Name));
+			new szName[MAX_NAME_LENGTH];
+			pev(iEntity,pev_classname,szName,charsmax(szName));
 			
-			if(equali(Name,"weaponbox"))
+			if(equali(szName,"weaponbox"))
 			{
-				set_pev(Ent,pev_effects,EF_NODRAW);
-				set_pev(Ent,pev_nextthink,get_gametime() + 0.1);
+				set_pev(iEntity,pev_effects,EF_NODRAW);
+				set_pev(iEntity,pev_nextthink,get_gametime() + 0.1);
 			}
-			else if(equali(Name,"weapon_shield"))
+			else if(equali(szName,"weapon_shield"))
 			{
-				set_pev(Ent,pev_effects,EF_NODRAW);
-				set_task(0.1,"RemoveEnt",Ent);
+				set_pev(iEntity,pev_effects,EF_NODRAW);
+				set_task(0.1,"PUG_RemoveEnt",iEntity);
 			}
 		}
 	}
 }
 
-public RemoveEnt(Ent)
+public PUG_RemoveEnt(iEntity)
 {
-	if(pev_valid(Ent))
+	if(pev_valid(iEntity))
 	{
-		dllfunc(DLLFunc_Think,Ent);
+		dllfunc(DLLFunc_Think,iEntity);
 	}
 }
 
-public JoinClass(id)
+public HOOK_JoinedClass(id)
 {
-	if(g_Warmup)
+	if(g_bWarmup)
 	{
 		if(get_ent_data(id,"CBasePlayer","m_iMenu") == CS_Menu_ChooseAppearance)
 		{
-			set_task(0.75,"Respawn",id);
+			set_task(0.75,"PUG_Respawn",id);
 		}
 	}
 }

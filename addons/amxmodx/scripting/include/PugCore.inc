@@ -3,8 +3,14 @@
 #endif
 #define _PugCore_included
 
-#if AMXX_VERSION_NUM < 190
-	#assert AMX Mod X v1.9.0 or later library required!
+#include <amxmodx>
+#include <amxmisc>
+#include <cstrike>
+#include <fakemeta>
+#include <hamsandwich>
+
+#if AMXX_VERSION_NUM < 200
+	#assert AMX Mod X v1.10 or later library required!
 #endif
 
 #pragma reqlib "PugCore"
@@ -12,23 +18,24 @@
 	#pragma loadlib "PugCore"
 #endif
 
-#define PUG_VERSION	"3.0.5"
-#define PUG_AUTHOR 	"SmileY"
-#define PUG_HEADER	"^4[PUG]^1"
+#define PUG_MOD_PLUGIN 		"CS Pug Mod"
+#define PUG_MOD_VERSION		"3.0.6"
+#define PUG_MOD_AUTHOR		"SmileY"
+#define PUG_MOD_HEADER		"^4[PUG]^1"
 
-enum _:States
+enum _:PUG_MOD_STATES
 {
 	STATE_DEAD,
 	STATE_WARMUP,
 	STATE_START,
-	STATE_FIRSTHALF,
+	STATE_FIRST_HALF,
 	STATE_HALFTIME,
-	STATE_SECONDHALF,
+	STATE_SECOND_HALF,
 	STATE_OVERTIME,
 	STATE_END
 };
 
-stock const g_States[States][] =
+stock const PUG_MOD_STATES_STR[PUG_MOD_STATES][] =
 {
 	"Dead",
 	"Warmup",
@@ -47,7 +54,7 @@ stock const g_States[States][] =
  *
  * @noreturn
  */
-native PugNext();
+native PUG_NextState();
 
 /**
  * Called just after the Pug Mod change the state
@@ -58,15 +65,21 @@ native PugNext();
  *
  * @noreturn
  */
-forward PugEvent(State);
+forward PUG_Event(iState);
 
 /**
- * Get a team score
+ * Get Pug Mod State
  *
- * @param Team     	The Team index to get score
+ * @note This return current state of pug mod
  *
- * @note Will return -1 if a invalid team is passed
- *
- * @return      Return score on success, -1 on fail
+ * @noreturn
  */
-native PugGetScore(Team);
+stock PUG_GetState()
+{
+	if(xvar_exists("g_iState"))
+	{
+		return get_xvar_num(get_xvar_id("g_iState"));
+	}
+	
+	return STATE_DEAD;
+}

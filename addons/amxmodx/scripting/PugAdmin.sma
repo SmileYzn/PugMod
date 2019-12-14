@@ -1,193 +1,187 @@
-#include <amxmodx>
-#include <amxmisc>
-
 #include <PugCore>
 #include <PugStocks>
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Admin)",PUG_VERSION,PUG_AUTHOR);
+	register_plugin("Pug Mod (Admin)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
 	
-	register_dictionary("common.txt");
-	register_dictionary("PugAdmin.txt");
-	
-	PugRegCommand("kick","Kick",ADMIN_LEVEL_A,"PUG_DESC_KICK");
-	PugRegCommand("kill","Kill",ADMIN_LEVEL_A,"PUG_DESC_KILL");
-	PugRegCommand("rcon","Rcon",ADMIN_LEVEL_A,"PUG_DESC_RCON");
-	PugRegCommand("map","Map",ADMIN_LEVEL_A,"PUG_DESC_MAP");
-	PugRegCommand("msg","Msg",ADMIN_LEVEL_A,"PUG_DESC_MSG");
-	PugRegCommand("ban","Ban",ADMIN_LEVEL_A,"PUG_DESC_BAN");
+	PUG_RegCommand("kick","PUG_Kick",ADMIN_LEVEL_A,"PUG_DESC_KICK");
+	PUG_RegCommand("kill","PUG_Kill",ADMIN_LEVEL_A,"PUG_DESC_KILL");
+	PUG_RegCommand("rcon","PUG_Rcon",ADMIN_LEVEL_A,"PUG_DESC_RCON");
+	PUG_RegCommand("map","PUG_Map",ADMIN_LEVEL_A,"PUG_DESC_MAP");
+	PUG_RegCommand("msg","PUG_Msg",ADMIN_LEVEL_A,"PUG_DESC_MSG");
+	PUG_RegCommand("ban","PUG_Ban",ADMIN_LEVEL_A,"PUG_DESC_BAN");
 }
 
 public plugin_cfg()
 {
 	remove_user_flags(0,read_flags("z"));
 	
-	new Path[64];
-	PugGetFilePath("admins.rc",Path,charsmax(Path));
+	new szPath[PLATFORM_MAX_PATH];
+	PUG_GetFilePath("admin.rc",szPath,charsmax(szPath));
 	
-	if(file_exists(Path))
+	if(file_exists(szPath))
 	{
-		new SMCParser:Handle = SMC_CreateParser();
+		new SMCParser:hHandle = SMC_CreateParser();
 		
-		if(Handle != Invalid_SMCParser)
+		if(hHandle != Invalid_SMCParser)
 		{
-			SMC_SetReaders(Handle,"OnKeyValue");
-			SMC_ParseFile(Handle,Path);
+			SMC_SetReaders(hHandle,"SMC_OnKeyValue");
+			SMC_ParseFile(hHandle,szPath);
 		}
 		
-		SMC_DestroyParser(Handle);
+		SMC_DestroyParser(hHandle);
 	}
 }
 
-public SMCResult:OnKeyValue(SMCParser:handle,const Key[],const Value[],any:data)
+public SMCResult:SMC_OnKeyValue(SMCParser:hHandle,const szAuth[],const szFlags[])
 {
-	admins_push(Key,"",read_flags(Value),FLAG_AUTHID|FLAG_NOPASS);	
+	admins_push(szAuth,"",read_flags(szFlags),FLAG_AUTHID|FLAG_NOPASS);	
 	return SMCParse_Continue;
 }
 
 public client_authorized(id)
 {
-	new Auth[2][MAX_AUTHID_LENGTH];
-	get_user_authid(id,Auth[0],charsmax(Auth[]));
+	new szAuth[2][MAX_AUTHID_LENGTH];
+	get_user_authid(id,szAuth[0],charsmax(szAuth[]));
 	
 	for(new i;i < admins_num();i++)
 	{
-		admins_lookup(i,AdminProp_Auth,Auth[1],charsmax(Auth[]));
+		admins_lookup(i,AdminProp_Auth,szAuth[1],charsmax(szAuth[]));
 		
-		if(equali(Auth[0],Auth[1]))
+		if(equali(szAuth[0],szAuth[1]))
 		{
 			set_user_flags(id,admins_lookup(i,AdminProp_Access));
 			return PLUGIN_CONTINUE;
 		}
 	}
 	
-	set_user_flags(id,ADMIN_USER);
-	
+	set_user_flags(id,ADMIN_USER);	
 	return PLUGIN_CONTINUE;
 }
 
-public Kick(id,Level)
+
+public PUG_Kick(id,iLevel)
 {
-	if(access(id,Level))
+	if(access(id,iLevel))
 	{
-		new Name[MAX_NAME_LENGTH];
-		read_argv(1,Name,charsmax(Name));
+		new szName[MAX_NAME_LENGTH];
+		read_argv(1,szName,charsmax(szName));
 		
-		new Player = cmd_target(id,Name,CMDTARGET_OBEY_IMMUNITY);
+		new iPlayer = cmd_target(id,szName,CMDTARGET_OBEY_IMMUNITY);
 		
-		if(Player)
+		if(iPlayer)
 		{		
-			new Reason[32];
-			read_argv(2,Reason,charsmax(Reason));
-			remove_quotes(Reason);
+			new szReason[32];
+			read_argv(2,szReason,charsmax(szReason));
+			remove_quotes(szReason);
 			
-			server_cmd("kick #%i ^"%s^"",get_user_userid(Player),Reason);
+			server_cmd("kick #%i ^"%s^"",get_user_userid(iPlayer),szReason);
 		}
 		
-		PugCommandClient(id,"!kick","PUG_KICK",Player,Player);
+		PUG_CommandClient(id,"!kick","PUG_KICK",iPlayer,iPlayer);
 	}
 	
 	return PLUGIN_HANDLED;
 }
 
-public Kill(id,Level)
+public PUG_Kill(id,iLevel)
 {
-	if(access(id,Level))
+	if(access(id,iLevel))
 	{
-		new Name[MAX_NAME_LENGTH];
-		read_argv(1,Name,charsmax(Name));
+		new szName[MAX_NAME_LENGTH];
+		read_argv(1,szName,charsmax(szName));
 		
-		new Player = cmd_target(id,Name,CMDTARGET_OBEY_IMMUNITY);
+		new iPlayer = cmd_target(id,szName,CMDTARGET_OBEY_IMMUNITY);
 		
-		if(Player)
+		if(iPlayer)
 		{
-			user_kill(Player,1)
+			user_kill(iPlayer,1)
 		}
 
-		PugCommandClient(id,"!kill","PUG_KILL",Player,Player);
+		PUG_CommandClient(id,"!kill","PUG_KILL",iPlayer,iPlayer);
 	}
 	
 	return PLUGIN_HANDLED;
 }
 
-public Rcon(id,Level)
+public PUG_Rcon(id,iLevel)
 {
-	if(access(id,Level))
+	if(access(id,iLevel))
 	{
-		new Text[256];
-		read_args(Text,charsmax(Text));
-		remove_quotes(Text);
+		new szCommand[256];
+		read_args(szCommand,charsmax(szCommand));
+		remove_quotes(szCommand);
 		
-		if(Text[0])
+		if(szCommand[0])
 		{
-			server_cmd(Text);
+			server_cmd(szCommand);
 		}
 		
-		PugCommand(id,"!rcon","PUG_RCON",Text[0]);
+		PUG_ExecuteCommand(id,"!rcon","PUG_RCON",szCommand[0]);
 	}
 	
 	return PLUGIN_HANDLED;
 }
 
-public Map(id,Level)
+public PUG_Map(id,iLevel)
 {
-	if(access(id,Level))
+	if(access(id,iLevel))
 	{
-		new Name[MAX_NAME_LENGTH];
-		read_args(Name,charsmax(Name));
-		remove_quotes(Name);
+		new szMap[MAX_NAME_LENGTH];
+		read_args(szMap,charsmax(szMap));
+		remove_quotes(szMap);
 		
-		new IsMap = is_map_valid(Name);
+		new bIsMapValid = is_map_valid(szMap);
 		
-		if(IsMap)
+		if(bIsMapValid)
 		{
-			engine_changelevel(Name);
+			server_cmd("changelevel %s",szMap);
 		}
 		
-		PugCommand(id,"!map","PUG_MAP",IsMap);
+		PUG_ExecuteCommand(id,"!map","PUG_MAP",bIsMapValid);
 	}
 	
 	return PLUGIN_HANDLED;
 }
 
-public Msg(id,Level)
+public PUG_Msg(id,iLevel)
 {
-	if(access(id,Level))
+	if(access(id,iLevel))
 	{
-		new Text[256];
-		read_args(Text,charsmax(Text));
-		remove_quotes(Text);
+		new szMessage[256];
+		read_args(szMessage,charsmax(szMessage));
+		remove_quotes(szMessage);
 		
-		if(Text[0])
+		if(szMessage[0])
 		{
-			new Name[MAX_NAME_LENGTH];
-			get_user_name(id,Name,charsmax(Name));
+			new szName[MAX_NAME_LENGTH];
+			get_user_name(id,szName,charsmax(szName));
 			
-			client_print_color(0,print_team_red,"%s ^3(%s) ^1%s",PUG_HEADER,Name,Text);
+			client_print_color(0,id,"%s (^3%s^1) %s",PUG_MOD_HEADER,szName,szMessage);
 		}
 	}
 	
 	return PLUGIN_HANDLED;
 }
 
-public Ban(id,Level)
+public PUG_Ban(id,iLevel)
 {
-	if(access(id,Level))
+	if(access(id,iLevel))
 	{
-		new Name[MAX_NAME_LENGTH];
-		read_argv(1,Name,charsmax(Name));
+		new szName[MAX_NAME_LENGTH];
+		read_argv(1,szName,charsmax(szName));
 		
-		new Player = cmd_target(id,Name,CMDTARGET_OBEY_IMMUNITY);
+		new iPlayer = cmd_target(id,szName,CMDTARGET_OBEY_IMMUNITY);
 		
-		if(Player)
+		if(iPlayer)
 		{
-			new Time = read_argv_int(2);
+			new iTime = read_argv_int(2);
 			
-			server_cmd("banid %i #%i kick;writeid",Time,get_user_userid(Player));
+			server_cmd("banid %i #%i kick;writeid",iTime,get_user_userid(iPlayer));
 		}
 		
-		PugCommandClient(id,"!ban","PUG_BAN",Player,Player);
+		PUG_CommandClient(id,"!ban","PUG_BAN",iPlayer,iPlayer);
 	}
 	
 	return PLUGIN_HANDLED;

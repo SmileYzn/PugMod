@@ -3,10 +3,14 @@
 #endif
 #define _PugMenus_included
 
+#define PUG_CAPTAIN_PLAYERS	4
+#define PUG_MENU_MAPS		32
+#define PUG_MENU_TEAM		6
+
  /**
  * Store current view menu id for players
  */
-new g_Menu[MAX_PLAYERS+1] = {0, ...};
+stock g_iViewMenu[MAX_PLAYERS+1] = {-1,...};
 
  /**
  * Display an menu for all players that are in teams
@@ -15,20 +19,18 @@ new g_Menu[MAX_PLAYERS+1] = {0, ...};
  *
  * @noreturn
  */
-stock PugDisplayMenuAll(Menu)
+stock PUG_DisplayMenuAll(iMenu)
 {
-	new Players[MAX_PLAYERS],Num;
-	get_players(Players,Num,"ch");
-
-	new Player;
+	new iPlayers[MAX_PLAYERS],iNum,iPlayer;
+	get_players(iPlayers,iNum,"ch");
 	
-	for(new i;i < Num;i++) 
+	for(new i;i < iNum;i++) 
 	{
-		Player = Players[i];
+		iPlayer = iPlayers[i];
 
-		if(1 <= get_user_team(Player) <= 2)
+		if(1 <= get_user_team(iPlayer) <= 2)
 		{
-			PugDisplayMenuSingle(Player,Menu);
+			PUG_DisplayMenuSingle(iPlayer,iMenu);
 		}
 	}
 }
@@ -45,27 +47,39 @@ stock PugDisplayMenuAll(Menu)
  *
  * @noreturn
  */
-stock PugDisplayMenuSingle(id,Menu)
+stock PUG_DisplayMenuSingle(id,iMenu)
 {
-	g_Menu[id] = Menu;
-	PugDisplayMenuClient(id);
+	g_iViewMenu[id] = iMenu;
+	PUG_DisplayMenuClient(id);
 }
 
-public PugDisplayMenuClient(id)
+public PUG_DisplayMenuClient(id)
 {
 	if(is_user_connected(id))
 	{
-		new Menu[2];
-		
-		if(!player_menu_info(id,Menu[0],Menu[1]))
+		new iMenu[2];
+
+		if(!player_menu_info(id,iMenu[0],iMenu[1]))
 		{
-			menu_display(id,g_Menu[id]);	
+			menu_display(id,g_iViewMenu[id]);	
 		}
 		else
 		{
-			set_task(1.0,"PugDisplayMenuClient",id);	
+			set_task(1.0,"PUG_DisplayMenuClient",id);	
 		}
 	}
+}
+
+/**
+ * Check if players have any PUG menu opened
+ *
+ * @param id	The client index
+ *
+ * @noreturn
+ */
+stock PUG_InMenu(id)
+{
+	return (g_iViewMenu[id] != -1);
 }
 
 /**
@@ -75,8 +89,25 @@ public PugDisplayMenuClient(id)
  *
  * @noreturn
  */
-stock PugCancelMenu(id)
+stock PUG_CancelMenu(id)
 {
-	g_Menu[id] = 0;
 	show_menu(id,0,"^n",1);
+	
+	if(id)
+	{
+		g_iViewMenu[id] = -1;
+		menu_cancel(id);
+	}
+	else
+	{
+		arrayset(g_iViewMenu,-1,sizeof(g_iViewMenu));
+		
+		for(new iPlayer;iPlayer <= MaxClients;iPlayer++)
+		{
+			if(is_user_connected(iPlayer))
+			{
+				menu_cancel(iPlayer);
+			}
+		}
+	}	
 }

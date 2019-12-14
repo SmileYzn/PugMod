@@ -11,16 +11,16 @@ public plugin_init()
 {
 	register_plugin("Pug Mod (Anti Flood)",AMXX_VERSION_STR,"AMXX Dev Team");
 
-	register_clcmd("say","Filter");
-	register_clcmd("say_team","Filter");
-	register_clcmd("jointeam","Filter");
-	register_clcmd("chooseteam","Filter");
+	register_clcmd("say","PUG_FilterCommand");
+	register_clcmd("say_team","PUG_FilterCommand");
+	register_clcmd("jointeam","PUG_FilterCommand");
+	register_clcmd("chooseteam","PUG_FilterCommand");
 
-	register_clcmd("vote","Block");
-	register_clcmd("votemap","Block");
+	register_clcmd("vote","PUG_GenericBlock");
+	register_clcmd("votemap","PUG_GenericBlock");
 }
 
-public Filter(id)
+public PUG_FilterCommand(id)
 {
 	new Float:NexTime = get_gametime();
 		
@@ -44,7 +44,7 @@ public Filter(id)
 	return PLUGIN_CONTINUE;
 }
 
-public Block()
+public PUG_GenericBlock()
 {
 	return PLUGIN_HANDLED;
 }
