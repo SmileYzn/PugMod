@@ -1,6 +1,4 @@
 ﻿[en]
-PUG_DESC_VOTEKICK 		= Vote to kick an team player.
-
 PUG_HUD_MAP 			= Choose the map:
 PUG_HUD_TEAM 			= Game Mode:
 
@@ -9,6 +7,7 @@ PUG_TEAM_TYPE_CAPTAIN 		= Captain Sorted
 PUG_TEAM_TYPE_AUTO 		= Random
 PUG_TEAM_TYPE_NONE 		= Not Sorted
 PUG_TEAM_TYPE_SKILL 		= Skill Sorted
+PUG_TEAM_TYPE_SWAP		= Swap Teams
 
 PUG_VOTEMAP_NEXTMAP 		= Changing map to %s...
 PUG_VOTEMAP_START 		= Choose the start map.
@@ -23,21 +22,14 @@ PUG_CAPTAINS_ARE 		= The leaders are: %s Terrorists, %s CTs
 PUG_TEAMS_RANDOM 		= Mixing teams now.
 PUG_TEAMS_SAME 			= The teams will remain the same.
 PUG_TEAMS_SKILL 		= Balancing teams by skills.
+PUG_TEAMS_SWAP			= Swaping teams now.
 
-PUG_CAPTAINS_NEW_T 		= %s is the new captain of Terrorists
-PUG_CAPTAINS_NEW_CT 		= %s is the new captain of CTs
-PUG_CAPTAINS_PICK 		= %s choosed %s
+PUG_CAPTAINS_NEW_T 		= ^3%s^1 is the new captain of Terrorists
+PUG_CAPTAINS_NEW_CT 		= ^3%s^1 is the new captain of CTs
+PUG_CAPTAINS_PICK 		= ^3%s^1 choosed ^3%s^1
 PUG_CAPTAINS_UNASSIGNED 	= Unassigned
 
-PUG_VOTEKICK_DESC 		= Vote to pick an player.
-PUG_VOTEKICK_NEED_PLAYERS	= Need ^3%i^1 players to execute vote kick.
-PUG_VOTEKICK_KICK_MESSAGE	= ^3%s^1 Kicked: ^4%i^1 votes reached.
-PUG_VOTEKICK_NEED_MESSAGE	= ^3%s^1 voted to kick %s: Need ^4%i^1 votes to kick.
-PUG_VOTEKICK_KICK_MESSAGE	= Kicked by Vote Kick
-
 [bp]
-PUG_DESC_VOTEKICK 		= Vota para kickar um jogador do seu time.
-
 PUG_HUD_MAP 			= Escolha do mapa:
 PUG_HUD_TEAM 			= Modo de times:
 
@@ -46,6 +38,7 @@ PUG_TEAM_TYPE_CAPTAIN 		= Capitaes
 PUG_TEAM_TYPE_AUTO 		= Automatico
 PUG_TEAM_TYPE_NONE 		= Sem Sorteio
 PUG_TEAM_TYPE_SKILL 		= Balancear Skill
+PUG_TEAM_TYPE_SWAP		= Trocar Times
 
 PUG_VOTEMAP_NEXTMAP 		= O proximo mapa sera %s...
 PUG_VOTEMAP_START 		= Escolha do mapa iniciada.
@@ -60,14 +53,9 @@ PUG_CAPTAINS_ARE 		= Os capitaes sao: %s Terroristas, %s CTs
 PUG_TEAMS_RANDOM 		= Misturando times automaticamente.
 PUG_TEAMS_SAME 			= Os times serao os mesmos.
 PUG_TEAMS_SKILL 		= Balanceando times por sua skill.
+PUG_TEAMS_SWAP			= Trocando os times de lado.
 
-PUG_CAPTAINS_NEW_T 		= %s e o novo capitao do time Terroristas
-PUG_CAPTAINS_NEW_CT 		= %s e o novo capitao do time CTs
-PUG_CAPTAINS_PICK 		= %s escolheu %s
+PUG_CAPTAINS_NEW_T 		= ^3%s^1 e o novo capitao do time Terroristas
+PUG_CAPTAINS_NEW_CT 		= ^3%s^1 e o novo capitao do time CTs
+PUG_CAPTAINS_PICK 		= ^3%s^1 escolheu ^3%s^1
 PUG_CAPTAINS_UNASSIGNED 	= Espectadores
-
-PUG_VOTEKICK_DESC 		= Vote para kickar um jogador.
-PUG_VOTEKICK_NEED_PLAYERS	= Necessario mais ^3%i^1 jogadores para usar o vote kick.
-PUG_VOTEKICK_KICK_MESSAGE	= ^3%s^1 Kickado: ^4%i^1 votos alcancados.
-PUG_VOTEKICK_NEED_MESSAGE	= ^3%s^1 votou em %s: Mais ^4%i^1 votos para kickar.
-PUG_VOTEKICK_KICK_MESSAGE	= Kickado por Vote Kick

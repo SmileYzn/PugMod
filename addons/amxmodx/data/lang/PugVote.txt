@@ -1,0 +1,35 @@
+[en]
+PUG_VOTE_KICK_DESC 	= Vote to kick an player.
+PUG_VOTE_KICK_MENU 	= Vote Kick:
+PUG_VOTE_KICK_MAIN 	= Choose a player to vote.
+PUG_VOTE_KICK_NEED	= Need ^3%i^1 players to use vote kick.
+PUG_VOTE_KICK_MSG	= Kicked by Vote Kick.
+PUG_VOTE_KICK_KICKED	= ^3%s^1 Kicked: ^4%i^1 votes reached.
+PUG_VOTE_KICK_VOTED	= ^3%s^1 voted to kick %s: Need more ^4%i^1 votes to kick.
+
+PUG_VOTE_MAP_DESC	= Nominate a map to change.
+PUG_VOTE_MAP_MENU	= Pick a map:
+PUG_VOTE_MAP_MAIN	= Pick up a map to nominate.
+PUG_VOTE_MAP_VOTE 	= An vote session is running, try again later.
+PUG_VOTE_MAP_VOTED 	= You already nominated: ^3%s
+PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomitated ^4%s^1: Lacking ^4%i^1 votes to change map.
+PUG_VOTE_MAP_PICK2 	= Say ^3.votemap^1 if you want to nominate a map.
+PUG_VOTE_MAP_CHANGE 	= Changing to ^4%s^1...
+
+[bp]
+PUG_VOTE_KICK_DESC 	= Vote para kickar um jogador.
+PUG_VOTE_KICK_MENU 	= Vote Kick:
+PUG_VOTE_KICK_MAIN 	= Escolha um jogador.
+PUG_VOTE_KICK_NEED	= Necessario mais ^3%i^1 jogadores para o vote kick.
+PUG_VOTE_KICK_MSG	= Kickado por Vote Kick.
+PUG_VOTE_KICK_KICKED	= ^3%s^1 Kickado: ^4%i^1 votos alcancados.
+PUG_VOTE_KICK_VOTED	= ^3%s^1 votou em %s: Mais ^4%i^1 votos para kickar.
+
+PUG_VOTE_MAP_DESC	= Escolher um mapa.
+PUG_VOTE_MAP_MENU	= Escolha o mapa:
+PUG_VOTE_MAP_MAIN	= Escolha um mapa para nomear.
+PUG_VOTE_MAP_VOTE 	= Uma votacao esta em execucao, tente novamente.
+PUG_VOTE_MAP_VOTED	= Voce ja escolheu: ^3%s
+PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomeou ^4%s^1: Restando ^4%i^1 votos para alterar.
+PUG_VOTE_MAP_PICK2 	= Say ^3.votemap^1 se voce quer nomear um mapa.
+PUG_VOTE_MAP_CHANGE 	= Changing to ^4%s^1...
