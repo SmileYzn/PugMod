@@ -2,16 +2,16 @@ pug_players_min		"10"			// Minimum of players to start a game
 pug_players_max		"10"			// Maximum of players allowed in the teams
 pug_rounds_max		"30"			// Rounds to play before start overtime
 pug_rounds_ot		"3"			// Win difference to determine a winner in overtime
-pug_force_ot		"0"			// Force Overtime (0 End tied, 1 Force Overtime)
-pug_handle_time		"10.0"			// Time to PUG change states
+pug_force_ot		"1"			// Force Overtime (0 End tied, 1 Force Overtime)
 pug_allow_spec		"1"			// Allow Spectators in game
+pug_allow_hltv		"1"			// Allow HLTV in game
+pug_handle_time		"10.0"			// Time to PUG change states
 pug_drop_ban_time	"15"			// Minutes of ban players that leave from game in live
 pug_vote_delay		"15.0"			// How long voting session goes on
 pug_vote_map_enabled	"1"			// Active vote map in pug (0 Disable, 1 Enable, 2 Random map)
 pug_teams_enforcement	"0"			// The teams method for assign teams (0 Vote, 1 Captains, 2 Random, 3 None, 4 Skill Balanced)
-pug_ready_time		"0"			// Seconds to put a player in ready state (0 to disable)
-pug_team_tr		"Terrorists"		// Team Terrorists name
-pug_team_ct		"Counter-Terrorists"	// Team CTs name
+pug_vote_percent 	"0.7" 			// Vote percent to execute actions
+pug_vote_kick_ban_time 	"0" 			// Minutes to temporary ban if player has kicked (0 to disable it)
 
 pug_cfg_pugmod		"pugmod.rc"		// Config executed for pugmod cvars
 pug_cfg_warmup		"warmup.rc"		// Used at warmup session in pug mod
