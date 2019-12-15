@@ -61,7 +61,7 @@ public CS_OnBuy(id,Weapon)
 {
 	if(g_bWarmup)
 	{
-		if(cs_get_weapon_class(Weapon) == CS_WEAPONCLASS_GRENADE || Weapon == CSW_SHIELDGUN)
+		if((cs_get_weapon_class(Weapon) == CS_WEAPONCLASS_GRENADE) || (Weapon == CSI_SHIELD))
 		{
 			return PLUGIN_HANDLED;
 		}
@@ -174,7 +174,7 @@ public PUG_RemoveEnt(iEntity)
 public HOOK_JoinedClass(id)
 {
 	if(g_bWarmup)
-	{
+	{		
 		if(get_ent_data(id,"CBasePlayer","m_iMenu") == CS_Menu_ChooseAppearance)
 		{
 			set_task(0.75,"PUG_Respawn",id);
