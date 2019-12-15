@@ -141,25 +141,28 @@ public client_disconnected(id,bool:bDrop,szMessage[],iLen)
 			}
 			else
 			{
-				new iBanTime = get_pcvar_num(g_pBanLeaveTime);
-				
-				if(iBanTime)
+				if(1 <= get_ent_data(id,"CBasePlayer","m_iTeam") <= 2)
 				{
-					if(equali(szMessage,"Timed out") || equali(szMessage,"Client sent 'drop'"))
+					new iBanTime = get_pcvar_num(g_pBanLeaveTime);
+					
+					if(iBanTime)
 					{
-						if(!access(id,ADMIN_LEVEL_A))
+						if(equali(szMessage,"Timed out") || equali(szMessage,"Client sent 'drop'"))
 						{
-							new szAuth[MAX_AUTHID_LENGTH];
-							get_user_authid(id,szAuth,charsmax(szAuth));
-							
-							new szName[MAX_NAME_LENGTH];
-							get_user_name(id,szName,charsmax(szName));
-							
-							server_cmd("banid %i %s;wait;writeid",iBanTime,szAuth);
-							
-							client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CLIENT_DROP_BAN",szName,iBanTime,szMessage);
+							if(!access(id,ADMIN_LEVEL_A))
+							{
+								new szAuth[MAX_AUTHID_LENGTH];
+								get_user_authid(id,szAuth,charsmax(szAuth));
+								
+								new szName[MAX_NAME_LENGTH];
+								get_user_name(id,szName,charsmax(szName));
+								
+								server_cmd("banid %i %s;wait;writeid",iBanTime,szAuth);
+								
+								client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CLIENT_DROP_BAN",szName,iBanTime,szMessage);
+							}
 						}
-					}
+					}	
 				}
 			}
 		}
