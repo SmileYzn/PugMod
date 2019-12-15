@@ -388,7 +388,7 @@ PUG_GetVoteCount(iType)
 
 public PUG_ChangeLevel(iMapIndex)
 {
-	server_cmd("changelevel %s",g_szMapList[iMapIndex]);
+	engine_changelevel(g_szMapList[iMapIndex]);
 }
 
 public PUG_ChangeTeams(iType)

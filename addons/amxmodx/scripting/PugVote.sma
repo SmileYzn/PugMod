@@ -229,5 +229,5 @@ public HANDLER_MenuMap(id,iMenu,iKey)
 
 public PUG_ChangeLevel(iMapIndex)
 {
-	server_cmd("changelevel %s",g_szMapList[iMapIndex]);
+	engine_changelevel(g_szMapList[iMapIndex]);
 }
