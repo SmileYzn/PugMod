@@ -46,8 +46,8 @@ public plugin_init()
 	
 	g_pBanLeaveTime	= create_cvar("pug_drop_ban_time","15",FCVAR_NONE,"Minutes of ban players that leave from game in live");
 	
-	register_clcmd("say","PUG_SayHandler");
-	register_clcmd("say_team","PUG_SayHandler");
+	register_clcmd("say","HOOK_SayHandler");
+	register_clcmd("say_team","HOOK_SayHandler");
 	
 	PUG_RegCommand("status","PUG_Status",ADMIN_ALL,"PUG_DESC_STATUS");
 	PUG_RegCommand("score","PUG_ShowScore",ADMIN_ALL,"PUG_DESC_SCORE");
@@ -265,7 +265,7 @@ public PUG_Event(iState)
 	}
 }
 
-public PUG_SayHandler(id)
+public HOOK_SayHandler(id)
 {
 	new szArgs[192];
 	read_args(szArgs,charsmax(szArgs));
@@ -521,8 +521,12 @@ public HOOK_RoundStart()
 {
 	if(g_iState == STATE_FIRST_HALF || g_iState == STATE_SECOND_HALF || g_iState == STATE_OVERTIME)
 	{
-		PUG_DisplayScores(0);
-		client_print(0,print_console,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_START",g_iRounds + 1);
+		if(g_iRounds)
+		{
+			PUG_DisplayScores(0);
+		}
+		
+		client_print(0,print_console,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_START",(g_iRounds + 1));
 	}
 }
 
