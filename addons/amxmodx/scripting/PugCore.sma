@@ -599,18 +599,15 @@ public HOOK_RoundRestart()
 
 public HOOK_JoinTeamHandle(id)
 {
-	new szArg[2];
-	read_argv(1,szArg,charsmax(szArg));
-	
-	return CheckTeam(id,str_to_num(szArg));
+	return PUG_CheckTeam(id,read_argv_int(1));
 }
 
 public HOOK_TeamSelectHandle(id,iKey)
 {
-	return CheckTeam(id,iKey + 1);
+	return PUG_CheckTeam(id,(iKey + 1));
 }
 
-public CheckTeam(id,iSlot)
+PUG_CheckTeam(id,iSlot)
 {
 	if(iSlot == 5)
 	{
