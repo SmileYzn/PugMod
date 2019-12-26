@@ -19,6 +19,7 @@ PUG_DESC_HELP_ADMIN 			= Show ADMIN commands.
 
 PUG_LIVE_HUD_MSG			= --- MATCH IS LIVE ---
 
+PUG_WARMUP_MSG				= Warmup started, get ready!
 PUG_LIVE_1ST 				= First Half started, Good Luck & Have Fun!
 PUG_HALFTIME 				= Half Time started, changing teams automatically.
 PUG_LIVE_2ND 				= Second Half started, Good Luck & Have Fun!
@@ -72,6 +73,7 @@ PUG_DESC_HELP_ADMIN 			= Mostra os comandos de Admin.
 
 PUG_LIVE_HUD_MSG			= --- MATCH IS LIVE ---
 
+PUG_WARMUP_MSG				= Aquecimento iniciado, prepare-se!
 PUG_LIVE_1ST 				= First Half  iniciado, Good Luck & Have Fun!
 PUG_HALFTIME 				= Half Time iniciado, Trocando os times automaticamente.
 PUG_LIVE_2ND 				= Second Half iniciado, Good Luck & Have Fun!
