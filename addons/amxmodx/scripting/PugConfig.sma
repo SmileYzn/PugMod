@@ -17,6 +17,11 @@ public plugin_init()
 	g_pConfig[STATE_END]		= create_cvar("pug_cfg_end","end.rc",FCVAR_NONE,"Executed when the match ends");
 }
 
+public plugin_cfg()
+{
+	PUG_Event(STATE_DEAD);
+}
+
 public PUG_Event(iState)
 {
 	new szFile[MAX_NAME_LENGTH];
