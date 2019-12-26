@@ -4,7 +4,7 @@
 
 #define PUG_MOD_TASK_READY_LIST 1337
 
-new g_pPlayersMin;
+new g_iPlayersMin;
 
 new bool:g_bReady[MAX_PLAYERS+1];
 new bool:g_bReadySystem;
@@ -12,8 +12,8 @@ new bool:g_bReadySystem;
 public plugin_init()
 {
 	register_plugin("Pug Mod (Ready System)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
-	
-	g_pPlayersMin = get_cvar_pointer("pug_players_min");
+
+	bind_pcvar_num(get_cvar_pointer("pug_players_min"),g_iPlayersMin);
 	
 	register_dictionary("PugReady.txt");
 	
@@ -27,7 +27,7 @@ public PUG_Event(iState)
 {
 	if(iState == STATE_HALFTIME)
 	{
-		if(PUG_GetPlayersNum(true) < get_pcvar_num(g_pPlayersMin))
+		if(PUG_GetPlayersNum(true) < g_iPlayersMin)
 		{
 			PUG_ReadySystem(true);
 		}
@@ -81,22 +81,20 @@ public PUG_HudListReady()
 		}
 	}
 	
-	new iMinPlayers = get_pcvar_num(g_pPlayersMin);
-	
-	if(iReadyCount >= iMinPlayers)
+	if(iReadyCount >= g_iPlayersMin)
 	{
 		PUG_ReadySystem(false);
 		
 		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ALL_READY");
-		PUG_NextState();
+		PUG_RunState();
 	}
 	else
 	{
 		set_hudmessage(0,255,0,0.23,0.02,0,0.0,0.6,0.0,0.0,1);
-		show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIST_NOTREADY",(iPlayersCount - iReadyCount),iMinPlayers);
+		show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIST_NOTREADY",(iPlayersCount - iReadyCount),g_iPlayersMin);
 	
 		set_hudmessage(0,255,0,0.58,0.02,0,0.0,0.6,0.0,0.0,2);
-		show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIST_READY",iReadyCount,iMinPlayers);
+		show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIST_READY",iReadyCount,g_iPlayersMin);
 		
 		set_hudmessage(255,255,225,0.58,0.02,0,0.0,0.6,0.0,0.0,3);
 		show_hudmessage(0,"^n%s",szList[0]);
@@ -164,12 +162,10 @@ public PUG_ForceReady(id,iLevel)
 		
 		new iPlayer = cmd_target(id,szName,CMDTARGET_OBEY_IMMUNITY);
 		
-		if(!iPlayer)
+		if(iPlayer)
 		{
-			return PLUGIN_HANDLED;
+			PUG_CommandClient(id,"!forceready","PUG_FORCE_READY",iPlayer,PUG_Ready(iPlayer));
 		}
-		
-		PUG_CommandClient(id,"!forceready","PUG_FORCE_READY",iPlayer,PUG_Ready(iPlayer));
 	}
 	
 	return PLUGIN_HANDLED;
