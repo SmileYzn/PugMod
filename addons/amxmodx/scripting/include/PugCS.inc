@@ -75,13 +75,46 @@ stock PUG_SetMapObjectives(bool:bBlock)
 		"_func_escapezone"
 	}
 	
-	new iEntity = -1;
+	new iEntity = FM_NULLENT;
 
 	for(new i;i < sizeof(szMapEntity);i++)
 	{
 		while((iEntity = engfunc(EngFunc_FindEntityByString,iEntity,"classname",bBlock ? szMapEntity[i] : szMapEntityBlock[i])) > 0)
 		{
 			set_pev(iEntity,pev_classname,bBlock ? szMapEntityBlock[i] : szMapEntity[i]);
+		}
+	}
+}
+
+ /**
+ * Add or remove full map buyzone
+ *
+ * @param Enable	If true, map will have full buyzone
+ *			Set to false remove full map buyzone
+ *
+ * @noreturn
+ */
+stock PUG_SetFullBuyzone(bool:bEnable)
+{
+	static iEntityBuyZone = FM_NULLENT;
+	
+	if(bEnable)
+	{
+		if(iEntityBuyZone == FM_NULLENT)
+		{
+			if((iEntityBuyZone = engfunc(EngFunc_CreateNamedEntity,engfunc(EngFunc_AllocString,"func_buyzone"))) > 0)
+			{
+				dllfunc(DLLFunc_Spawn,iEntityBuyZone);
+				engfunc(EngFunc_SetSize,iEntityBuyZone,{-8191.0,-8191.0,-8191.0},{8191.0,8191.0,8191.0});
+			}
+		}
+	}
+	else
+	{
+		if(iEntityBuyZone != FM_NULLENT)
+		{
+			engfunc(EngFunc_RemoveEntity,iEntityBuyZone);
+			iEntityBuyZone = FM_NULLENT;
 		}
 	}
 }
