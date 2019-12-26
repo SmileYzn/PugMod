@@ -444,7 +444,7 @@ public PUG_ChangeTeams(iType)
 			}
 			else
 			{
-				PUG_NextState();
+				PUG_RunState();
 			}
 		}
 		case 2:
@@ -452,27 +452,27 @@ public PUG_ChangeTeams(iType)
 			PUG_TeamsRandomize();
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_RANDOM");
 			
-			PUG_NextState();
+			PUG_RunState();
 		}
 		case 3:
 		{
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SAME");
 			
-			PUG_NextState();
+			PUG_RunState();
 		}
 		case 4:
 		{
 			PUG_TeamsOptimize();
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SKILL");
 			
-			PUG_NextState();
+			PUG_RunState();
 		}
 		case 5:
 		{
 			PUG_TeamsSwap();
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SWAP");
 			
-			PUG_NextState();
+			PUG_RunState();
 		}
 	}
 }
@@ -545,7 +545,7 @@ public PUG_CaptainMenu(id)
 		else
 		{
 			remove_task(PUG_TASK_HUDS_CAPTAIN);
-			PUG_NextState();
+			PUG_RunState();
 		}
 	}
 }
@@ -607,6 +607,6 @@ public PUG_CaptainPickUp(id)
 	else
 	{
 		remove_task(PUG_TASK_HUDS_CAPTAIN);
-		PUG_NextState();
+		PUG_RunState();
 	}
 }
