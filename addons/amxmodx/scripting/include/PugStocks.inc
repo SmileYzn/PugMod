@@ -121,16 +121,13 @@ public PUG_GetMapList(szData[][],iLen)
 	{
 		new iFile = fopen(szPath,"rb");
 		new szLine[MAX_NAME_LENGTH],iCount;
-		
-		new szMap[MAX_NAME_LENGTH];
-		get_mapname(szMap,charsmax(szMap));
 	
 		while(!feof(iFile) && (iCount < iLen))
 		{
 			fgets(iFile,szLine,charsmax(szLine));
 			trim(szLine);
 			
-			if(is_map_valid(szLine) && !equali(szMap,szLine))
+			if(is_map_valid(szLine) && !equali(MapName,szLine))
 			{
 				copy(szData[iCount++],iLen,szLine);
 			}
