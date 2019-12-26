@@ -5,7 +5,7 @@
 #include <PugMenus>
 #include <PugStocks>
 
-new g_pPlayersMin;
+new g_iPlayersMin;
 
 new g_pVoteMinPercent;
 new g_pVoteKickBanTime;
@@ -23,7 +23,7 @@ public plugin_init()
 	
 	register_dictionary("PugVote.txt");
 	
-	g_pPlayersMin = get_cvar_pointer("pug_players_min");
+	bind_pcvar_num(get_cvar_pointer("pug_players_min"),g_iPlayersMin);
 	
 	g_pVoteMinPercent = create_cvar("pug_vote_percent","0.7",FCVAR_NONE,"Vote percent to execute actions");
 	g_pVoteKickBanTime = create_cvar("pug_vote_kick_ban_time","0",FCVAR_NONE,"Minutes to temporary ban if player has kicked (0 to disable it)");	
@@ -58,7 +58,7 @@ public PUG_VoteKick(id)
 		new iPlayers[MAX_PLAYERS],iNum;
 		get_players(iPlayers,iNum,"e",szTeam);
 		
-		new iNeedPlayers = (get_pcvar_num(g_pPlayersMin) / 2);
+		new iNeedPlayers = (g_iPlayersMin / 2);
 		
 		if(iNum >= iNeedPlayers)
 		{
@@ -204,7 +204,7 @@ public HANDLER_MenuMap(id,iMenu,iKey)
 		g_iMapVotes[iMapIndex]++;
 		g_bVotedMap[id][iMapIndex] = true;		
 		
-		new iNeedVotes 		= floatround(get_pcvar_num(g_pPlayersMin) * get_pcvar_float(g_pVoteMinPercent));
+		new iNeedVotes 		= floatround(g_iPlayersMin * get_pcvar_float(g_pVoteMinPercent));
 		new iLackingVotes 	= (iNeedVotes - g_iMapVotes[iMapIndex]);
 		
 		if(iLackingVotes > 0)
