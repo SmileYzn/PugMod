@@ -19,7 +19,7 @@
 #endif
 
 #define PUG_MOD_PLUGIN 		"CS Pug Mod"
-#define PUG_MOD_VERSION		"3.0.8"
+#define PUG_MOD_VERSION		"3.0.9"
 #define PUG_MOD_AUTHOR		"SmileY"
 #define PUG_MOD_HEADER		"^4[PUG]^1"
 
@@ -54,14 +54,14 @@ stock const PUG_MOD_STATES_STR[PUG_MOD_STATES][] =
  *
  * @noreturn
  */
-native PUG_NextState();
+native PUG_RunState();
 
 /**
  * Called just after the Pug Mod change the state
  *
  * @note This is useful to do what you want :D
  *
- * @param State		The new state that was called
+ * @param iState		The new state that was called
  *
  * @noreturn
  */
@@ -72,14 +72,26 @@ forward PUG_Event(iState);
  *
  * @note This return current state of pug mod
  *
- * @noreturn
+ * @return	Return the state enum
  */
-stock PUG_GetState()
-{
-	if(xvar_exists("g_iState"))
-	{
-		return get_xvar_num(get_xvar_id("g_iState"));
-	}
-	
-	return STATE_DEAD;
-}
+native PUG_GetState();
+
+/**
+ * Get a team score
+ *
+ * @param iTeam     	The Team index to get score
+ *
+ * @note Will return -1 if a invalid team is passed
+ *
+ * @return      Return score on success, -1 on fail
+ */
+native PUG_GetScore(iTeam);
+
+/**
+ * Get current round count
+ *
+ * @note Will return 0 if match is not started
+ *
+ * @return      Return rounds played
+ */
+native PUG_GetRound();
