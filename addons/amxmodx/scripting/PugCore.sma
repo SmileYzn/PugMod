@@ -223,7 +223,7 @@ public PUG_Next()
 		}
 		case STATE_OVERTIME:
 		{
-			if((g_iRounds % get_pcvar_num(g_pForceOT)) == 0)
+			if((g_iRounds % get_pcvar_num(g_pMaxRoundsOT)) == 0)
 			{
 				g_iState = STATE_HALFTIME;
 			}
@@ -610,9 +610,9 @@ public HOOK_RoundRestart()
 		g_iScores[CS_TEAM_T] = 0;
 		g_iScores[CS_TEAM_CT] = 0;
 		
-		for(new i;i <= MaxClients;i++)
+		for(new iPlayer;iPlayer <= MaxClients;iPlayer++)
 		{
-			arrayset(g_iFrags[i],0,sizeof(g_iFrags[]));
+			arrayset(g_iFrags[iPlayer],0,sizeof(g_iFrags[]));
 		}
 	}
 	else if(STATE_HALFTIME <= g_iState <= STATE_OVERTIME)
