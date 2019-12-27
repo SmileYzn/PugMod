@@ -43,8 +43,8 @@ public plugin_init()
 public plugin_cfg()
 {
 	g_iMenuMap  = menu_create("PUG_HUD_MAP","HANDLER_MenuVote",true);
-	g_iMapCount = PUG_GetMapList(g_szMapList,sizeof(g_szMapList));
-	
+	g_iMapCount = PUG_GetMapList(g_szMapList,sizeof(g_szMapList[]));
+
 	for(new i;i < g_iMapCount;i++)
 	{
 		menu_additem(g_iMenuMap,g_szMapList[i],fmt("%i",i));
