@@ -19,7 +19,7 @@
 #endif
 
 #define PUG_MOD_PLUGIN 		"CS Pug Mod"
-#define PUG_MOD_VERSION		"3.0.9"
+#define PUG_MOD_VERSION		"3.1.0"
 #define PUG_MOD_AUTHOR		"SmileY"
 #define PUG_MOD_HEADER		"^4[PUG]^1"
 
