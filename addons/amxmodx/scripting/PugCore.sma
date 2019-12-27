@@ -223,7 +223,7 @@ public PUG_Next()
 		}
 		case STATE_OVERTIME:
 		{
-			if((g_iRounds % get_pcvar_num(g_pForceOT)) == 0)
+			if((g_iRounds % get_pcvar_num(g_pMaxRoundsOT)) == 0)
 			{
 				g_iState = STATE_HALFTIME;
 			}
