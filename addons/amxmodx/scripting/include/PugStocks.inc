@@ -112,7 +112,7 @@ stock PUG_ExecuteCommand(id,szCommand[],szLang[],bCheck)
  *
  * @return              	Maps Loaded count
  */
-public PUG_GetMapList(szData[][],iLen)
+stock PUG_GetMapList(szData[][],iLen)
 {
 	new szPath[PLATFORM_MAX_PATH];
 	PUG_GetFilePath("maps.rc",szPath,charsmax(szPath));
