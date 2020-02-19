@@ -29,6 +29,37 @@ PUG_CAPTAINS_NEW_CT 		= ^3%s^1 is the new captain of CTs
 PUG_CAPTAINS_PICK 		= ^3%s^1 choosed ^3%s^1
 PUG_CAPTAINS_UNASSIGNED 	= Unassigned
 
+[ru]
+PUG_HUD_MAP 			= Выберите карту:
+PUG_HUD_TEAM 			= Режим игры:
+
+PUG_TEAM_TYPE_VOTE 		= Голосованием
+PUG_TEAM_TYPE_CAPTAIN 	= Капитаном
+PUG_TEAM_TYPE_AUTO 		= Случайно
+PUG_TEAM_TYPE_NONE 		= Не менять
+PUG_TEAM_TYPE_SKILL 	= По скиллу
+PUG_TEAM_TYPE_SWAP		= Сменить сторонами команды
+
+PUG_VOTEMAP_NEXTMAP 	= Сменил карту на %s...
+PUG_VOTEMAP_START 		= Выбрал карту.
+PUG_NOVOTES 			= Нет голосов.
+PUG_VOTE_CHOOSED 		= %s выбрал %s
+PUG_VOTEMAP_FAIL 		= Выбор карты провален:
+
+PUG_TEAMVOTE_START 		= Выбрал команду.
+PUG_TEAMVOTE_FAIL 		= Выбор команды провален:
+
+PUG_CAPTAINS_ARE 		= Капитаны матча: %s Terrorists, %s CTs
+PUG_TEAMS_RANDOM 		= Команды смешаны.
+PUG_TEAMS_SAME 			= Команды останутся преждними.
+PUG_TEAMS_SKILL 		= Балансировка команд по скиллу.
+PUG_TEAMS_SWAP			= Смена команд сторонами.
+
+PUG_CAPTAINS_NEW_T 		= ^3%s^1 является новым капитаном Террористов
+PUG_CAPTAINS_NEW_CT 	= ^3%s^1 является новым капитаном Контр-Террористов
+PUG_CAPTAINS_PICK 		= ^3%s^1 выбрал ^3%s^1
+PUG_CAPTAINS_UNASSIGNED = Не назначено
+
 [bp]
 PUG_HUD_MAP 			= Escolha do mapa:
 PUG_HUD_TEAM 			= Modo de times:

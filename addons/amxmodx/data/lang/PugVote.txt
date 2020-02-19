@@ -16,6 +16,24 @@ PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomitated ^4%s^1: Lacking ^4%i^1 votes to change ma
 PUG_VOTE_MAP_PICK2 	= Say ^3.votemap^1 if you want to nominate a map.
 PUG_VOTE_MAP_CHANGE 	= Changing to ^4%s^1...
 
+[ru]
+PUG_VOTE_KICK_DESC 	= Голосование за кик игрока.
+PUG_VOTE_KICK_MENU 	= Кикнуть игрока:
+PUG_VOTE_KICK_MAIN 	= Выберите игрока для голосования.
+PUG_VOTE_KICK_NEED	= Необходимо ^3%i^1 игроков, чтобы использовать голосование за кик.
+PUG_VOTE_KICK_MSG	= Кикнут голосованием.
+PUG_VOTE_KICK_KICKED = ^3%s^1 выгнан: ^4%i^1 набрано голосов.
+PUG_VOTE_KICK_VOTED	= ^3%s^1 проголосовал за кик %s: Нужно больше ^4%i^1 голосов, чтобы кикнуть.
+
+PUG_VOTE_MAP_DESC	= Номинировать карту для смены.
+PUG_VOTE_MAP_MENU	= Выбрать карту:
+PUG_VOTE_MAP_MAIN	= Выберите карту для смены.
+PUG_VOTE_MAP_VOTE 	= Голосование запущено. Попробуйте позже.
+PUG_VOTE_MAP_VOTED 	= Ввы уже номинировали: ^3%s
+PUG_VOTE_MAP_PICK1 	= ^3%s^1 номинировал ^4%s^1: Осталось ^4%i^1 голосов для смены карты.
+PUG_VOTE_MAP_PICK2 	= Напишите ^3.votemap^1 если вы хотите номинировать карту.
+PUG_VOTE_MAP_CHANGE = Меняется на ^4%s^1...
+
 [bp]
 PUG_VOTE_KICK_DESC 	= Vote para kickar um jogador.
 PUG_VOTE_KICK_MENU 	= Vote Kick:
