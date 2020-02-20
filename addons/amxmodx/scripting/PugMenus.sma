@@ -168,7 +168,7 @@ public HANDLER_MenuVote(id,iMenu,iKey)
 			g_iTeamVotes[str_to_num(szNum)]++;
 		}
 		
-		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_VOTE_CHOOSED",szName,szOption);
+		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_VOTE_CHOOSED",szName,LANG_PLAYER,szOption);
 		
 		if(PUG_NeedStopVote())
 		{
