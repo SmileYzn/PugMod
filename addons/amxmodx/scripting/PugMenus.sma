@@ -54,12 +54,12 @@ public plugin_cfg()
 	
 	g_iMenuTeams = menu_create("PUG_HUD_TEAM","HANDLER_MenuVote",true);
 	
-	formatex(g_szTeamTypes[0],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_VOTE");
-	formatex(g_szTeamTypes[1],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_CAPTAIN");
-	formatex(g_szTeamTypes[2],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_AUTO");
-	formatex(g_szTeamTypes[3],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_NONE");
-	formatex(g_szTeamTypes[4],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_SKILL");
-	formatex(g_szTeamTypes[5],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_SWAP");
+	formatex(g_szTeamTypes[0],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_VOTE");
+	formatex(g_szTeamTypes[1],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_CAPTAIN");
+	formatex(g_szTeamTypes[2],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_AUTO");
+	formatex(g_szTeamTypes[3],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_NONE");
+	formatex(g_szTeamTypes[4],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_SKILL");
+	formatex(g_szTeamTypes[5],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_SWAP");
 	
 	menu_additem(g_iMenuTeams,g_szTeamTypes[1],"1");
 	menu_additem(g_iMenuTeams,g_szTeamTypes[2],"2");
