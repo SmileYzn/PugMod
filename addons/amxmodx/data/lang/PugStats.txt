@@ -33,3 +33,21 @@ PUG_NORDMG 	= Voce nao foi atingido nesse round.
 
 PUG_SUM 	= (%i dmg / %i hits) em (%i dmg / %i hits) de ^3%s^1 (%i HP)
 PUG_NOSUM 	= Nehum stats nesse round.
+
+[pl]
+PUG_DESC_HP  = Zdrowie innych graczy
+PUG_DESC_DMG  = Obrazenia zadane innym graczom.
+PUG_DESC_RDMG  = Wyswietl otrzymane obrazenia.
+PUG_DESC_SUM  = Podsumowanie rundy.
+
+PUG_HP_NONE  = Nikt nie zyje.
+PUG_HP_CMD  = ^3%s^1 z %i HP (%i AP)
+
+PUG_DMG  = Trafil ^3%s^1 %i raz(y) (Obrazenia %i)
+PUG_NODMG  = Nie trafiles nikogo w tej rundzie.
+
+PUG_RDMG  = Trafiony przez ^3%s^1 %i raz(y) (Obrazenia %i)
+PUG_NORDMG  = Nikt Ciebie nie trafil w tej rundzie.
+
+PUG_SUM  = Naniosles (%i obrazen / %i trafien) dostales (%i dmg / %i hits) od ^3%s^1 (%i HP)
+PUG_NOSUM  = Nie ma statystyk w tej rundzie.
