@@ -33,3 +33,21 @@ PUG_VOTE_MAP_VOTED	= Voce ja escolheu: ^3%s
 PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomeou ^4%s^1: Restando ^4%i^1 votos para alterar.
 PUG_VOTE_MAP_PICK2 	= Say ^3.votemap^1 se voce quer nomear um mapa.
 PUG_VOTE_MAP_CHANGE 	= Changing to ^4%s^1...
+
+[pl]
+PUG_VOTE_KICK_DESC = Glosowanie za kick Gracza.
+PUG_VOTE_KICK_MENU = Glosowanie za wyrzucenie:
+PUG_VOTE_KICK_MAIN = Wybierz gracza do wyrzucenia.
+PUG_VOTE_KICK_NEED = Potrzebne sa ^3%i^1 graczy zeby wymusic glosowanie za wyrzucenie.
+PUG_VOTE_KICK_MSG = Wyrzucony przez glosowanie.
+PUG_VOTE_KICK_KICKED = ^3%s^1 wyrzucony: ^4%i^1 glosow.
+PUG_VOTE_KICK_VOTED = ^3%s^1 glosuje za wyrzuceniem %s: potrzebne sa jeszcze ^4%i^1 glosow.
+
+PUG_VOTE_MAP_DESC = Nominuj mape do zmiany.
+PUG_VOTE_MAP_MENU = Wybierz mape:
+PUG_VOTE_MAP_MAIN = Wybierz mape do nominowania.
+PUG_VOTE_MAP_VOTE = Glosowanie juz trwa, sprobuj pozniej.
+PUG_VOTE_MAP_VOTED = Juz nominowales: ^3%s
+PUG_VOTE_MAP_PICK1 = ^3%s^1 nominowal ^4%s^1: Brakuje ^4%i^1 glosow zeby zmienic mape.
+PUG_VOTE_MAP_PICK2 = Napisz ^3.votemap^1 jesli chcesz nominowac mape do zmiany.
+PUG_VOTE_MAP_CHANGE = Zmieniamy na ^4%s^1...

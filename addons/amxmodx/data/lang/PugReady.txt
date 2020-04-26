@@ -29,3 +29,19 @@ PUG_ALL_READY 				= Todos estao prontos!
 
 PUG_LIST_NOTREADY 			= Aquecendo (%i de %i):
 PUG_LIST_READY 				= Prontos (%i de %i):
+
+[pl]
+PUG_DESC_READY     = Poinformowac serwer o gotowosci Gracza.
+PUG_DESC_NOTREADY    = Poinformowac serwer o niegotowosci Gracza.
+PUG_DESC_FORCEREADY    = <Gracz> - Wymusic gotowosc na Graczu. 
+
+PUG_FORCE_READY    = ADMIN: wymusil gotowosc na ^3%s^1.
+
+PUG_READY     = ^3%s^1 jest gotowy.
+PUG_NOTREADY     = ^3%s^1 nie jest gotowy.
+
+PUG_READY_START    = Napisz ^4.ready^1 zeby kontynuowac
+PUG_ALL_READY     = Wszyscy gracze sa gotowi!
+
+PUG_LIST_NOTREADY    = Niegotowi: (%i of %i):
+PUG_LIST_READY     = Gotowi: (%i of %i):

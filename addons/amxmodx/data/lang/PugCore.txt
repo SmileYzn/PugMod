@@ -105,3 +105,57 @@ PUG_TEAM_FULL 				= Esse time ja esta completo.
 
 PUG_HELP_TITLE 				= Comandos do Pug Mod
 PUG_HELP_TITLE_ADMIN 			= Comandos do Admin
+
+[pl]
+PUG_BUILD_STRING1= %s Build %s (%s)
+PUG_BUILD_STRING2= Napisz ^3.help^1 zeby zobaczyc liste komend
+
+PUG_STATUS = %s (Graczy: %i) (%i min - %i max)
+PUG_START_PUG = ADMIN: Rozpoczal mecz.
+PUG_STOP_PUG = ADMIN: Zakonczyl mecz.
+
+PUG_CMD_ERROR = Nie da sie wykonac tej komendy teraz.
+PUG_CMD_OK = Komenda %s zostala wykonana.
+PUG_CMD_FAIL = Komenda %s sie nie powiodla.
+
+PUG_DESC_STATUS = Pokaz status meczu.
+PUG_DESC_SCORE = Pokaz wynik meczu.
+PUG_DESC_START = Wymus rozpoczecie meczu.
+PUG_DESC_STOP = Wymus zakonczenie meczu.
+PUG_DESC_HELP = Pokaz liste komend.
+PUG_DESC_HELP_ADMIN = Pokaz liste komend dla admina.
+
+PUG_LIVE_HUD_MSG = --- MECZ SIE ROZPOCZAL ---
+
+PUG_WARMUP_MSG = Rozgrzewka sie rozpoczela, przygotowac sie!
+PUG_LIVE_1ST = Pierwsza polowa sie rozpoczela.
+PUG_HALFTIME = Koniec pierwszej polowy, zmieniamy druzyny automatycznie.
+PUG_LIVE_2ND = Druga polowa meczu sie rozpoczela.
+PUG_LIVE_OT = Dogrywka sie rozpoczela.
+
+PUG_KICK_MSG_FULL = Serwer jest pelny.
+PUG_KICK_MSG_HLTV = HLTV jest zabronione.
+
+PUG_GAME_DESC_LIVE = T %i [%s] %i CT
+PUG_GAME_DESC_NOT_LIVE = Automix: %s
+
+PUG_ROUND_START = Runda %i rozpoczeta.
+PUG_ROUND_WON = Runde %i wygrali %s.
+PUG_ROUND_DRAW = Runda %i odrzucona: Nikt nie zwyciezyl.
+
+PUG_SCORE = ^3%s^1 wygrywaja: %i-%i
+PUG_SCORE_TIED = Jest remis: %i-%i
+
+PUG_END_WONALL = Koniecz meczu! ^3%s^1 wygrali: %i-%i
+PUG_END_TIED = Koniecz meczu! Remis: %i-%i
+
+PUG_CLIENT_DROP_BAN = %s zbanowany na %i minut: %s
+
+PUG_TEAM_SAME = Juz jestes w tej druzynie.
+PUG_TEAM_AUTO = Automatyczne wybieranie jest zabronione.
+PUG_TEAM_SPEC = Specty sa zabronione.
+PUG_TEAM_NONE = Nie da sie zmienic druzyny kiedy mecz jest rozpoczety.
+PUG_TEAM_FULL = Ta druzyna juz jest pelna.
+
+PUG_HELP_TITLE = Lista komend
+PUG_HELP_TITLE_ADMIN = Komendy admina
