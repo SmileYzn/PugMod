@@ -2,6 +2,10 @@
 LANG_NAME		= English
 LANG_NAME_NATIVE	= English
 
+[ru]
+LANG_NAME		= Russian
+LANG_NAME_NATIVE	= Русский
+
 [bp]
 LANG_NAME		= Brazil Portuguese
 LANG_NAME_NATIVE	= Portugues Brasil

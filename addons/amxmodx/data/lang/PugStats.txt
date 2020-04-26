@@ -16,6 +16,24 @@ PUG_NORDMG 	= You were not reached in this round.
 PUG_SUM 	= (%i dmg / %i hits) to (%i dmg / %i hits) from ^3%s^1 (%i HP)
 PUG_NOSUM 	= No stats in this round.
 
+[ru]
+PUG_DESC_HP 	= HP других игроков.
+PUG_DESC_DMG 	= Урон, прошедший по другим игрокам.
+PUG_DESC_RDMG 	= Показать полученный урон.
+PUG_DESC_SUM 	= Общий урон в раунде.
+
+PUG_HP_NONE 	= Нет живых игроков.
+PUG_HP_CMD 	    = ^3%s^1 с %i HP (%i AP)
+
+PUG_DMG 	    = Попал ^3%s^1 %i раз (Урон %i)
+PUG_NODMG 	    = Нет попаданий в раунде.
+
+PUG_RDMG 	    = Попадание от ^3%s^1 %i раз (Урон %i)
+PUG_NORDMG 	    = В этом раунде в вас не попадали.
+
+PUG_SUM 	    = Нанесено (%i урона / %i попаданий) получено (%i урона / %i попаданий) от ^3%s^1 (%i HP)
+PUG_NOSUM 	    = Нет статистики в этом раунде.
+
 [bp]
 PUG_DESC_HP 	= Mostra o HP do time adversario.
 PUG_DESC_DMG 	= Dano causado no round.
