@@ -54,12 +54,12 @@ public plugin_cfg()
 	
 	g_iMenuTeams = menu_create("PUG_HUD_TEAM","HANDLER_MenuVote",true);
 	
-	formatex(g_szTeamTypes[0],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_VOTE");
-	formatex(g_szTeamTypes[1],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_CAPTAIN");
-	formatex(g_szTeamTypes[2],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_AUTO");
-	formatex(g_szTeamTypes[3],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_NONE");
-	formatex(g_szTeamTypes[4],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_SKILL");
-	formatex(g_szTeamTypes[5],charsmax(g_szTeamTypes[]),"PUG_TEAM_TYPE_SWAP");
+	formatex(g_szTeamTypes[0],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_VOTE");
+	formatex(g_szTeamTypes[1],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_CAPTAIN");
+	formatex(g_szTeamTypes[2],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_AUTO");
+	formatex(g_szTeamTypes[3],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_NONE");
+	formatex(g_szTeamTypes[4],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_SKILL");
+	formatex(g_szTeamTypes[5],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_SWAP");
 	
 	menu_additem(g_iMenuTeams,g_szTeamTypes[1],"1");
 	menu_additem(g_iMenuTeams,g_szTeamTypes[2],"2");
@@ -168,7 +168,7 @@ public HANDLER_MenuVote(id,iMenu,iKey)
 			g_iTeamVotes[str_to_num(szNum)]++;
 		}
 		
-		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_VOTE_CHOOSED",szName,LANG_PLAYER,szOption);
+		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_VOTE_CHOOSED",szName,szOption);
 		
 		if(PUG_NeedStopVote())
 		{
@@ -262,7 +262,14 @@ public PUG_HudList(iType)
 			
 			iTeam = get_user_team(iPlayer);
 			
-			(iTeam == 2) ? iCountCTs++ : iCountSpecs++;
+			if(iTeam == 2)
+			{
+				iCountCTs++;
+			}
+			else if(iTeam == 3)
+			{
+				iCountSpecs++;
+			}
 			
 			add(szName,charsmax(szName),"^n");
 			add(szList[iTeam],charsmax(szList[]),szName);
@@ -407,15 +414,10 @@ public PUG_ChangeTeams(iType)
 				g_iCaptain[0] = iPlayers[random(iNum)];
 				g_iCaptain[1] = iPlayers[random(iNum)];
 				
-				while(is_user_bot(g_iCaptain[0]))
+				while(g_iCaptain[0] == g_iCaptain[1] || is_user_bot(g_iCaptain[0]))
 				{
 					g_iCaptain[0] = iPlayers[random(iNum)];
-				}
-				
-				while(g_iCaptain[0] == g_iCaptain[1])
-				{
-					g_iCaptain[0] = iPlayers[random(iNum)];
-				}
+				}				
 				
 				cs_set_user_team(g_iCaptain[0],CS_TEAM_T);
 				cs_set_user_team(g_iCaptain[1],CS_TEAM_CT);
@@ -437,7 +439,7 @@ public PUG_ChangeTeams(iType)
 					}
 				}
 				
-				set_cvar_num("sv_restart",1);
+				
 				
 				set_task(0.5,"PUG_HudList",PUG_TASK_HUDS_CAPTAIN, .flags="b");
 				set_task(2.0,"PUG_CaptainMenu",g_iCaptain[random_num(0,1)]);
@@ -482,7 +484,7 @@ public PUG_CaptainMenu(id)
 	new iPlayers[MAX_PLAYERS],iNum,iPlayer;
 	get_players(iPlayers,iNum,"eh","SPECTATOR");
 	
-	if(!is_user_connected(id) && (iNum > 0))
+	if((!is_user_connected(id) || !PUG_PLAYER_IN_TEAM(id)) && (iNum > 0))
 	{
 		iPlayer = iPlayers[random(iNum)];
 		
@@ -493,8 +495,7 @@ public PUG_CaptainMenu(id)
 		{
 			g_iCaptain[0] = iPlayer;
 			
-			cs_set_user_team(iPlayer,CS_TEAM_T);
-			ExecuteHamB(Ham_CS_RoundRespawn,iPlayer);
+			PUG_SetTeamAndRespawn(iPlayer,CS_TEAM_T);
 			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CAPTAINS_NEW_T",szName);
 		}
@@ -502,8 +503,7 @@ public PUG_CaptainMenu(id)
 		{
 			g_iCaptain[1] = iPlayer;
 			
-			cs_set_user_team(iPlayer,CS_TEAM_CT);
-			ExecuteHamB(Ham_CS_RoundRespawn,iPlayer);
+			PUG_SetTeamAndRespawn(iPlayer,CS_TEAM_CT);
 			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CAPTAINS_NEW_CT",szName);
 		}
@@ -516,7 +516,7 @@ public PUG_CaptainMenu(id)
 		{
 			if(is_user_bot(id))
 			{
-				PUG_CaptainPickUp(id);
+				PUG_CaptainPickUpRandom(id);
 			}
 			else
 			{
@@ -539,7 +539,7 @@ public PUG_CaptainMenu(id)
 				
 				PUG_DisplayMenuSingle(id,iMenu);
 				
-				set_task(10.0,"PUG_CaptainPickUp",id);
+				set_task(10.0,"PUG_CaptainPickUpRandom",id);
 			}
 		}
 		else
@@ -554,22 +554,24 @@ public PUG_MenuHandler(id,iMenu,iKey)
 {
 	if(iKey != MENU_EXIT)
 	{
-		new szNum[3],szOption[MAX_NAME_LENGTH];
-		menu_item_getinfo(iMenu,iKey,_,szNum,charsmax(szNum),szOption,charsmax(szOption));
-		
-		new iPlayer = str_to_num(szNum);
-		
-		if(is_user_connected(iPlayer) && is_user_connected(id))
+		if(is_user_connected(id))
 		{
-			remove_task(id);
+			new szNum[3],szOption[MAX_NAME_LENGTH];
+			menu_item_getinfo(iMenu,iKey,_,szNum,charsmax(szNum),szOption,charsmax(szOption));
 			
-			cs_set_user_team(iPlayer,cs_get_user_team(id));
-			ExecuteHamB(Ham_CS_RoundRespawn,iPlayer);
+			new iPlayer = str_to_num(szNum);
 			
-			new szName[MAX_NAME_LENGTH];
-			get_user_name(id,szName[0],charsmax(szName));
-			
-			client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CAPTAINS_PICK",szName,szOption);
+			if(is_user_connected(iPlayer))
+			{
+				remove_task(id);
+				
+				PUG_SetTeamAndRespawn(iPlayer,cs_get_user_team(id));
+				
+				new szName[MAX_NAME_LENGTH];
+				get_user_name(id,szName[0],charsmax(szName));
+				
+				client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CAPTAINS_PICK",szName,szOption);
+			}
 		}
 		
 		set_task(2.0,"PUG_CaptainMenu",(id == g_iCaptain[0]) ? g_iCaptain[1] : g_iCaptain[0]);
@@ -579,34 +581,62 @@ public PUG_MenuHandler(id,iMenu,iKey)
 	return PLUGIN_HANDLED;
 }
 
-public PUG_CaptainPickUp(id)
+public PUG_CaptainPickUpRandom(id)
 {
-	PUG_CancelMenu(id);
-
-	new iPlayers[MAX_PLAYERS],iNum;
-	get_players(iPlayers,iNum,"eh","SPECTATOR");
-
-	if(iNum)
+	if(is_user_connected(id))
 	{
-		new iPlayer = iPlayers[random(iNum)];
-		
-		if(is_user_connected(iPlayer) && is_user_connected(id))
+		if(PUG_PLAYER_IN_TEAM(id))
 		{
-			cs_set_user_team(iPlayer,cs_get_user_team(id));
-			ExecuteHamB(Ham_CS_RoundRespawn,iPlayer);
-			
-			new szName[2][MAX_NAME_LENGTH];
-			get_user_name(id,szName[0],charsmax(szName[]));
-			get_user_name(iPlayer,szName[1],charsmax(szName[]));
-			
-			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CAPTAINS_PICK",szName[0],szName[1]);
-		}
+			PUG_CancelMenu(id);
 		
-		set_task(2.0,"PUG_CaptainMenu",(id == g_iCaptain[0]) ? g_iCaptain[1] : g_iCaptain[0]);
+			new iPlayers[MAX_PLAYERS],iNum;
+			get_players(iPlayers,iNum,"eh","SPECTATOR");
+		
+			if(iNum)
+			{
+				new iPlayer = iPlayers[random(iNum)];
+				
+				if(is_user_connected(iPlayer))
+				{
+					PUG_SetTeamAndRespawn(iPlayer,cs_get_user_team(id));
+					
+					new szName[2][MAX_NAME_LENGTH];
+					get_user_name(id,szName[0],charsmax(szName[]));
+					get_user_name(iPlayer,szName[1],charsmax(szName[]));					
+					
+					client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CAPTAINS_PICK",szName[0],szName[1]);
+				}
+				
+				set_task(2.0,"PUG_CaptainMenu",(id == g_iCaptain[0]) ? g_iCaptain[1] : g_iCaptain[0]);
+			}
+			else
+			{
+				remove_task(PUG_TASK_HUDS_CAPTAIN);
+				PUG_RunState();
+			}
+		}
+		else
+		{
+			PUG_CaptainMenu(id);
+		}
 	}
-	else
+}
+
+PUG_SetTeamAndRespawn(id,CsTeams:iTeam)
+{
+	if(pev_valid(id) == 2)
 	{
-		remove_task(PUG_TASK_HUDS_CAPTAIN);
-		PUG_RunState();
+		if(!PUG_PLAYER_IN_TEAM(id))
+		{
+			set_ent_data(id,"CBasePlayer","m_iJoiningState",CS_STATE_GET_INTO_GAME);
+			
+			set_ent_data(id,"CBasePlayer","m_iTeam",(iTeam == CS_TEAM_T) ? 1 : 2);
+		}	
+				
+		cs_set_user_team(id,iTeam);
+		
+		set_pev(id,pev_deadflag,DEAD_RESPAWNABLE);
+		
+		ExecuteHamB(Ham_CS_RoundRespawn,id);
 	}
 }
