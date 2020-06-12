@@ -24,6 +24,14 @@ public PUG_Event(iState)
 	g_bLive = (iState == STATE_FIRST_HALF || iState == STATE_SECOND_HALF || iState == STATE_OVERTIME);
 }
 
+public client_death(iVictim,iKiller,iWeapon)
+{
+	if(g_bLive && iWeapon == CSW_C4)
+	{
+		make_deathmsg(0,iVictim,0,"worldspawn");		
+	}
+}
+
 public PUG_HP(id)
 {
 	if(g_bLive && PUG_PLAYER_IN_TEAM(id) && (!is_user_alive(id) || get_gamerules_int("CHalfLifeMultiplay","m_bRoundTerminating")))
