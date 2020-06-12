@@ -20,7 +20,6 @@ new g_pBanLeaveTime;
 
 new g_iRounds;
 new g_iScores[CsTeams];
-new g_szTeams[CsTeams][MAX_NAME_LENGTH] = {"Unassigned","Terrorists","Counter-Terrorists","Spectators"};
 new g_iFrags[MAX_PLAYERS+1][2];
 
 new g_iMsgTeamScore;
@@ -29,7 +28,7 @@ new g_iMsgScoreInfo;
 new g_hLogEventRoundStart;
 new g_hLogEventRoundEnd;
 
-new g_hEventRound;
+new g_hEventSendAudio;
 new g_hEventTextMsg;
 
 public plugin_init()
@@ -70,7 +69,7 @@ public plugin_init()
 	disable_logevent(g_hLogEventRoundStart = register_logevent("HOOK_RoundStart",2,"1=Round_Start"));
 	disable_logevent(g_hLogEventRoundEnd = register_logevent("HOOK_RoundEnd",2,"1=Round_End"));
 	
-	disable_event(g_hEventRound = register_event("SendAudio","HOOK_Round","a","2=%!MRAD_terwin","2=%!MRAD_ctwin","2=%!MRAD_rounddraw"));
+	disable_event(g_hEventSendAudio = register_event("SendAudio","HOOK_SendAudio","a","2=%!MRAD_terwin","2=%!MRAD_ctwin","2=%!MRAD_rounddraw"));
 	disable_event(g_hEventTextMsg = register_event("TextMsg","HOOK_RoundRestart","a","2=#Game_will_restart_in"));
 	
 	register_clcmd("jointeam","HOOK_JoinTeamHandle");
@@ -91,6 +90,7 @@ public plugin_natives()
 	register_native("PUG_GetState","PUG_GetStates");
 	register_native("PUG_GetScore","PUG_GetScores");
 	register_native("PUG_GetRound","PUG_GetRounds");
+	register_native("PUG_SetEnded","PUG_SetFinish");
 }
 
 public plugin_cfg()
@@ -256,6 +256,32 @@ public PUG_GetRounds()
 	return g_iRounds;
 }
 
+public PUG_SetFinish()
+{
+	new CsTeams:iWinner = CsTeams:get_param(1);
+	
+	g_iRounds = get_pcvar_num(g_pMaxRounds);
+	
+	if(iWinner == CS_TEAM_T || iWinner == CS_TEAM_CT)
+	{
+		g_iRounds = (g_iRounds / 2) + 1;
+		
+		g_iScores[iWinner] = g_iRounds;
+		
+		g_iScores[(iWinner == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T] = 0;
+	}
+	else
+	{
+		g_iScores[CS_TEAM_T] = g_iRounds;
+		
+		g_iScores[CS_TEAM_CT] = g_iRounds;
+	}
+	
+	g_iState = STATE_END;
+	
+	ExecuteForward(g_iEvent,_,g_iState);
+}
+
 public PUG_Event(iState)
 {
 	switch(iState)
@@ -301,7 +327,7 @@ public PUG_Event(iState)
 		enable_logevent(g_hLogEventRoundStart);
 		enable_logevent(g_hLogEventRoundEnd);
 		
-		enable_event(g_hEventRound);
+		enable_event(g_hEventSendAudio);
 		enable_event(g_hEventTextMsg);
 	}
 	else
@@ -312,7 +338,7 @@ public PUG_Event(iState)
 		disable_logevent(g_hLogEventRoundStart);
 		disable_logevent(g_hLogEventRoundEnd);
 		
-		disable_event(g_hEventRound);
+		disable_event(g_hEventSendAudio);
 		disable_event(g_hEventTextMsg);
 	}
 }
@@ -432,28 +458,15 @@ public PUG_HelpAdmin(id,Level)
 
 public PUG_LO3(iDelay)
 {
-	switch(iDelay)
+	if(1 <= iDelay <= 3)
 	{
-		case 1:
-		{
-			set_task(2.0,"PUG_LO3",iDelay+1);
-			set_cvar_num("sv_restart",iDelay);
-		}
-		case 2:
-		{
-			set_task(3.0,"PUG_LO3",iDelay+1);
-			set_cvar_num("sv_restart",iDelay);
-		}
-		case 3:
-		{
-			set_task(4.0,"PUG_LO3",iDelay+1);
-			set_cvar_num("sv_restart",iDelay);
-		}
-		default:
-		{
-			set_hudmessage(0,255,0,-1.0,0.3,0,6.0,6.0);
-			show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_MSG");
-		}
+		set_task(float(iDelay+1),"PUG_LO3",iDelay+1);
+		set_cvar_num("sv_restart",iDelay);
+	}
+	else
+	{
+		set_hudmessage(0,255,0,-1.0,0.3,0,6.0,6.0);
+		show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_MSG");
 	}
 }
 
@@ -471,7 +484,7 @@ PUG_DisplayScores(id,bool:bEnded = false)
 			PUG_MOD_HEADER,
 			LANG_SERVER,
 			bEnded ? "PUG_END_WONALL" : "PUG_SCORE",
-			g_szTeams[iWinner],
+			PUG_MOD_CS_TEAMS_STR[iWinner],
 			g_iScores[iWinner],
 			g_iScores[iWinner == CS_TEAM_T ? CS_TEAM_CT : CS_TEAM_T]
 		);
@@ -532,7 +545,7 @@ public HOOK_ScoreInfo(iMsg,iDest)
 	}
 }
 
-public HOOK_Round()
+public HOOK_SendAudio()
 {
 	new szCode[32];
 	read_data(2,szCode,charsmax(szCode));
@@ -547,7 +560,7 @@ public HOOK_Round()
 		
 		g_iRounds++;
 		g_iScores[iWinner]++;
-		client_print(0,print_console,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_WON",g_iRounds,g_szTeams[iWinner]);
+		client_print(0,print_console,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_WON",g_iRounds,PUG_MOD_CS_TEAMS_STR[iWinner]);
 	}
 }
 
@@ -664,11 +677,28 @@ PUG_CheckTeam(id,iSlot)
 		}
 	}
 	
+	new CurrentTeam = get_user_team(id);
+	
+	if(iSlot == CurrentTeam)
+	{
+		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_SAME");
+		return PLUGIN_HANDLED;
+	}
+	
+	if(g_iState == STATE_START && CurrentTeam == 0)
+	{
+		if(get_pcvar_num(g_pAllowSpec))
+		{
+			engclient_cmd(id,"jointeam","6");
+			engclient_cmd(id,"joinclass","5");
+		}
+		
+		return PLUGIN_HANDLED;	
+	}
+	
 	if(STATE_START <= g_iState <= STATE_END)
 	{
-		new CsTeams:iTeam = cs_get_user_team(id);
-		
-		if(iTeam == CS_TEAM_T || iTeam == CS_TEAM_CT)
+		if(CurrentTeam == 1 || CurrentTeam == 2)
 		{
 			client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_NONE");
 			return PLUGIN_HANDLED;
@@ -680,9 +710,12 @@ PUG_CheckTeam(id,iSlot)
 
 public HOOK_JoinedClass(id)
 {
-	if(get_ent_data(id,"CBasePlayer","m_iMenu") == CS_Menu_ChooseAppearance && get_ent_data(id,"CBasePlayer","m_iJoiningState") == CS_STATE_PICKING_TEAM)
+	if(pev_valid(id) == 2)
 	{
-		set_task(2.0,"PUG_JoinMessage",id);	
+		if(get_ent_data(id,"CBasePlayer","m_iMenu") == CS_Menu_ChooseAppearance && get_ent_data(id,"CBasePlayer","m_iJoiningState") == CS_STATE_PICKING_TEAM)
+		{
+			set_task(2.0,"PUG_JoinMessage",id);	
+		}
 	}
 }
 
