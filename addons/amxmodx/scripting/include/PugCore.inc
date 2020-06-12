@@ -19,7 +19,7 @@
 #endif
 
 #define PUG_MOD_PLUGIN 		"CS Pug Mod"
-#define PUG_MOD_VERSION		"3.1.0"
+#define PUG_MOD_VERSION		"3.1.1"
 #define PUG_MOD_AUTHOR		"SmileY"
 #define PUG_MOD_HEADER		"^4[PUG]^1"
 
@@ -45,6 +45,14 @@ stock const PUG_MOD_STATES_STR[PUG_MOD_STATES][] =
 	"Second Half",
 	"Overtime",
 	"Finished"
+};
+
+stock const PUG_MOD_CS_TEAMS_STR[CsTeams][] =
+{
+	"Unassigned",
+	"Terrorists",
+	"Counter-Terrorists",
+	"Spectators"
 };
 
 /**
@@ -79,7 +87,7 @@ native PUG_GetState();
 /**
  * Get a team score
  *
- * @param iTeam     	The Team index to get score
+ * @param iTeam     	The team index to get score
  *
  * @note Will return -1 if a invalid team is passed
  *
@@ -95,3 +103,15 @@ native PUG_GetScore(iTeam);
  * @return      Return rounds played
  */
 native PUG_GetRound();
+
+
+/**
+ * Stop the pug with a winner: 1 Team TR, 2 Team CT
+ *
+ * @param iTeam     	The team index to set as winner
+ *
+ * @note If an invalid team is passed, game will end as tied
+ *
+ * @noreturn
+ */
+native PUG_SetEnded(iTeam);
