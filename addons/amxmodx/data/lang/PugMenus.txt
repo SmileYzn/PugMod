@@ -18,7 +18,7 @@ PUG_VOTEMAP_FAIL 		= The map choice has failed:
 PUG_TEAMVOTE_START 		= Select teams started.
 PUG_TEAMVOTE_FAIL 		= The choice of the teams failed:
 
-PUG_CAPTAINS_ARE 		= The leaders are: %s Terrorists, %s CTs
+PUG_CAPTAINS_ARE 		= The leaders are: ^3%s^1 Terrorists, ^3%s^1 CTs
 PUG_TEAMS_RANDOM 		= Mixing teams now.
 PUG_TEAMS_SAME 			= The teams will remain the same.
 PUG_TEAMS_SKILL 		= Balancing teams by skills.
@@ -49,7 +49,7 @@ PUG_VOTEMAP_FAIL 		= A escolha do mapa falhou:
 PUG_TEAMVOTE_START 		= Escolha dos times iniciada.
 PUG_TEAMVOTE_FAIL 		= A escolha dos times falhou:
 
-PUG_CAPTAINS_ARE 		= Os capitaes sao: %s Terroristas, %s CTs
+PUG_CAPTAINS_ARE 		= Os capitaes sao: ^3%s^1 Terroristas, ^3%s^1 CTs
 PUG_TEAMS_RANDOM 		= Misturando times automaticamente.
 PUG_TEAMS_SAME 			= Os times serao os mesmos.
 PUG_TEAMS_SKILL 		= Balanceando times por sua skill.
