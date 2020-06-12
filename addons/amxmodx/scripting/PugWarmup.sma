@@ -159,7 +159,7 @@ public HOOK_SetModel(iEntity)
 			}
 			else if(equali(szName,"weapon_shield"))
 			{
-				set_pev(iEntity,pev_effects,EF_NODRAW);				
+				set_pev(iEntity,pev_effects,EF_NODRAW);
 				RequestFrame("PUG_ThinkEntity",iEntity);
 			}
 		}
