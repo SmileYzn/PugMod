@@ -2,9 +2,15 @@
 #include <PugCS>
 #include <PugStocks>
 
-#define PUG_MOD_TASK_READY_LIST 1337
+#define PUG_HUD_LIST 1337
+
+new g_pReadyListType;
 
 new g_iPlayersMin;
+new Float:g_fHandleTime;
+
+new g_iState;
+new g_iSystemTime;
 
 new bool:g_bReady[MAX_PLAYERS+1];
 new bool:g_bReadySystem;
@@ -12,8 +18,12 @@ new bool:g_bReadySystem;
 public plugin_init()
 {
 	register_plugin("Pug Mod (Ready System)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	
+	g_pReadyListType = create_cvar("pug_ready_type","1",FCVAR_NONE,"Ready system sype (1 Ready commands, 0 Timer Counter)");
 
 	bind_pcvar_num(get_cvar_pointer("pug_players_min"),g_iPlayersMin);
+	
+	bind_pcvar_float(get_cvar_pointer("pug_handle_time"),g_fHandleTime);
 	
 	register_dictionary("PugReady.txt");
 	
@@ -25,6 +35,8 @@ public plugin_init()
 
 public PUG_Event(iState)
 {
+	g_iState = iState;
+	
 	if(iState == STATE_HALFTIME)
 	{
 		if(PUG_GetPlayersNum(true) < g_iPlayersMin)
@@ -45,13 +57,24 @@ PUG_ReadySystem(bool:Enable)
 	
 	if(Enable)
 	{
-		set_task(0.5,"PUG_HudListReady",PUG_MOD_TASK_READY_LIST, .flags="b");
+		if(get_pcvar_num(g_pReadyListType))
+		{
+			set_task(0.5,"PUG_HudListReady",PUG_HUD_LIST, .flags="b");
 		
-		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_READY_START");
+			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_READY_START");
+		}
+		else
+		{
+			g_iSystemTime = get_systime();
+			
+			set_task(0.5,"PUG_HudListTimer",PUG_HUD_LIST, .flags="b");
+			
+			g_bReadySystem = false;
+		}
 	}
 	else
 	{
-		remove_task(PUG_MOD_TASK_READY_LIST);
+		remove_task(PUG_HUD_LIST);
 	}
 }
 
@@ -104,6 +127,37 @@ public PUG_HudListReady()
 	}
 }
 
+public PUG_HudListTimer()
+{
+	set_hudmessage(0,255,0,-1.0,0.3,0,0.0,0.8,0.0,0.0,1);
+	
+	new iRemainPlayers = (g_iPlayersMin - PUG_GetPlayersNum(true));
+	
+	if(iRemainPlayers > 0)
+	{
+		g_iSystemTime = get_systime();
+		
+		show_hudmessage(0,"%s^n%d %s Left",PUG_MOD_STATES_STR[g_iState],iRemainPlayers,(iRemainPlayers == 1) ? "Player" : "Players");
+	}
+	else
+	{
+		new iRemainTime = floatround(g_fHandleTime - (get_systime() - g_iSystemTime));
+		
+		if(iRemainTime > 0)
+		{
+			new szTime[16];
+			format_time(szTime,charsmax(szTime),"%M:%S",iRemainTime);
+			
+			show_hudmessage(0,"%s %s",PUG_MOD_STATES_STR[g_iState],szTime);
+		}
+		else
+		{
+			remove_task(PUG_HUD_LIST);
+			
+			PUG_RunState();
+		}
+	}
+}
 
 public PUG_Ready(id)
 {
@@ -155,7 +209,7 @@ public PUG_NotReady(id)
 
 public PUG_ForceReady(id,iLevel)
 {
-	if(access(id,iLevel))
+	if(g_bReadySystem && access(id,iLevel))
 	{
 		new szName[MAX_NAME_LENGTH];
 		read_argv(1,szName,charsmax(szName));
