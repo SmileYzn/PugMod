@@ -61,7 +61,7 @@ public CS_OnBuy(id,Weapon)
 {
 	if(g_bWarmup)
 	{
-		if((cs_get_weapon_class(Weapon) == CS_WEAPONCLASS_GRENADE) || (Weapon == CSI_SHIELD))
+		if((Weapon == CSI_SHIELD || Weapon == CSI_SHIELDGUN) || (cs_get_weapon_class(Weapon) == CS_WEAPONCLASS_GRENADE))
 		{
 			return PLUGIN_HANDLED;
 		}
@@ -159,8 +159,8 @@ public HOOK_SetModel(iEntity)
 			}
 			else if(equali(szName,"weapon_shield"))
 			{
-				set_pev(iEntity,pev_effects,EF_NODRAW);
-				set_task(0.1,"PUG_ThinkEntity",iEntity);
+				set_pev(iEntity,pev_effects,EF_NODRAW);				
+				RequestFrame("PUG_ThinkEntity",iEntity);
 			}
 		}
 	}
