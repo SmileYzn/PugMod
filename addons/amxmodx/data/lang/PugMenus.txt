@@ -12,7 +12,7 @@ PUG_TEAM_TYPE_SWAP		= Swap Teams
 PUG_VOTEMAP_NEXTMAP 		= Changing map to %s...
 PUG_VOTEMAP_START 		= Choose the start map.
 PUG_NOVOTES 			= No votes.
-PUG_VOTE_CHOOSED 		= %s choosed %L
+PUG_VOTE_CHOOSED 		= %s choosed %s
 PUG_VOTEMAP_FAIL 		= The map choice has failed:
 
 PUG_TEAMVOTE_START 		= Select teams started.
@@ -29,37 +29,6 @@ PUG_CAPTAINS_NEW_CT 		= ^3%s^1 is the new captain of CTs
 PUG_CAPTAINS_PICK 		= ^3%s^1 choosed ^3%s^1
 PUG_CAPTAINS_UNASSIGNED 	= Unassigned
 
-[ru]
-PUG_HUD_MAP 			= Выберите карту:
-PUG_HUD_TEAM 			= Режим игры:
-
-PUG_TEAM_TYPE_VOTE 		= Голосованием
-PUG_TEAM_TYPE_CAPTAIN 	= Капитаном
-PUG_TEAM_TYPE_AUTO 		= Случайно
-PUG_TEAM_TYPE_NONE 		= Не менять
-PUG_TEAM_TYPE_SKILL 	= По скиллу
-PUG_TEAM_TYPE_SWAP		= Сменить сторонами команды
-
-PUG_VOTEMAP_NEXTMAP 	= Сменил карту на %s...
-PUG_VOTEMAP_START 		= Выбрал карту.
-PUG_NOVOTES 			= Нет голосов.
-PUG_VOTE_CHOOSED 		= %s выбрал %L
-PUG_VOTEMAP_FAIL 		= Выбор карты провален:
-
-PUG_TEAMVOTE_START 		= Выбрал команду.
-PUG_TEAMVOTE_FAIL 		= Выбор команды провален:
-
-PUG_CAPTAINS_ARE 		= Капитаны матча: %s Terrorists, %s CTs
-PUG_TEAMS_RANDOM 		= Команды смешаны.
-PUG_TEAMS_SAME 			= Команды останутся преждними.
-PUG_TEAMS_SKILL 		= Балансировка команд по скиллу.
-PUG_TEAMS_SWAP			= Смена команд сторонами.
-
-PUG_CAPTAINS_NEW_T 		= ^3%s^1 является новым капитаном Террористов
-PUG_CAPTAINS_NEW_CT 	= ^3%s^1 является новым капитаном Контр-Террористов
-PUG_CAPTAINS_PICK 		= ^3%s^1 выбрал ^3%s^1
-PUG_CAPTAINS_UNASSIGNED = Не назначено
-
 [bp]
 PUG_HUD_MAP 			= Escolha do mapa:
 PUG_HUD_TEAM 			= Modo de times:
@@ -74,7 +43,7 @@ PUG_TEAM_TYPE_SWAP		= Trocar Times
 PUG_VOTEMAP_NEXTMAP 		= O proximo mapa sera %s...
 PUG_VOTEMAP_START 		= Escolha do mapa iniciada.
 PUG_NOVOTES 			= Nenhum voto.
-PUG_VOTE_CHOOSED 		= %s escolheu %L
+PUG_VOTE_CHOOSED 		= %s escolheu %s
 PUG_VOTEMAP_FAIL 		= A escolha do mapa falhou:
 
 PUG_TEAMVOTE_START 		= Escolha dos times iniciada.
@@ -90,34 +59,3 @@ PUG_CAPTAINS_NEW_T 		= ^3%s^1 e o novo capitao do time Terroristas
 PUG_CAPTAINS_NEW_CT 		= ^3%s^1 e o novo capitao do time CTs
 PUG_CAPTAINS_PICK 		= ^3%s^1 escolheu ^3%s^1
 PUG_CAPTAINS_UNASSIGNED 	= Espectadores
-
-[pl]
-PUG_HUD_MAP    = Wybierz mape:
-PUG_HUD_TEAM    = Tryb rozgrywki:
-
-PUG_TEAM_TYPE_VOTE   = Glosowaniem
-PUG_TEAM_TYPE_CAPTAIN   = Kapitanem
-PUG_TEAM_TYPE_AUTO   = Losowo
-PUG_TEAM_TYPE_NONE   = Nie zmieniac
-PUG_TEAM_TYPE_SKILL   = Wedlug skilla
-PUG_TEAM_TYPE_SWAP  = Zamienic druzyny stronami
-
-PUG_VOTEMAP_NEXTMAP   = Zmieniamy mape na %s...
-PUG_VOTEMAP_START   = Wybierz mape startowa.
-PUG_NOVOTES      = Nie ma glosow.
-PUG_VOTE_CHOOSED   = %s wybral %s
-PUG_VOTEMAP_FAIL   = Wybor mapy sie nie powiodl:
-
-PUG_TEAMVOTE_START   = Wybor druzyn rozpoczety.
-PUG_TEAMVOTE_FAIL   = Wybor druzyn sie nie powiodl:
-
-PUG_CAPTAINS_ARE   = Kapitanowie: %s T, %s CT
-PUG_TEAMS_RANDOM   = Miksujemy druzyny.
-PUG_TEAMS_SAME    = Druzyny pozostana takie same.
-PUG_TEAMS_SKILL   = Balansujemy druzyny wedlug skilla.
-PUG_TEAMS_SWAP   = Zmieniamy druzyny stronami.
-
-PUG_CAPTAINS_NEW_T   = ^3%s^1 jest nowym kapitanem od T
-PUG_CAPTAINS_NEW_CT   = ^3%s^1 jest nowym kapitanem od CT
-PUG_CAPTAINS_PICK   = ^3%s^1 wybral ^3%s^1
-PUG_CAPTAINS_UNASSIGNED  = Nieprzypisany

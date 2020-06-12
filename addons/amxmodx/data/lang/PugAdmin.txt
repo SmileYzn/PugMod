@@ -12,20 +12,6 @@ PUG_RCON 	= ADMIN: Executed an command.
 PUG_MAP 	= ADMIN: Changed the map.
 PUG_BAN 	= ADMIN: Banned %s permanently.
 
-[ru]
-PUG_DESC_KICK 	= <player> [reason] - Кикнуть игрока
-PUG_DESC_KILL 	= <player> - Убить игрока
-PUG_DESC_RCON 	= <command> - Послать RCON команду на сервер
-PUG_DESC_MAP 	= <map> - Сменить карту
-PUG_DESC_MSG 	= <text> - Отправить сообщение в чат всем игрокам
-PUG_DESC_BAN 	= <player> [minutes] - Бан игрока навсегда
-
-PUG_KICK 	= ADMIN: %s кикнут с сервера.
-PUG_KILL 	= ADMIN: Убит %s.
-PUG_RCON 	= ADMIN: Выполнена команда.
-PUG_MAP 	= ADMIN: Поменяна карта.
-PUG_BAN 	= ADMIN: %s забанен навегда.
-
 [bp]
 PUG_DESC_KICK 	= <player> [motivo] - Kickar o jogador
 PUG_DESC_KILL 	= <player> - Matar o jogador alvo
@@ -39,17 +25,3 @@ PUG_KILL 	= ADMIN: Matou %s.
 PUG_RCON 	= ADMIN: Executou um comando.
 PUG_MAP 	= ADMIN: Alterou o mapa.
 PUG_BAN 	= ADMIN: Baniu %s.
-
-[pl]
-PUG_DESC_KICK 	= <gracz> [przyczyna] - Wyrzuc gracza
-PUG_DESC_KILL 	= <gracz> - Zgladz gracza
-PUG_DESC_RCON 	= <komenda> - Wykonaj rcon komende na serwerze
-PUG_DESC_MAP 	= <mapa> - Zmien mape
-PUG_DESC_MSG 	= <tekst> - Wyslij wiadomosc na czacie do wszystkich graczy
-PUG_DESC_BAN 	= <gracz> [minuty] - Zbanuj gracza na zawsze
-
-PUG_KICK 	= ADMIN: Wyzrucil %s z serwera.
-PUG_KILL 	= ADMIN: Zabil %s.
-PUG_RCON 	= ADMIN: Wykonal rcon komende.
-PUG_MAP 	= ADMIN: Zmienil mape.
-PUG_BAN 	= ADMIN: Zbanowal %s na zawsze.

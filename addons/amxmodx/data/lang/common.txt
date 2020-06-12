@@ -41,25 +41,3 @@ CANT_PERF_DEAD 	= Aquela acao nao pode ser executada com o cliente morto "%s"
 CANT_PERF_BOT 	= Aquela acao nao pode ser executada com bot "%s"
 ON 		= Ligado
 OFF 		= Desligado
-
-[pl]
-BACK 		= Powrot
-EXIT 		= Wyjscie
-MORE 		= Wiecej
-NONE 		= None
-ADMIN 		= ADMIN
-PLAYER 		= GRACZ
-ERROR 		= Blad
-YES 		= Tak
-NO 		= Nie
-BAN 		= ban
-KICK 		= kick
-NO_ACC_COM 	= Nie masz dostepu do tej komendy
-USAGE 		= Wykorzystanie
-MORE_CL_MATCHT 	= Jest wiecej niz jeden gracz pasujacy do tego argumentu
-CL_NOT_FOUND 	= Nie znaleziono gracza z podanym nickiem albo userid
-CLIENT_IMM 	= Gracz "%s" ma imunitet
-CANT_PERF_DEAD 	= Nie da sie wykonac tej akcji na martwym graczu "%s"
-CANT_PERF_BOT 	= Nie da sie wykonac tej akcji na bocie "%s"
-ON 		= Wl.
-OFF 		= Wyl.

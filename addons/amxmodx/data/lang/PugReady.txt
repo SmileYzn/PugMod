@@ -14,22 +14,6 @@ PUG_ALL_READY 				= All playres are ready!
 PUG_LIST_NOTREADY 			= Not Ready (%i of %i):
 PUG_LIST_READY 				= Ready (%i of %i):
 
-[ru]
-PUG_DESC_READY 				= Сообщить серверу о готовности Игрока к игре.
-PUG_DESC_NOTREADY 			= Сообщить серверу о НЕ готовности Игрока к игре.
-PUG_DESC_FORCEREADY 		= <Player> - Принудительно сообщить о готовности игрока.
-
-PUG_FORCE_READY 			= ADMIN: Принудительно установил готовность игроку ^3%s^1.
-
-PUG_READY 				    = ^3%s^1 готов к игре.
-PUG_NOTREADY 				= ^3%s^1 НЕ готов к игре.
-
-PUG_READY_START 			= Напишите ^4.ready^1 чтобы продолжить
-PUG_ALL_READY 				= Все игроки готовы к матчу!
-
-PUG_LIST_NOTREADY 			= Не готовы (%i из %i):
-PUG_LIST_READY 				= Готовы (%i из %i):
-
 [bp]
 PUG_DESC_READY 				= Jogador esta pronto para o jogo.
 PUG_DESC_NOTREADY 			= Jogador nao esta mais pronto.
@@ -45,19 +29,3 @@ PUG_ALL_READY 				= Todos estao prontos!
 
 PUG_LIST_NOTREADY 			= Aquecendo (%i de %i):
 PUG_LIST_READY 				= Prontos (%i de %i):
-
-[pl]
-PUG_DESC_READY     = Poinformowac serwer o gotowosci Gracza.
-PUG_DESC_NOTREADY    = Poinformowac serwer o niegotowosci Gracza.
-PUG_DESC_FORCEREADY    = <Gracz> - Wymusic gotowosc na Graczu. 
-
-PUG_FORCE_READY    = ADMIN: wymusil gotowosc na ^3%s^1.
-
-PUG_READY     = ^3%s^1 jest gotowy.
-PUG_NOTREADY     = ^3%s^1 nie jest gotowy.
-
-PUG_READY_START    = Napisz ^4.ready^1 zeby kontynuowac
-PUG_ALL_READY     = Wszyscy gracze sa gotowi!
-
-PUG_LIST_NOTREADY    = Niegotowi: (%i of %i):
-PUG_LIST_READY     = Gotowi: (%i of %i):

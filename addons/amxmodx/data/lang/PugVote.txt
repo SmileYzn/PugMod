@@ -1,5 +1,7 @@
 [en]
-PUG_VOTE_KICK_DESC 	= Vote to kick an player.
+PUG_VOTE_DESC		= Open main vote menu
+PUG_VOTE_MENU		= Call Vote:
+
 PUG_VOTE_KICK_MENU 	= Vote Kick:
 PUG_VOTE_KICK_MAIN 	= Choose a player to vote.
 PUG_VOTE_KICK_NEED	= Need ^3%i^1 players to use vote kick.
@@ -7,35 +9,34 @@ PUG_VOTE_KICK_MSG	= Kicked by Vote Kick.
 PUG_VOTE_KICK_KICKED	= ^3%s^1 Kicked: ^4%i^1 votes reached.
 PUG_VOTE_KICK_VOTED	= ^3%s^1 voted to kick %s: Need more ^4%i^1 votes to kick.
 
-PUG_VOTE_MAP_DESC	= Nominate a map to change.
 PUG_VOTE_MAP_MENU	= Pick a map:
 PUG_VOTE_MAP_MAIN	= Pick up a map to nominate.
 PUG_VOTE_MAP_VOTE 	= An vote session is running, try again later.
 PUG_VOTE_MAP_VOTED 	= You already nominated: ^3%s
 PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomitated ^4%s^1: Lacking ^4%i^1 votes to change map.
-PUG_VOTE_MAP_PICK2 	= Say ^3.votemap^1 if you want to nominate a map.
-PUG_VOTE_MAP_CHANGE 	= Changing to ^4%s^1...
+PUG_VOTE_MAP_PICK2 	= Say ^3.vote^1 if you want to nominate a map.
+PUG_VOTE_MAP_CHANGE 	= Changing map to ^4%s^1...
 
-[ru]
-PUG_VOTE_KICK_DESC 	= Голосование за кик игрока.
-PUG_VOTE_KICK_MENU 	= Кикнуть игрока:
-PUG_VOTE_KICK_MAIN 	= Выберите игрока для голосования.
-PUG_VOTE_KICK_NEED	= Необходимо ^3%i^1 игроков, чтобы использовать голосование за кик.
-PUG_VOTE_KICK_MSG	= Кикнут голосованием.
-PUG_VOTE_KICK_KICKED = ^3%s^1 выгнан: ^4%i^1 набрано голосов.
-PUG_VOTE_KICK_VOTED	= ^3%s^1 проголосовал за кик %s: Нужно больше ^4%i^1 голосов, чтобы кикнуть.
+PUG_VOTE_TIMEOUT_MSG1 	= ^3%s^1 from (^3%s^1) voted for a timeout. Lacking ^4%i^1 vote(s) to run timeout.
+PUG_VOTE_TIMEOUT_MSG2	= Say ^4.vote^1 to vote for a timeout.
+PUG_VOTE_TIMEOUT_PAUSE	= Match will pause for ^3%i^1 seconds on next round.
+PUG_VOTE_TIMEOUT_PAUSE2	= Match already will pause on next round.
+PUG_VOTE_TIMEOUT_VOTED 	= You already voted for a timeout.
+PUG_VOTE_TIMEOUT_TEAM 	= ^3%s^1 already paused the game.
+PUG_VOTE_TIMEOUT_LIVE	= Match is not live yet.
+PUG_VOTE_TIMEOUT_PAUSED = Match is paused for ^3%i^1 seconds.
 
-PUG_VOTE_MAP_DESC	= Номинировать карту для смены.
-PUG_VOTE_MAP_MENU	= Выбрать карту:
-PUG_VOTE_MAP_MAIN	= Выберите карту для смены.
-PUG_VOTE_MAP_VOTE 	= Голосование запущено. Попробуйте позже.
-PUG_VOTE_MAP_VOTED 	= Ввы уже номинировали: ^3%s
-PUG_VOTE_MAP_PICK1 	= ^3%s^1 номинировал ^4%s^1: Осталось ^4%i^1 голосов для смены карты.
-PUG_VOTE_MAP_PICK2 	= Напишите ^3.votemap^1 если вы хотите номинировать карту.
-PUG_VOTE_MAP_CHANGE = Меняется на ^4%s^1...
+PUG_VOTE_STOP_LIVE	= Match is not live yet.
+PUG_VOTE_STOP_TEAM	= You do not assigned to any team.
+PUG_VOTE_STOP_VOTED	= You already voted to stop the match.
+PUG_VOTE_STOP_MSG1 	= ^3%s^1 from (^3%s^1) voted for surrender. Lacking ^4%i^1 vote(s) stop the match.
+PUG_VOTE_STOP_MSG2	= Say ^4.vote^1 to vote for stop the match.
+PUG_VOTE_STOP_END	= Game Over! The ^3%s^1 Surrendered!
 
 [bp]
-PUG_VOTE_KICK_DESC 	= Vote para kickar um jogador.
+PUG_VOTE_DESC		= Abre o menu de vota��es
+PUG_VOTE_MENU		= Iniciar vota��o:
+
 PUG_VOTE_KICK_MENU 	= Vote Kick:
 PUG_VOTE_KICK_MAIN 	= Escolha um jogador.
 PUG_VOTE_KICK_NEED	= Necessario mais ^3%i^1 jogadores para o vote kick.
@@ -43,29 +44,26 @@ PUG_VOTE_KICK_MSG	= Kickado por Vote Kick.
 PUG_VOTE_KICK_KICKED	= ^3%s^1 Kickado: ^4%i^1 votos alcancados.
 PUG_VOTE_KICK_VOTED	= ^3%s^1 votou em %s: Mais ^4%i^1 votos para kickar.
 
-PUG_VOTE_MAP_DESC	= Escolher um mapa.
 PUG_VOTE_MAP_MENU	= Escolha o mapa:
 PUG_VOTE_MAP_MAIN	= Escolha um mapa para nomear.
 PUG_VOTE_MAP_VOTE 	= Uma votacao esta em execucao, tente novamente.
 PUG_VOTE_MAP_VOTED	= Voce ja escolheu: ^3%s
 PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomeou ^4%s^1: Restando ^4%i^1 votos para alterar.
-PUG_VOTE_MAP_PICK2 	= Say ^3.votemap^1 se voce quer nomear um mapa.
-PUG_VOTE_MAP_CHANGE 	= Changing to ^4%s^1...
+PUG_VOTE_MAP_PICK2 	= Say ^3.vote^1 se voce quer nomear um mapa.
+PUG_VOTE_MAP_CHANGE 	= Alterando mapa para ^4%s^1...
 
-[pl]
-PUG_VOTE_KICK_DESC = Glosowanie za kick Gracza.
-PUG_VOTE_KICK_MENU = Glosowanie za wyrzucenie:
-PUG_VOTE_KICK_MAIN = Wybierz gracza do wyrzucenia.
-PUG_VOTE_KICK_NEED = Potrzebne sa ^3%i^1 graczy zeby wymusic glosowanie za wyrzucenie.
-PUG_VOTE_KICK_MSG = Wyrzucony przez glosowanie.
-PUG_VOTE_KICK_KICKED = ^3%s^1 wyrzucony: ^4%i^1 glosow.
-PUG_VOTE_KICK_VOTED = ^3%s^1 glosuje za wyrzuceniem %s: potrzebne sa jeszcze ^4%i^1 glosow.
+PUG_VOTE_TIMEOUT_MSG1 	= ^3%s^1 (^3%s^1) votou para pausar o jogo. Faltam ^4%i^1 voto(s) para pausa.
+PUG_VOTE_TIMEOUT_MSG2	= Say ^4.vote^1 para votar a pausa.
+PUG_VOTE_TIMEOUT_PAUSE	= O jogo sera pausado em ^3%i^1 segundos no proximo round.
+PUG_VOTE_TIMEOUT_PAUSE2	= A partida ja sera pausada no proximo round.
+PUG_VOTE_TIMEOUT_VOTED 	= Voce ja votou para pausar o jogo.
+PUG_VOTE_TIMEOUT_TEAM 	= O time ^3%s^1 nao pode mais pausar o jogo.
+PUG_VOTE_TIMEOUT_LIVE	= A partida ainda nao comecou.
+PUG_VOTE_TIMEOUT_PAUSED = Jogo pausado por ^3%i^1 segundos.
 
-PUG_VOTE_MAP_DESC = Nominuj mape do zmiany.
-PUG_VOTE_MAP_MENU = Wybierz mape:
-PUG_VOTE_MAP_MAIN = Wybierz mape do nominowania.
-PUG_VOTE_MAP_VOTE = Glosowanie juz trwa, sprobuj pozniej.
-PUG_VOTE_MAP_VOTED = Juz nominowales: ^3%s
-PUG_VOTE_MAP_PICK1 = ^3%s^1 nominowal ^4%s^1: Brakuje ^4%i^1 glosow zeby zmienic mape.
-PUG_VOTE_MAP_PICK2 = Napisz ^3.votemap^1 jesli chcesz nominowac mape do zmiany.
-PUG_VOTE_MAP_CHANGE = Zmieniamy na ^4%s^1...
+PUG_VOTE_STOP_LIVE	= A partida ainda nao comecou.
+PUG_VOTE_STOP_TEAM	= Voce deve entrar em um time primeiro.
+PUG_VOTE_STOP_VOTED	= Voce ja votou para cancelar a partida.
+PUG_VOTE_STOP_MSG1 	= ^3%s^1 (^3%s^1) votou para se render. Faltam ^4%i^1 voto(s) para cancelar a partida.
+PUG_VOTE_STOP_MSG2	= Say ^4.vote^1 para votar o encerramento da partida.
+PUG_VOTE_STOP_END	= Fim de jogo! Os ^3%s^1 se renderam!
