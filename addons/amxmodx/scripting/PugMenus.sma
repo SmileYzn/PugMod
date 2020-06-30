@@ -13,6 +13,7 @@ new g_pVoteDelay;
 new g_pMapVoteType;
 new g_pMapVote;
 new g_pTeamEnforcement;
+new g_pPlayersMax;
 
 new bool:g_bVoted[MAX_PLAYERS+1];
 
@@ -33,6 +34,8 @@ public plugin_init()
 	register_plugin("Pug Mod (Menus)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
 	
 	register_dictionary("PugMenus.txt");
+	
+	g_pPlayersMax = get_cvar_pointer("pug_players_max");
 	
 	g_pVoteDelay = create_cvar("pug_vote_delay","15.0",FCVAR_NONE,"How long voting session goes on");
 	g_pMapVoteType = create_cvar("pug_vote_map_enabled","1",FCVAR_NONE,"Active vote map in pug (0 Disable, 1 Enable, 2 Random map)");
@@ -512,7 +515,7 @@ public PUG_CaptainMenu(id)
 	}
 	else
 	{
-		if(iNum)
+		if(iNum && (PUG_GetPlayersNum(true) < get_pcvar_num(g_pPlayersMax)))
 		{
 			if(is_user_bot(id))
 			{
