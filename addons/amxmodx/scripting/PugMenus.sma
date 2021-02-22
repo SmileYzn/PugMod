@@ -45,7 +45,7 @@ public plugin_init()
 
 public plugin_cfg()
 {
-	g_iMenuMap  = menu_create("PUG_HUD_MAP","HANDLER_MenuVote",true);
+	g_iMenuMap  = menu_create(fmt("%L", LANG_PLAYER, "PUG_HUD_MAP"),"HANDLER_MenuVote",true);
 	g_iMapCount = PUG_GetMapList(g_szMapList,sizeof(g_szMapList[]));
 
 	for(new i;i < g_iMapCount;i++)
@@ -55,7 +55,7 @@ public plugin_cfg()
 	
 	menu_setprop(g_iMenuMap,MPROP_EXIT,MEXIT_NEVER);
 	
-	g_iMenuTeams = menu_create("PUG_HUD_TEAM","HANDLER_MenuVote",true);
+	g_iMenuTeams = menu_create(fmt("%L", LANG_PLAYER, "PUG_HUD_TEAM"),"HANDLER_MenuVote",true);
 	
 	formatex(g_szTeamTypes[0],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_VOTE");
 	formatex(g_szTeamTypes[1],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,"PUG_TEAM_TYPE_CAPTAIN");
