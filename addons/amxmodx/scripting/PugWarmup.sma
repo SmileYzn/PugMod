@@ -65,7 +65,12 @@ public CS_OnBuy(id,Weapon)
 {
 	if(g_bWarmup)
 	{
-		if((Weapon == CSI_SHIELD || Weapon == CSI_SHIELDGUN) || (cs_get_weapon_class(Weapon) == CS_WEAPONCLASS_GRENADE))
+		if(Weapon == CSI_SHIELD || Weapon == CSI_SHIELDGUN)
+		{
+			return PLUGIN_HANDLED;
+		}
+		
+		if(cs_get_weapon_class(Weapon) == CS_WEAPONCLASS_GRENADE && !get_pcvar_num(g_pWarmupGrenade))
 		{
 			return PLUGIN_HANDLED;
 		}
