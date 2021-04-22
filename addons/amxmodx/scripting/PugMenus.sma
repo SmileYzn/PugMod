@@ -43,7 +43,7 @@ public plugin_init()
 	g_pTeamEnforcement = create_cvar("pug_teams_enforcement","0",FCVAR_NONE,"The teams method for assign teams (0 Vote, 1 Captains, 2 Random, 3 None, 4 Skill Balanced, 5 Swap Teams)");
 }
 
-public plugin_cfg()
+public OnConfigsExecuted()
 {
 	g_iMenuMap  = menu_create("PUG_HUD_MAP","HANDLER_MenuVote",true);
 	g_iMapCount = PUG_GetMapList(g_szMapList,sizeof(g_szMapList[]));
