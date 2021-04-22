@@ -22,7 +22,10 @@ stock g_iViewMenu[MAX_PLAYERS+1] = {-1,...};
 stock PUG_DisplayMenuAll(iMenu)
 {
 	new iPlayers[MAX_PLAYERS],iNum,iPlayer;
+	
 	get_players(iPlayers,iNum,"ch");
+	
+	arrayset(g_iViewMenu,-1,sizeof(g_iViewMenu));
 	
 	for(new i;i < iNum;i++) 
 	{
@@ -50,12 +53,13 @@ stock PUG_DisplayMenuAll(iMenu)
 stock PUG_DisplayMenuSingle(id,iMenu)
 {
 	g_iViewMenu[id] = iMenu;
+	
 	PUG_DisplayMenuClient(id);
 }
 
 public PUG_DisplayMenuClient(id)
 {
-	if(is_user_connected(id))
+	if(g_iViewMenu[id] != -1 && is_user_connected(id))
 	{
 		new iMenu[2];
 
