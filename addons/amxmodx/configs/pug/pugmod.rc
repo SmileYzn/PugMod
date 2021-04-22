@@ -14,6 +14,7 @@ pug_teams_enforcement	"0"			// The teams method for assign teams (0 Vote, 1 Capt
 pug_vote_percent	"0.7"			// Vote percent to execute actions
 pug_vote_kick_ban_time	"0"			// Minutes to temporary ban if player has kicked (0 to disable)
 pug_vote_timeout_time	"60"			// Seconds to pause round when timeout is running
+pug_warmup_grenade	"0"			// Allow buy grenades at warmup session
 
 pug_cfg_pugmod		"pugmod.rc"		// Config executed for pugmod cvars
 pug_cfg_warmup		"warmup.rc"		// Used at warmup session in pug mod
