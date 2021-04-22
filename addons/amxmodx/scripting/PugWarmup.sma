@@ -16,9 +16,13 @@ new g_iFMCmdStart;
 #define HUD_HIDE_TIMER (1<<4)
 #define HUD_HIDE_MONEY (1<<5)
 
+new g_pWarmupGrenade;
+
 public plugin_init()
 {
 	register_plugin("Pug Mod (Warmup)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	
+	g_pWarmupGrenade = create_cvar("pug_warmup_grenade","0",FCVAR_NONE,"Allow Grenades in Warmup");
 	
 	DisableHamForward(g_hHamKilled = RegisterHamPlayer(Ham_Killed,"HOOK_HamKilled",true));
 	DisableHamForward(g_hHamSpawn = RegisterHamPlayer(Ham_Spawn,"HOOK_HamSpawn",true));
