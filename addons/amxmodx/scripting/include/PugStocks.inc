@@ -2,7 +2,6 @@
 	#endinput
 #endif
 #define _PugStocks_included
-
 /**
  * Get Pug Mod configuration directory
  *
@@ -33,22 +32,9 @@ stock PUG_GetFilePath(const szFile[],szPath[],iLen)
  *
  * @noreturn
  */
-stock PUG_RegCommand(const szCommand[],const szFunction[],iFlags = 0,const szInfo[] = "",bool:bTranslate = true)
+stock PUG_RegCommand(const szCommand[],const szFunction[],iFlags = ADMIN_ALL,const szInfo[] = "",bool:bTranslate = true)
 {
-	new szBuffer[16];
-	formatex(szBuffer,charsmax(szBuffer),(iFlags == ADMIN_ALL) ? ".%s" : "!%s",szCommand);
-	
-	if(szInfo[0] && bTranslate)
-	{
-		new szKey[64];
-		format(szKey,charsmax(szKey),"%L",LANG_SERVER,szInfo);
-
-		register_clcmd(szBuffer,szFunction,iFlags,szKey);
-	}
-	else
-	{
-		register_clcmd(szBuffer,szFunction,iFlags,szInfo);
-	}
+	return register_clcmd(fmt((iFlags == ADMIN_ALL ? ".%s" : "!%s"),szCommand),szFunction,iFlags,szInfo,-1,bTranslate);
 }
 
 /**
@@ -57,24 +43,23 @@ stock PUG_RegCommand(const szCommand[],const szFunction[],iFlags = 0,const szInf
  * @note This is only for execute functions that return an value
  *
  * @param id			Caller index (Usually an admin)
- * @param Command		String of the command
- * @param Lang			Lang string in language system
- * @param Target		Target client index
- * @param Check			The function to call or it's result
+ * @param szLang		Lang string to translate
+ * @param iClient		Target client index
+ * @param bCheck		The function to call or it's result
  *
  * @noreturn
  */
-stock PUG_CommandClient(id,szCommand[],szLang[],iClient,iCheck)
+stock PUG_CommandClient(id,szLang[],iClient,bCheck)
 {
-	if(iCheck)
-	{
-		new szName[MAX_NAME_LENGTH];
-		get_user_name(iClient,szName,charsmax(szName));
+	new szCommand[32];
+	read_argv(0,szCommand,charsmax(szCommand));
 	
-		client_print_color(0,iClient,"%s %L",PUG_MOD_HEADER,LANG_SERVER,szLang,szName);
+	if(bCheck)
+	{
+		client_print_color(0,iClient,"%s %L",PUG_MOD_HEADER,LANG_SERVER,szLang,iClient);
 	}
 	
-	client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_PLAYER,iCheck ? "PUG_CMD_OK" : "PUG_CMD_FAIL",szCommand);
+	client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_PLAYER,bCheck ? "PUG_CMD_OK" : "PUG_CMD_FAIL",szCommand);
 }
 
 /**
@@ -83,20 +68,19 @@ stock PUG_CommandClient(id,szCommand[],szLang[],iClient,iCheck)
  * @note This is only for execute functions that return an value
  *
  * @param id			Caller index (Usually an admin)
- * @param Command		String of the command
- * @param Lang			Lang string in language system
- * @param Check			The function to call or it's result
+ * @param szLang		Lang string in language system
+ * @param bCheck		The function to call or it's result
  *
  * @noreturn
  */
-stock PUG_ExecuteCommand(id,szCommand[],szLang[],bCheck)
+stock PUG_ExecuteCommand(id,szLang[],bCheck)
 {
+	new szCommand[32];
+	read_argv(0,szCommand,charsmax(szCommand));
+	
 	if(bCheck)
 	{
-		new szName[MAX_NAME_LENGTH];
-		get_user_name(id,szName,charsmax(szName));
-		
-		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,szLang,szName,szCommand);
+		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,szLang,id,szCommand);
 	}
 	
 	client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_PLAYER,bCheck ? "PUG_CMD_OK" : "PUG_CMD_FAIL",szCommand);
@@ -107,10 +91,10 @@ stock PUG_ExecuteCommand(id,szCommand[],szLang[],bCheck)
  *
  * @note This is used to build maps menu for votes
  *
- * @param Data			2D data array returned from function
- * @param Len			Size of Data Array
+ * @param szData		2D data array returned from function
+ * @param iLen			Size of Data Array
  *
- * @return              	Maps Loaded count
+ * @return              Maps Loaded count
  */
 stock PUG_GetMapList(szData[][],iLen)
 {
@@ -145,9 +129,7 @@ stock PUG_GetMapList(szData[][],iLen)
  *
  * @note This is used to automatically build a file with registred commands
  *
- * @param Level			Admin level constant (See amxconst for flags)
- * @param Name			Name of the file to check or build
- * @param Tag			First character to check command (Usually . for PUG)
+ * @param iLevel			Admin level constant (See amxconst for flags)
  *
  * @noreturn
  */

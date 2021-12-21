@@ -3,10 +3,10 @@ PUG_DESC_READY 				= Tells the server the Player is ready.
 PUG_DESC_NOTREADY 			= Tells the server the Player is not ready.
 PUG_DESC_FORCEREADY 			= <Player> - Force a Player to ready up status.
 
-PUG_FORCE_READY 			= ADMIN: Forced ^3%s^1 to be ready.
+PUG_FORCE_READY 			= ADMIN: Forced ^3%n^1 to be ready.
 
-PUG_READY 				= ^3%s^1 is ready.
-PUG_NOTREADY 				= ^3%s^1 is not ready.
+PUG_READY 				= ^3%n^1 is ready.
+PUG_NOTREADY 				= ^3%n^1 is not ready.
 
 PUG_READY_START 			= Say ^4.ready^1 to continue
 PUG_ALL_READY 				= All playres are ready!
@@ -14,18 +14,24 @@ PUG_ALL_READY 				= All playres are ready!
 PUG_LIST_NOTREADY 			= Not Ready (%i of %i):
 PUG_LIST_READY 				= Ready (%i of %i):
 
+PUG_WAIT_HUD_MSG_1			= Waiting To Start^n%i Player(s) Left
+PUG_WAIT_HUD_MSG_2			= Starting Match^n%s
+
 [bp]
-PUG_DESC_READY 				= Jogador esta pronto para o jogo.
-PUG_DESC_NOTREADY 			= Jogador nao esta mais pronto.
-PUG_DESC_FORCEREADY 			= <Player> - Forca o jogador a ficar pronto.
+PUG_DESC_READY 				= Jogador está pronto para o jogo.
+PUG_DESC_NOTREADY 			= Jogador não está mais pronto.
+PUG_DESC_FORCEREADY 			= <Player> - Forçar o jogador a ficar pronto.
 
-PUG_FORCE_READY 			= ADMIN: Forcou ^3%s^1 a estar pronto.
+PUG_FORCE_READY 			= ADMIN: Forçou ^3%n^1 a estar pronto.
 
-PUG_READY 				= ^3%s^1 esta pronto.
-PUG_NOTREADY 				= ^3%s^1 nao esta pronto.
+PUG_READY 				= ^3%n^1 está pronto.
+PUG_NOTREADY 				= ^3%n^1 não está pronto.
 
 PUG_READY_START 			= Say ^4.ready^1 para continuar.
-PUG_ALL_READY 				= Todos estao prontos!
+PUG_ALL_READY 				= Todos estão prontos!
 
 PUG_LIST_NOTREADY 			= Aquecendo (%i de %i):
 PUG_LIST_READY 				= Prontos (%i de %i):
+
+PUG_WAIT_HUD_MSG_1			= Aguardando^nFalta(m) %i Jogador(es)
+PUG_WAIT_HUD_MSG_2			= Iniciando Partida Em^n%s

@@ -81,7 +81,7 @@ public PUG_Kick(id,iLevel)
 			server_cmd("kick #%i ^"%s^"",get_user_userid(iPlayer),szReason);
 		}
 		
-		PUG_CommandClient(id,"!kick","PUG_KICK",iPlayer,iPlayer);
+		PUG_CommandClient(id,"PUG_KICK",iPlayer,iPlayer);
 	}
 	
 	return PLUGIN_HANDLED;
@@ -98,10 +98,10 @@ public PUG_Kill(id,iLevel)
 		
 		if(iPlayer)
 		{
-			user_kill(iPlayer,1)
+			user_kill(iPlayer,1);
 		}
 
-		PUG_CommandClient(id,"!kill","PUG_KILL",iPlayer,iPlayer);
+		PUG_CommandClient(id,"PUG_KILL",iPlayer,iPlayer);
 	}
 	
 	return PLUGIN_HANDLED;
@@ -120,7 +120,7 @@ public PUG_Rcon(id,iLevel)
 			server_cmd(szCommand);
 		}
 		
-		PUG_ExecuteCommand(id,"!rcon","PUG_RCON",szCommand[0]);
+		PUG_ExecuteCommand(id,"PUG_RCON",szCommand[0]);
 	}
 	
 	return PLUGIN_HANDLED;
@@ -140,8 +140,8 @@ public PUG_Map(id,iLevel)
 		{
 			server_cmd("changelevel %s",szMap);
 		}
-		
-		PUG_ExecuteCommand(id,"!map","PUG_MAP",bIsMapValid);
+
+		PUG_ExecuteCommand(id,"PUG_MAP",bIsMapValid);
 	}
 	
 	return PLUGIN_HANDLED;
@@ -157,10 +157,7 @@ public PUG_Msg(id,iLevel)
 		
 		if(szMessage[0])
 		{
-			new szName[MAX_NAME_LENGTH];
-			get_user_name(id,szName,charsmax(szName));
-			
-			client_print_color(0,id,"%s (^3%s^1) %s",PUG_MOD_HEADER,szName,szMessage);
+			client_print_color(0,id,"%s (^3%n^1) %s",PUG_MOD_HEADER,id,szMessage);
 		}
 	}
 	
@@ -183,7 +180,7 @@ public PUG_Ban(id,iLevel)
 			server_cmd("banid %i #%i kick;writeid",iTime,get_user_userid(iPlayer));
 		}
 		
-		PUG_CommandClient(id,"!ban","PUG_BAN",iPlayer,iPlayer);
+		PUG_CommandClient(id,"PUG_BAN",iPlayer,iPlayer);
 	}
 	
 	return PLUGIN_HANDLED;

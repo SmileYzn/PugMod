@@ -1,35 +1,49 @@
 #include <PugCore>
+#include <PugMenus>
 #include <PugStocks>
 #include <PugCS>
 
 new g_iEvent;
 new g_iState;
 
-new g_pPlayersMin;
-new g_pPlayersMax;
+new g_iPlayersMin;
+new g_iPlayersMax;
 
-new g_pMaxRounds;
-new g_pMaxRoundsOT;
-new g_pForceOT;
+new g_iPlayRounds;
+new g_iPlayOvertimeRounds;
+new g_iPlayOvertime;
 
-new g_pAllowSpec;
-new g_pAllowHLTV;
+new g_iPlayBestRounds;
 
-new g_pHandleTime;
-new g_pBanLeaveTime;
+new g_iAllowSpec;
+new g_iAllowHLTV;
 
-new g_iRounds;
-new g_iScores[CsTeams];
-new g_iFrags[MAX_PLAYERS+1][2];
+new Float:g_fHandleTime;
+new g_iDropBanTime;
 
-new g_iMsgTeamScore;
-new g_iMsgScoreInfo;
+new g_iForceJoinTeam;
+new g_iBlockPickTeam;
 
-new g_hLogEventRoundStart;
-new g_hLogEventRoundEnd;
+new g_szStates[PUG_MOD_STATES][MAX_NAME_LENGTH] =
+{
+	"Dead",
+	"Warmup",
+	"Starting",
+	"First Half",
+	"Half Time",
+	"Second Half",
+	"Overtime",
+	"Finished"
+};
 
-new g_hEventSendAudio;
-new g_hEventTextMsg;
+new g_iRound[PUG_MOD_STATES];
+new g_iScore[TeamName][PUG_MOD_STATES];
+
+new g_iRoundReset;
+
+new HookChain:g_hCBasePlayer_GetIntoGame;
+new HookChain:g_hCSGameRules_OnRoundFreezeEnd;
+new HookChain:g_hRoundEnd;
 
 public plugin_init()
 {
@@ -38,24 +52,32 @@ public plugin_init()
 	register_dictionary("common.txt");
 	register_dictionary("PugCore.txt");
 	
-	g_iEvent = CreateMultiForward("PUG_Event",ET_IGNORE,FP_CELL);
+	g_iEvent = CreateMultiForward("PUG_Event",ET_IGNORE,FP_CELL,FP_STRING);
 	
-	g_pPlayersMin = create_cvar("pug_players_min","10",FCVAR_NONE,"Minimum of players to start a game");
-	g_pPlayersMax = create_cvar("pug_players_max","10",FCVAR_NONE,"Maximum of players allowed in the teams");
+	bind_pcvar_num(create_cvar("pug_players_min","10",FCVAR_NONE,"Minimum of players to start a game"),g_iPlayersMin);
+	bind_pcvar_num(create_cvar("pug_players_max","10",FCVAR_NONE,"Maximum of players allowed in game"),g_iPlayersMax);
 	
-	g_pMaxRounds = create_cvar("pug_rounds_max","30",FCVAR_NONE,"Rounds to play before start overtime");
-	g_pMaxRoundsOT = create_cvar("pug_rounds_ot","3",FCVAR_NONE,"Win difference to determine a winner in overtime");
-	g_pForceOT = create_cvar("pug_force_ot","1",FCVAR_NONE,"Force Overtime (0 End tied, 1 Force Overtime)");
+	bind_pcvar_num(create_cvar("pug_play_rounds","30",FCVAR_NONE,"Rounds to play before start overtime"),g_iPlayRounds);
+	bind_pcvar_num(create_cvar("pug_play_overtime_rounds","3",FCVAR_NONE,"Win difference to determine a winner in overtime"),g_iPlayOvertimeRounds);
+	bind_pcvar_num(create_cvar("pug_play_overtime","1",FCVAR_NONE,"Play Overtime (0 Sudden Death, 1 Force Overtime, 2 End Tied)"),g_iPlayOvertime);
 	
-	g_pAllowSpec = create_cvar("pug_allow_spec","1",FCVAR_NONE,"Allow Spectators in game");
-	g_pAllowHLTV = create_cvar("pug_allow_hltv","1",FCVAR_NONE,"Allow HLTV in game");
+	bind_pcvar_num(create_cvar("pug_play_best_rounds","0",FCVAR_NONE,"Play Best of X rounds (0 disable, or round count to enable)"),g_iPlayBestRounds);
 	
-	g_pHandleTime = create_cvar("pug_handle_time","10.0",FCVAR_NONE,"Time to PUG change states");
+	bind_pcvar_num(create_cvar("pug_allow_spec","1",FCVAR_NONE,"Allow Spectators in game"),g_iAllowSpec);
+	bind_pcvar_num(create_cvar("pug_allow_hltv","1",FCVAR_NONE,"Allow HLTV in game"),g_iAllowHLTV);
 	
-	g_pBanLeaveTime	= create_cvar("pug_drop_ban_time","15",FCVAR_NONE,"Minutes of ban players that leave from game in live");
+	bind_pcvar_float(create_cvar("pug_handle_time","10.0",FCVAR_NONE,"Time to PUG change states"),g_fHandleTime);
 	
-	register_clcmd("say","HOOK_SayHandler");
-	register_clcmd("say_team","HOOK_SayHandler");
+	bind_pcvar_num(create_cvar("pug_drop_ban_time","15",FCVAR_NONE,"Minutes of ban players that leave from game in live"),g_iDropBanTime);
+	
+	bind_pcvar_num(create_cvar("pug_force_join_team","1",FCVAR_NONE,"Force players join when connect to server"),g_iForceJoinTeam);
+	bind_pcvar_num(create_cvar("pug_block_pick_team","1",FCVAR_NONE,"Block players from choosing teams"),g_iBlockPickTeam);
+	
+	register_clcmd("say","HOOK_SayText");
+	register_clcmd("say_team","HOOK_SayText");
+	
+	register_clcmd("jointeam","HOOK_ChangeTeam");
+	register_clcmd("chooseteam","HOOK_ChangeTeam");
 	
 	PUG_RegCommand("status","PUG_Status",ADMIN_ALL,"PUG_DESC_STATUS");
 	PUG_RegCommand("score","PUG_ShowScore",ADMIN_ALL,"PUG_DESC_SCORE");
@@ -66,19 +88,11 @@ public plugin_init()
 	PUG_RegCommand("help","PUG_Help",ADMIN_ALL,"PUG_DESC_HELP");
 	PUG_RegCommand("help","PUG_HelpAdmin",ADMIN_LEVEL_A,"PUG_DESC_HELP_ADMIN");
 	
-	disable_logevent(g_hLogEventRoundStart = register_logevent("HOOK_RoundStart",2,"1=Round_Start"));
-	disable_logevent(g_hLogEventRoundEnd = register_logevent("HOOK_RoundEnd",2,"1=Round_End"));
+	DisableHookChain(g_hCBasePlayer_GetIntoGame = RegisterHookChain(RG_CBasePlayer_GetIntoGame,"HOOK_CBasePlayer_GetIntoGame",true));
 	
-	disable_event(g_hEventSendAudio = register_event("SendAudio","HOOK_SendAudio","a","2=%!MRAD_terwin","2=%!MRAD_ctwin","2=%!MRAD_rounddraw"));
-	disable_event(g_hEventTextMsg = register_event("TextMsg","HOOK_RoundRestart","a","2=#Game_will_restart_in"));
+	DisableHookChain(g_hCSGameRules_OnRoundFreezeEnd = RegisterHookChain(RG_CSGameRules_OnRoundFreezeEnd,"HOOK_CSGameRules_OnRoundFreezeEnd",true));
 	
-	register_clcmd("jointeam","HOOK_JoinTeamHandle");
-	
-	register_clcmd("joinclass","HOOK_JoinedClass");
-	register_clcmd("menuselect","HOOK_JoinedClass");
-	
-	register_menucmd(-2,MENU_KEY_1|MENU_KEY_2|MENU_KEY_5|MENU_KEY_6,"HOOK_TeamSelectHandle");
-	register_menucmd(register_menuid("Team_Select",1),MENU_KEY_1|MENU_KEY_2|MENU_KEY_5|MENU_KEY_6,"HOOK_TeamSelectHandle");
+	DisableHookChain(g_hRoundEnd = RegisterHookChain(RG_RoundEnd,"HOOK_RoundEnd",true));
 }
 
 public plugin_natives()
@@ -87,18 +101,30 @@ public plugin_natives()
 	
 	register_native("PUG_RunState","PUG_Next");
 	
-	register_native("PUG_GetState","PUG_GetStates");
-	register_native("PUG_GetScore","PUG_GetScores");
-	register_native("PUG_GetRound","PUG_GetRounds");
-	register_native("PUG_SetEnded","PUG_SetFinish");
+	register_native("PUG_GetState","THIS_GetState");
+	register_native("PUG_GetScore","THIS_GetScore");
+	register_native("PUG_GetRound","THIS_GetRound");
+	register_native("PUG_GetReset","THIS_GetReset");
+	register_native("PUG_SetEnded","THIS_SetEnded");
 }
 
-public plugin_cfg()
+public OnConfigsExecuted()
 {
 	PUG_BuildHelpFile(ADMIN_ALL);
 	PUG_BuildHelpFile(ADMIN_LEVEL_A);
 	
-	set_task(5.0,"PUG_Next");
+	PUG_BuildCvarsFile("pugmod.rc",false);
+	
+	formatex(g_szStates[STATE_DEAD],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_DEAD");
+	formatex(g_szStates[STATE_WARMUP],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_WARMUP");
+	formatex(g_szStates[STATE_START],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_START");
+	formatex(g_szStates[STATE_FIRST_HALF],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_FIRST_HALF");
+	formatex(g_szStates[STATE_HALFTIME],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_HALFTIME");
+	formatex(g_szStates[STATE_SECOND_HALF],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_SECOND_HALF");
+	formatex(g_szStates[STATE_OVERTIME],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_OVERTIME");
+	formatex(g_szStates[STATE_END],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_END");
+
+	PUG_Next();
 }
 
 public plugin_end()
@@ -106,75 +132,113 @@ public plugin_end()
 	if(STATE_FIRST_HALF <= g_iState <= STATE_OVERTIME)
 	{
 		g_iState = STATE_END;
-		ExecuteForward(g_iEvent,_,g_iState);
+		
+		ExecuteForward(g_iEvent,_,g_iState,g_szStates[g_iState]);
 	}
 }
 
-public client_connectex(id,const szName[],const szIP[],szReason[128])
-{	
-	if(!is_user_hltv(id))
+public client_putinserver(id)
+{
+	if(g_iForceJoinTeam && !is_user_hltv(id))
 	{
-		if(!get_pcvar_num(g_pAllowSpec))
-		{
-			if(PUG_GetPlayersNum(true) >= get_pcvar_num(g_pPlayersMax))
-			{
-				formatex(szReason,charsmax(szReason),"%L",LANG_SERVER,"PUG_KICK_MSG_FULL");
-				return PLUGIN_HANDLED;
-			}
-		}
+		RequestFrame("PUG_ForceTeamJoin",id);
 	}
-	else
+}
+
+public PUG_ForceTeamJoin(id)
+{
+	if(is_user_connected(id))
 	{
-		if(!get_pcvar_num(g_pAllowHLTV))
+		new TeamName:iTeam = TEAM_SPECTATOR;
+		
+		if((g_iState != STATE_START) && (PUG_GetPlayersNum() < g_iPlayersMax))
 		{
-			formatex(szReason,charsmax(szReason),"%L",LANG_SERVER,"PUG_KICK_MSG_HLTV");
-			return PLUGIN_HANDLED;
+			iTeam = rg_get_join_team_priority();
 		}
+		
+		rg_join_team(id,iTeam);
+	}
+}
+
+public HOOK_SayText(id)
+{
+	new szArgs[192];
+	read_args(szArgs,charsmax(szArgs));
+	remove_quotes(szArgs);
+	
+	if((szArgs[0] == '.') || (szArgs[0] == '!'))
+	{
+		client_cmd(id,szArgs);
+		return PLUGIN_HANDLED;
 	}
 	
 	return PLUGIN_CONTINUE;
 }
 
-public client_disconnected(id,bool:bDrop,szReason[],iLen)
+public HOOK_ChangeTeam(id)
 {
-	if(STATE_FIRST_HALF <= g_iState <= STATE_OVERTIME)
+	if(g_iBlockPickTeam)
 	{
-		if(bDrop)
+		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_CHANGE");
+		return PLUGIN_HANDLED;
+	}
+	
+	return PLUGIN_CONTINUE;
+}
+
+public client_connectex(id,const szName[],const szIP[],szReason[128])
+{
+	if(!g_iAllowSpec && !is_user_hltv(id) && (PUG_GetPlayersNum() >= g_iPlayersMax))
+	{
+		formatex(szReason,charsmax(szReason),"%L",LANG_SERVER,"PUG_KICK_MSG_FULL");
+		return PLUGIN_HANDLED;
+	}
+	
+	if(!g_iAllowHLTV && is_user_hltv(id))
+	{
+		formatex(szReason,charsmax(szReason),"%L",LANG_SERVER,"PUG_KICK_MSG_HLTV");
+		return PLUGIN_HANDLED;
+	}
+	
+	return PLUGIN_CONTINUE;
+}
+
+public HOOK_CBasePlayer_GetIntoGame(id)
+{
+	client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_BUILD_STRING1",PUG_MOD_PLUGIN,PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_BUILD_STRING2");
+}
+
+public client_disconnected(id,bool:bDropped,szReason[],iLen)
+{
+	if(bDropped && (STATE_FIRST_HALF <= g_iState <= STATE_OVERTIME) && !is_user_hltv(id))
+	{
+		if(get_playersnum() < g_iPlayersMin / 2)
 		{
-			if(!is_user_hltv(id))
+			g_iState = STATE_END;
+			
+			ExecuteForward(g_iEvent,_,g_iState,g_szStates[g_iState]);
+		}
+		else
+		{
+			if(1 <= get_user_team(id) <= 2)
 			{
-				if(get_playersnum() < get_pcvar_num(g_pPlayersMin) / 2)
+				if(g_iDropBanTime)
 				{
-					g_iState = STATE_END;
-					ExecuteForward(g_iEvent,_,g_iState);
-				}
-				else
-				{
-					if(1 <= get_user_team(id) <= 2)
+					if(equali(szReason,"Timed out") || equali(szReason,"Client sent 'drop'"))
 					{
-						new iBanTime = get_pcvar_num(g_pBanLeaveTime);
-						
-						if(iBanTime)
+						if(!access(id,ADMIN_LEVEL_A))
 						{
-							if(equali(szReason,"Timed out") || equali(szReason,"Client sent 'drop'"))
-							{
-								if(!access(id,ADMIN_LEVEL_A))
-								{
-									new szAuth[MAX_AUTHID_LENGTH];
-									get_user_authid(id,szAuth,charsmax(szAuth));
-									
-									new szName[MAX_NAME_LENGTH];
-									get_user_name(id,szName,charsmax(szName));
-									
-									server_cmd("banid %i %s;wait;writeid",iBanTime,szAuth);
-									
-									client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CLIENT_DROP_BAN",szName,iBanTime,szReason);
-								}
-							}
-						}	
+							new szAuth[MAX_AUTHID_LENGTH];
+							get_user_authid(id,szAuth,charsmax(szAuth));
+							
+							server_cmd("banid %i %s;wait;writeid",g_iDropBanTime,szAuth);
+							
+							client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_CLIENT_DROP_BAN",id,g_iDropBanTime,szReason);
+						}
 					}
-				}
-			}	
+				}	
+			}
 		}
 	}
 }
@@ -201,17 +265,17 @@ public PUG_Next()
 		}
 		case STATE_HALFTIME:
 		{
-			g_iState = (g_iRounds < get_pcvar_num(g_pMaxRounds)) ? STATE_SECOND_HALF : STATE_OVERTIME;
+			g_iState = (PUG_GetTotalScore(TEAM_TERRORIST) + PUG_GetTotalScore(TEAM_CT) < g_iPlayRounds) ? STATE_SECOND_HALF : STATE_OVERTIME;
 		}
 		case STATE_SECOND_HALF:
 		{
-			if(g_iRounds == get_pcvar_num(g_pMaxRounds))
+			if(PUG_GetTotalScore(TEAM_TERRORIST) + PUG_GetTotalScore(TEAM_CT) == g_iPlayRounds)
 			{
-				if(get_pcvar_num(g_pForceOT))
+				if(g_iPlayOvertime == 1)
 				{
 					g_iState = STATE_HALFTIME;
 				}
-				else
+				else if(g_iPlayOvertime == 2)
 				{
 					g_iState = STATE_END;
 				}
@@ -223,7 +287,7 @@ public PUG_Next()
 		}
 		case STATE_OVERTIME:
 		{
-			if((g_iRounds % get_pcvar_num(g_pMaxRoundsOT)) == 0)
+			if((g_iRound[STATE_OVERTIME] % (g_iPlayOvertimeRounds+1)) == 0)
 			{
 				g_iState = STATE_HALFTIME;
 			}
@@ -238,48 +302,76 @@ public PUG_Next()
 		}
 	}
 	
-	ExecuteForward(g_iEvent,_,g_iState);
+	ExecuteForward(g_iEvent,_,g_iState,g_szStates[g_iState]);
 }
 
-public PUG_GetStates()
+public THIS_GetState(iPlugin,iParams)
 {
+	if(iParams == 2)
+	{
+		set_string(1,g_szStates[g_iState],get_param(2)); 
+	}
+	
 	return g_iState;
 }
 
-public PUG_GetScores()
+public THIS_GetScore(iPlugin,iParams)
 {
-	return g_iScores[CsTeams:get_param(1)];
-}
-
-public PUG_GetRounds()
-{
-	return g_iRounds;
-}
-
-public PUG_SetFinish()
-{
-	new CsTeams:iWinner = CsTeams:get_param(1);
-	
-	g_iRounds = get_pcvar_num(g_pMaxRounds);
-	
-	if(iWinner == CS_TEAM_T || iWinner == CS_TEAM_CT)
+	if(iParams == 1)
 	{
-		g_iRounds = (g_iRounds / 2) + 1;
+		new TeamName:iTeam = TeamName:get_param(1);
 		
-		g_iScores[iWinner] = g_iRounds;
-		
-		g_iScores[(iWinner == CS_TEAM_T) ? CS_TEAM_CT : CS_TEAM_T] = 0;
+		if(TEAM_TERRORIST <= iTeam <= TEAM_CT)
+		{
+			return PUG_GetTotalScore(iTeam);
+		}
 	}
-	else
+	
+	return 0;
+}
+
+PUG_GetTotalScore(TeamName:iTeam)
+{
+	return (g_iScore[iTeam][STATE_FIRST_HALF]+g_iScore[iTeam][STATE_SECOND_HALF]+g_iScore[iTeam][STATE_OVERTIME]);
+}
+
+public THIS_GetRound()
+{
+	return (g_iRound[STATE_FIRST_HALF]+g_iRound[STATE_SECOND_HALF]+g_iRound[STATE_OVERTIME]);
+}
+
+public THIS_GetReset()
+{
+	return g_iRoundReset;
+}
+
+public THIS_SetEnded(iPlugin,iParams)
+{
+	if(iParams == 1)
 	{
-		g_iScores[CS_TEAM_T] = g_iRounds;
+		new TeamName:iWinner = TeamName:get_param(1);
 		
-		g_iScores[CS_TEAM_CT] = g_iRounds;
+		if(TEAM_TERRORIST <= iWinner <= TEAM_CT)
+		{
+			new TeamName:iLosers = (iWinner == TEAM_TERRORIST) ? TEAM_CT : TEAM_TERRORIST;
+			
+			g_iRound[STATE_FIRST_HALF]  = (g_iPlayRounds/2);
+			g_iRound[STATE_SECOND_HALF] = 1;
+			g_iRound[STATE_OVERTIME]    = 0;
+			
+			g_iScore[iWinner][STATE_FIRST_HALF]  = g_iRound[STATE_FIRST_HALF];
+			g_iScore[iWinner][STATE_SECOND_HALF] = g_iRound[STATE_SECOND_HALF];
+			g_iScore[iWinner][STATE_OVERTIME]    = g_iRound[STATE_OVERTIME];
+			
+			g_iScore[iLosers][STATE_FIRST_HALF]  = 0;
+			g_iScore[iLosers][STATE_SECOND_HALF] = 0;
+			g_iScore[iLosers][STATE_OVERTIME]    = 0;
+		}
 	}
 	
 	g_iState = STATE_END;
 	
-	ExecuteForward(g_iEvent,_,g_iState);
+	ExecuteForward(g_iEvent,_,g_iState,g_szStates[g_iState]);
 }
 
 public PUG_Event(iState)
@@ -288,74 +380,67 @@ public PUG_Event(iState)
 	{
 		case STATE_WARMUP:
 		{
+			EnableHookChain(g_hCBasePlayer_GetIntoGame);
+		
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_WARMUP_MSG");
 		}
 		case STATE_FIRST_HALF:
-		{			
+		{
 			PUG_LO3(1);
+			
+			g_iRoundReset = g_iPlayBestRounds;
+			
+			arrayset(g_iRound,0,sizeof(g_iRound));
+			
+			arrayset(g_iScore[TEAM_CT],0,sizeof(g_iScore[]));
+			
+			arrayset(g_iScore[TEAM_TERRORIST],0,sizeof(g_iScore[]));
+			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_LIVE_1ST");
 		}
 		case STATE_HALFTIME:
 		{
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_HALFTIME");
 			
-			set_task(get_pcvar_float(g_pHandleTime),"PUG_SwapTeams");
+			set_task(g_fHandleTime,"PUG_SwapTeams");
 		}
 		case STATE_SECOND_HALF:
 		{
 			PUG_LO3(1);
+			
+			if(abs(PUG_GetTotalScore(TEAM_TERRORIST)-PUG_GetTotalScore(TEAM_CT)) < (g_iPlayRounds/3))
+			{
+				g_iRoundReset = g_iPlayBestRounds;
+			}
+			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_LIVE_2ND");
 		}
 		case STATE_OVERTIME:
 		{
 			PUG_LO3(1);
+			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_LIVE_OT");
 		}
 		case STATE_END:
 		{
-			PUG_DisplayScores(0,true);
-			set_task(get_pcvar_float(g_pHandleTime),"PUG_Next");
+			PUG_ViewScore(0);
 			
+			set_task(g_fHandleTime,"PUG_Next");
 		}
 	}
 	
 	if(iState == STATE_FIRST_HALF || iState == STATE_SECOND_HALF || iState == STATE_OVERTIME)
 	{
-		g_iMsgTeamScore = register_message(get_user_msgid("TeamScore"),"HOOK_TeamScore");
-		g_iMsgScoreInfo = register_message(get_user_msgid("ScoreInfo"),"HOOK_ScoreInfo");
+		EnableHookChain(g_hCSGameRules_OnRoundFreezeEnd);
 		
-		enable_logevent(g_hLogEventRoundStart);
-		enable_logevent(g_hLogEventRoundEnd);
-		
-		enable_event(g_hEventSendAudio);
-		enable_event(g_hEventTextMsg);
+		EnableHookChain(g_hRoundEnd);
 	}
 	else
 	{
-		unregister_message(get_user_msgid("TeamScore"),g_iMsgTeamScore);
-		unregister_message(get_user_msgid("ScoreInfo"),g_iMsgScoreInfo);
+		DisableHookChain(g_hCSGameRules_OnRoundFreezeEnd);
 		
-		disable_logevent(g_hLogEventRoundStart);
-		disable_logevent(g_hLogEventRoundEnd);
-		
-		disable_event(g_hEventSendAudio);
-		disable_event(g_hEventTextMsg);
+		DisableHookChain(g_hRoundEnd);
 	}
-}
-
-public HOOK_SayHandler(id)
-{
-	new szArgs[192];
-	read_args(szArgs,charsmax(szArgs));
-	remove_quotes(szArgs);
-	
-	if((szArgs[0] == '.') || (szArgs[0] == '!'))
-	{
-		client_cmd(id,szArgs);
-		return PLUGIN_HANDLED;
-	}
-	
-	return PLUGIN_CONTINUE;
 }
 
 public PUG_Status(id)
@@ -368,10 +453,10 @@ public PUG_Status(id)
 		PUG_MOD_HEADER,
 		LANG_SERVER,
 		"PUG_STATUS",
-		PUG_MOD_STATES_STR[g_iState],
+		g_szStates[g_iState],
 		get_playersnum(),
-		get_pcvar_num(g_pPlayersMin),
-		get_pcvar_num(g_pPlayersMax)
+		g_iPlayersMin,
+		g_iPlayersMax
 	);	
 	
 	return PLUGIN_HANDLED;
@@ -381,7 +466,7 @@ public PUG_ShowScore(id)
 {
 	if(STATE_FIRST_HALF <= g_iState <= STATE_OVERTIME)
 	{
-		PUG_DisplayScores(id);
+		PUG_ViewScore(id);
 	}
 	else
 	{
@@ -397,11 +482,11 @@ public PUG_StartPug(id,iLevel)
 	{
 		new bool:bCheck = (g_iState == STATE_WARMUP || g_iState == STATE_HALFTIME);
 		
-		PUG_ExecuteCommand(id,"!startpug","PUG_START_PUG",bCheck);
+		PUG_ExecuteCommand(id,"PUG_START_PUG",bCheck);
 		
 		if(bCheck)
 		{
-			PUG_Next();			
+			PUG_Next();		
 		}
 	}
 	
@@ -414,12 +499,13 @@ public PUG_StopPug(id,Level)
 	{
 		new bool:bCheck = (STATE_FIRST_HALF <= g_iState <= STATE_OVERTIME);
 		
-		PUG_ExecuteCommand(id,"!stoppug","PUG_STOP_PUG",bCheck);
+		PUG_ExecuteCommand(id,"PUG_STOP_PUG",bCheck);
 		
 		if(bCheck)
 		{
 			g_iState = STATE_END;
-			ExecuteForward(g_iEvent,_,g_iState);
+			
+			ExecuteForward(g_iEvent,_,g_iState,g_szStates[g_iState]);
 			
 		}
 	}
@@ -461,269 +547,223 @@ public PUG_LO3(iDelay)
 	if(1 <= iDelay <= 3)
 	{
 		set_task(float(iDelay+1),"PUG_LO3",iDelay+1);
+		
 		set_cvar_num("sv_restart",iDelay);
 	}
 	else
 	{
 		set_hudmessage(0,255,0,-1.0,0.3,0,6.0,6.0);
-		show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_MSG");
+		
+		if(!g_iRoundReset)
+		{
+			show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_1");
+		}
+		else
+		{
+			show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_2",g_iRoundReset);
+		}
 	}
 }
 
-PUG_DisplayScores(id,bool:bEnded = false)
+PUG_ViewScore(id)
 {
-	new CsTeams:iWinner = PUG_GetWinner();
+	new TeamName:iWinner = PUG_GetWinner();
 	
 	if(iWinner)
 	{
 		client_print_color
 		(
 			id,
-			(iWinner == CS_TEAM_T) ? print_team_red : print_team_blue,
+			(iWinner == TEAM_TERRORIST) ? print_team_red : print_team_blue,
 			"%s %L",
 			PUG_MOD_HEADER,
 			LANG_SERVER,
-			bEnded ? "PUG_END_WONALL" : "PUG_SCORE",
+			(g_iState == STATE_END) ? "PUG_END_WONALL" : "PUG_SCORE",
 			PUG_MOD_CS_TEAMS_STR[iWinner],
-			g_iScores[iWinner],
-			g_iScores[iWinner == CS_TEAM_T ? CS_TEAM_CT : CS_TEAM_T]
+			PUG_GetTotalScore(iWinner),
+			PUG_GetTotalScore(iWinner == TEAM_TERRORIST ? TEAM_CT : TEAM_TERRORIST)
 		);
 	}
 	else
 	{
-		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,bEnded ? "PUG_END_TIED" : "PUG_SCORE_TIED",g_iScores[CS_TEAM_T],g_iScores[CS_TEAM_T]);
+		client_print_color
+		(
+			id,
+			id,
+			"%s %L",
+			PUG_MOD_HEADER,
+			LANG_SERVER,
+			(g_iState == STATE_END) ? "PUG_END_TIED" : "PUG_SCORE_TIED",
+			PUG_GetTotalScore(TEAM_TERRORIST),
+			PUG_GetTotalScore(TEAM_CT)
+		);
 	}
 }
 
-CsTeams:PUG_GetWinner()
+TeamName:PUG_GetWinner()
 {
-	if(g_iScores[CS_TEAM_T] != g_iScores[CS_TEAM_CT])
+	if(PUG_GetTotalScore(TEAM_TERRORIST) != PUG_GetTotalScore(TEAM_CT))
 	{
-		return (g_iScores[CS_TEAM_T] > g_iScores[CS_TEAM_CT]) ? CS_TEAM_T : CS_TEAM_CT;
+		return (PUG_GetTotalScore(TEAM_TERRORIST) > PUG_GetTotalScore(TEAM_CT)) ? TEAM_TERRORIST : TEAM_CT;
 	}
 	
-	return CS_TEAM_UNASSIGNED;
+	return TEAM_UNASSIGNED;
+}
+
+PUG_ResetRound()
+{
+	if(g_iRoundReset)
+	{
+		if(g_iRound[g_iState] > (g_iRoundReset/2))
+		{
+			g_iRoundReset = 0;
+			
+			g_iRound[g_iState] = 1;
+			
+			new TeamName:iWinner = PUG_GetWinner();
+			
+			if(iWinner == TEAM_TERRORIST || iWinner == TEAM_CT)
+			{
+				g_iScore[iWinner][g_iState] = 1;
+				
+				g_iScore[iWinner == TEAM_TERRORIST ? TEAM_CT : TEAM_TERRORIST][g_iState] = 0;
+			}
+		}
+		
+		PUG_LO3(1);
+		
+		return 1;
+	}
+	
+	return 0;
 }
 
 public PUG_SwapTeams()
 {
-	new iScoreTR 		= g_iScores[CS_TEAM_T];
-	g_iScores[CS_TEAM_T] 	= g_iScores[CS_TEAM_CT];
-	g_iScores[CS_TEAM_CT] 	= iScoreTR;
-
-	PUG_TeamsSwap();
-	set_cvar_num("sv_restart",1);
+	new iTemp;
 	
-	if(PUG_GetPlayersNum(true) >= get_pcvar_num(g_pPlayersMin))
+	for(new iState = STATE_FIRST_HALF;iState <= STATE_OVERTIME;iState++)
+	{
+		iTemp = g_iScore[TEAM_TERRORIST][iState];
+		
+		g_iScore[TEAM_TERRORIST][iState] = g_iScore[TEAM_CT][iState];
+		
+		g_iScore[TEAM_CT][iState] = iTemp;
+	}
+	
+	rg_swap_all_players();
+	
+	rg_restart_round();
+	
+	client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_SWAP_TEAMS");
+	
+	if((g_iState == STATE_HALFTIME) && (PUG_GetPlayersNum(true) >= g_iPlayersMin))
 	{
 		PUG_Next();
 	}
 }
 
-public HOOK_TeamScore()
-{
-	new szTeam[2];
-	get_msg_arg_string(1,szTeam,charsmax(szTeam));
-
-	set_msg_arg_int(2,ARG_SHORT,g_iScores[(szTeam[0] == 'T') ? CS_TEAM_T : CS_TEAM_CT]);
-}
-
-public HOOK_ScoreInfo(iMsg,iDest)
-{
-	if(iDest == MSG_ALL || iDest == MSG_BROADCAST)
-	{
-		if(get_msg_arg_int(5)) 
-		{
-			new id = get_msg_arg_int(1); 
-			
-			if(is_user_connected(id))
-			{
-				set_msg_arg_int(2,ARG_SHORT,get_msg_arg_int(2) + g_iFrags[id][0]);
-				set_msg_arg_int(3,ARG_SHORT,get_msg_arg_int(3) + g_iFrags[id][1]);
-			}
-		}
-	}
-}
-
-public HOOK_SendAudio()
-{
-	new szCode[32];
-	read_data(2,szCode,charsmax(szCode));
-
-	if(containi(szCode,"MRAD_rounddraw") != -1)
-	{
-		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_DRAW",g_iRounds);
-	}
-	else
-	{
-		new CsTeams:iWinner = (containi(szCode,"MRAD_terwin") != -1) ? CS_TEAM_T : CS_TEAM_CT;
-		
-		g_iRounds++;
-		g_iScores[iWinner]++;
-		client_print(0,print_console,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_WON",g_iRounds,PUG_MOD_CS_TEAMS_STR[iWinner]);
-	}
-}
-
-public HOOK_RoundStart()
-{
-	if(g_iRounds)
-	{
-		PUG_DisplayScores(0);
-	}
-
-	client_print(0,print_console,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_START",(g_iRounds + 1));
-}
-
-public HOOK_RoundEnd()
+bool:PUG_CheckRound()
 {
 	if(g_iState == STATE_FIRST_HALF)
 	{
-		if(g_iRounds == (get_pcvar_num(g_pMaxRounds) / 2))
+		if(!PUG_ResetRound())
 		{
-			set_task(2.0,"PUG_Next");
+			if(g_iRound[g_iState] == (g_iPlayRounds / 2))
+			{
+				return true;
+			}
 		}
 	}
 	else if(g_iState == STATE_SECOND_HALF)
 	{
-		new iHalfRounds = (get_pcvar_num(g_pMaxRounds) / 2);
-		
-		if(g_iScores[PUG_GetWinner()] > iHalfRounds)
+		if(!PUG_ResetRound())
 		{
-			set_task(2.0,"PUG_Next");
-		}
-		else if((g_iScores[CS_TEAM_T] == iHalfRounds) && (g_iScores[CS_TEAM_CT] == iHalfRounds))
-		{
-			set_task(2.0,"PUG_Next");
+			new iScoreTR = PUG_GetTotalScore(TEAM_TERRORIST);
+			new iScoreCT = PUG_GetTotalScore(TEAM_CT);
+			
+			if((iScoreTR > (g_iPlayRounds / 2)) || (iScoreCT > (g_iPlayRounds / 2)))
+			{
+				return true;
+			}
+			else if(g_iPlayOvertime && (iScoreTR == (g_iPlayRounds / 2)) && (iScoreCT == (g_iPlayRounds / 2)))
+			{
+				return true;
+			}	
 		}
 	}
 	else if(g_iState == STATE_OVERTIME)
 	{
-		new iRounds = get_pcvar_num(g_pMaxRoundsOT);
+		if((THIS_GetRound() % g_iPlayOvertimeRounds) == 0)
+		{
+			return true;
+		}
+		else if((g_iScore[TEAM_TERRORIST][STATE_OVERTIME] - g_iScore[TEAM_CT][STATE_OVERTIME]) > g_iPlayOvertimeRounds)
+		{
+			return true;
+		}
+		else if((g_iScore[TEAM_CT][STATE_OVERTIME] - g_iScore[TEAM_TERRORIST][STATE_OVERTIME]) > g_iPlayOvertimeRounds)
+		{
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+public HOOK_CSGameRules_OnRoundFreezeEnd()
+{
+	if(THIS_GetRound())
+	{
+		PUG_ViewScore(0);
 		
-		if((g_iRounds % iRounds) == 0)
-		{
-			set_task(2.0,"PUG_Next");
-		}
-		else if((g_iScores[CS_TEAM_T] - g_iScores[CS_TEAM_CT]) > iRounds)
-		{
-			set_task(2.0,"PUG_Next");
-		}
-		else if((g_iScores[CS_TEAM_CT] - g_iScores[CS_TEAM_T]) > iRounds)
-		{
-			set_task(2.0,"PUG_Next");
-		}
+		client_print(0,print_console,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_START",THIS_GetRound());
 	}
 }
 
-public HOOK_RoundRestart()
+public HOOK_RoundEnd(WinStatus:Status,ScenarioEventEndRound:Event,Float:tmDelay)
 {
-	if(g_iState == STATE_FIRST_HALF)
+	if(Status != WINSTATUS_NONE)
 	{
-		g_iRounds = 0;
-		g_iScores[CS_TEAM_T] = 0;
-		g_iScores[CS_TEAM_CT] = 0;
-		
-		for(new iPlayer;iPlayer <= MaxClients;iPlayer++)
+		if(Status == WINSTATUS_TERRORISTS)
 		{
-			arrayset(g_iFrags[iPlayer],0,sizeof(g_iFrags[]));
-		}
-	}
-	else if(STATE_HALFTIME <= g_iState <= STATE_OVERTIME)
-	{
-		for(new iPlayer;iPlayer <= MaxClients;iPlayer++)
-		{
-			if(is_user_connected(iPlayer))
+			g_iRound[g_iState]++;
+			
+			g_iScore[TEAM_TERRORIST][g_iState]++;
+			
+			client_print(0,print_console,"%L",LANG_SERVER,"PUG_ROUND_WON",THIS_GetRound(),PUG_MOD_CS_TEAMS_STR[TEAM_TERRORIST]);
+			
+			if(g_iRoundReset)
 			{
-				g_iFrags[iPlayer][0] += get_user_frags(iPlayer);
-				g_iFrags[iPlayer][1] += get_user_deaths(iPlayer);
+				client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_WON",g_iRound[g_iState],PUG_MOD_CS_TEAMS_STR[TEAM_TERRORIST]);
 			}
 		}
-	}
-}
-
-public HOOK_JoinTeamHandle(id)
-{
-	return PUG_CheckTeam(id,read_argv_int(1));
-}
-
-public HOOK_TeamSelectHandle(id,iKey)
-{
-	return PUG_CheckTeam(id,(iKey + 1));
-}
-
-PUG_CheckTeam(id,iSlot)
-{
-	if(iSlot == 5)
-	{
-		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_AUTO");		
-		return PLUGIN_HANDLED;
-	}
-	
-	if(iSlot == 6)
-	{
-		if(!get_pcvar_num(g_pAllowSpec) && !access(id,ADMIN_LEVEL_A))
+		else if(Status == WINSTATUS_CTS)
 		{
-			client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_SPEC");
-			return PLUGIN_HANDLED;
+			g_iRound[g_iState]++;
+			
+			g_iScore[TEAM_CT][g_iState]++;
+			
+			client_print(0,print_console,"%L",LANG_SERVER,"PUG_ROUND_WON",THIS_GetRound(),PUG_MOD_CS_TEAMS_STR[TEAM_CT]);
+			
+			if(g_iRoundReset)
+			{
+				client_print_color(0,print_team_blue,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_WON",g_iRound[g_iState],PUG_MOD_CS_TEAMS_STR[TEAM_CT]);
+			}
 		}
-	}
-	
-	if((iSlot == 1) || (iSlot == 2))
-	{
-		if(PUG_GetPlayersTeam(CsTeams:iSlot) >= (get_pcvar_num(g_pPlayersMax) / 2))
+		else if(Status == WINSTATUS_DRAW)
 		{
-			client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_FULL");
-			return PLUGIN_HANDLED;
-		}
-	}
-	
-	new CurrentTeam = get_user_team(id);
-	
-	if(iSlot == CurrentTeam)
-	{
-		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_SAME");
-		return PLUGIN_HANDLED;
-	}
-	
-	if(g_iState == STATE_START && CurrentTeam == 0)
-	{
-		if(get_pcvar_num(g_pAllowSpec))
-		{
-			engclient_cmd(id,"jointeam","6");
-			engclient_cmd(id,"joinclass","5");
+			client_print(0,print_console,"%L",LANG_SERVER,"PUG_ROUND_DRAW",THIS_GetRound());
+			
+			if(g_iRoundReset)
+			{
+				client_print_color(0,print_team_default,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_ROUND_DRAW",g_iRound[g_iState]);
+			}
 		}
 		
-		return PLUGIN_HANDLED;	
-	}
-	
-	if(STATE_START <= g_iState <= STATE_END)
-	{
-		if(CurrentTeam == 1 || CurrentTeam == 2)
+		if(PUG_CheckRound())
 		{
-			client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_NONE");
-			return PLUGIN_HANDLED;
+			set_task(tmDelay,"PUG_Next");
 		}
-	}
-	
-	return PLUGIN_CONTINUE;
-}
-
-public HOOK_JoinedClass(id)
-{
-	if(pev_valid(id) == 2)
-	{
-		if(get_ent_data(id,"CBasePlayer","m_iMenu") == CS_Menu_ChooseAppearance && get_ent_data(id,"CBasePlayer","m_iJoiningState") == CS_STATE_PICKING_TEAM)
-		{
-			set_task(2.0,"PUG_JoinMessage",id);	
-		}
-	}
-}
-
-public PUG_JoinMessage(id)
-{
-	if(is_user_connected(id))
-	{
-		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_BUILD_STRING1",PUG_MOD_PLUGIN,PUG_MOD_VERSION,PUG_MOD_AUTHOR);
-		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_BUILD_STRING2");
 	}
 }

@@ -3,9 +3,8 @@
 #endif
 #define _PugMenus_included
 
-#define PUG_CAPTAIN_PLAYERS	4
-#define PUG_MENU_MAPS		32
-#define PUG_MENU_TEAM		6
+#define PUG_MENU_MAPS 32
+#define PUG_MENU_TEAM 6
 
  /**
  * Store current view menu id for players
@@ -15,19 +14,18 @@ stock g_iViewMenu[MAX_PLAYERS+1] = {-1,...};
  /**
  * Display an menu for all players that are in teams
  *
- * @param Menu	The menu to display for users
+ * @param iMenu	The menu to display for users
  *
  * @noreturn
  */
 stock PUG_DisplayMenuAll(iMenu)
 {
-	new iPlayers[MAX_PLAYERS],iNum,iPlayer;
-	
+	new iPlayers[MAX_PLAYERS],iNum;
 	get_players(iPlayers,iNum,"ch");
 	
-	arrayset(g_iViewMenu,-1,sizeof(g_iViewMenu));
+	new iPlayer;
 	
-	for(new i;i < iNum;i++) 
+	for(new i;i < iNum;i++)
 	{
 		iPlayer = iPlayers[i];
 
@@ -36,6 +34,31 @@ stock PUG_DisplayMenuAll(iMenu)
 			PUG_DisplayMenuSingle(iPlayer,iMenu);
 		}
 	}
+}
+
+ /**
+ * Display an menu for all players of selected team
+ *
+ * @param iMenu		The menu to display for users
+ * @param szTeam	The team to display menu: TERRORIST, CT, SPECTATOR
+ *
+ * @return		Number of players that menu will display
+ */
+stock PUG_DisplayMenuTeam(iMenu,szTeam[])
+{
+	new iPlayers[MAX_PLAYERS],iNum;
+	get_players(iPlayers,iNum,"che",szTeam);
+	
+	new iPlayer;
+	
+	for(new i;i < iNum;i++)
+	{
+		iPlayer = iPlayers[i];
+
+		PUG_DisplayMenuSingle(iPlayer,iMenu);
+	}
+	
+	return iNum;
 }
 
  /**
@@ -59,9 +82,9 @@ stock PUG_DisplayMenuSingle(id,iMenu)
 
 public PUG_DisplayMenuClient(id)
 {
-	if(g_iViewMenu[id] != -1 && is_user_connected(id))
+	if((g_iViewMenu[id] != -1) && is_user_connected(id))
 	{
-		new iMenu[2];
+		new iMenu[2] = {0,0};
 
 		if(!player_menu_info(id,iMenu[0],iMenu[1]))
 		{
@@ -100,18 +123,23 @@ stock PUG_CancelMenu(id)
 	if(id)
 	{
 		g_iViewMenu[id] = -1;
+		
 		menu_cancel(id);
 	}
 	else
 	{
-		arrayset(g_iViewMenu,-1,sizeof(g_iViewMenu));
+		new iPlayers[MAX_PLAYERS],iNum;
+		get_players(iPlayers,iNum,"ch");
 		
-		for(new iPlayer;iPlayer <= MaxClients;iPlayer++)
+		new iPlayer;
+		
+		for(new i;i < iNum;i++)
 		{
-			if(is_user_connected(iPlayer))
-			{
-				menu_cancel(iPlayer);
-			}
+			iPlayer = iPlayers[i];
+			
+			g_iViewMenu[iPlayer] = -1;
+			
+			menu_cancel(iPlayer);
 		}
 	}	
 }

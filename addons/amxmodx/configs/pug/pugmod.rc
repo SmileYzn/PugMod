@@ -1,26 +1,31 @@
-pug_players_min		"10"			// Minimum of players to start a game
-pug_players_max		"10"			// Maximum of players allowed in the teams
-pug_rounds_max		"30"			// Rounds to play before start overtime
-pug_rounds_ot		"3"			// Win difference to determine a winner in overtime
-pug_force_ot		"1"			// Force Overtime (0 End tied, 1 Force Overtime)
-pug_allow_spec		"1"			// Allow Spectators in game
-pug_allow_hltv		"1"			// Allow HLTV in game
-pug_handle_time		"10.0"			// Time to PUG change states
-pug_drop_ban_time	"15"			// Minutes of ban players that leave from game in live
-pug_ready_type		"1"			// Ready system sype (1 Ready commands, 0 Timer Counter)
-pug_vote_delay		"15.0"			// How long voting session goes on
-pug_vote_map_enabled	"1"			// Active vote map in pug (0 Disable, 1 Enable, 2 Random map)
-pug_teams_enforcement	"0"			// The teams method for assign teams (0 Vote, 1 Captains, 2 Random, 3 None, 4 Skill Balanced, 5 Swap Teams)
-pug_vote_percent	"0.7"			// Vote percent to execute actions
-pug_vote_kick_ban_time	"0"			// Minutes to temporary ban if player has kicked (0 to disable)
-pug_vote_timeout_time	"60"			// Seconds to pause round when timeout is running
-pug_warmup_grenade	"0"			// Allow buy grenades at warmup session
+﻿pug_players_min			"10"			// Minimum of players to start a game
+pug_players_max			"10"			// Maximum of players allowed in game
+pug_play_rounds			"30"			// Rounds to play before start overtime
+pug_play_overtime_rounds	"3"			// Win difference to determine a winner in overtime
+pug_play_overtime		"1"			// Play Overtime (0 Sudden Death, 1 Force Overtime, 2 End Tied)
+pug_play_best_rounds		"0"			// Play Best of X rounds (0 disable, or round count to enable)
+pug_allow_spec			"1"			// Allow Spectators in game
+pug_allow_hltv			"1"			// Allow HLTV in game
+pug_handle_time			"10.0"			// Time to PUG change states
+pug_drop_ban_time		"15"			// Minutes of ban players that leave from game in live
+pug_force_join_team		"1"			// Force players join when connect to server
+pug_block_pick_team		"1"			// Block players from choosing teams
+pug_ready_type			"1"			// Ready system type (1 Ready System, 0 Timer Counter)
+pug_ready_timer			"60.0"			// Time limit to start match
+pug_vote_map_enabled		"1"			// Active vote map in pug (0 Disable, 1 Enable, 2 Random map)
+pug_teams_enforcement		"-1"			// The teams method for assign teams (-1 Vote, 0 Leaders, 1 Random, 2 None, 3 Skill Balanced, 4 Swap Teams, 5 Knife Round)
+pug_stats_round_end		"1"			// Display round stats at console when round end
+pug_stats_scoreboard		"1"			// Store team scores on scoreboard after swap teams
+pug_stats_game_desc		"1"			// Show scores and match status at game description
+pug_vote_percent		"0.7"			// Vote percent to execute actions
+pug_vote_kick_ban_time		"30"			// Minutes to temporary ban if player has vote kicked (0 to disable)
+pug_vote_timeout_time		"60"			// Seconds to pause round when timeout is running
 
-pug_cfg_pugmod		"pugmod.rc"		// Config executed for pugmod cvars
-pug_cfg_warmup		"warmup.rc"		// Used at warmup session in pug mod
-pug_cfg_start		"start.rc"		// Executed when vote session starts
-pug_cfg_1st		"esl.rc"		// Used when the match begin (Live config)
-pug_cfg_halftime	"halftime.rc"		// Used at half-time session
-pug_cfg_2nd		"esl.rc"		// Used when the match begin (Live config)
-pug_cfg_overtime	"esl-ot.rc"		// Used at Overtime session
-pug_cfg_end		"end.rc"		// Executed when the match ends
+pug_cfg_pugmod			"pugmod.rc"		// Config executed for pugmod cvars
+pug_cfg_warmup			"warmup.rc"		// Used at warmup session in pug mod
+pug_cfg_start			"start.rc"		// Executed when vote session starts
+pug_cfg_1st			"esl.rc"		// Used when the match begin (Live config)
+pug_cfg_halftime		"halftime.rc"		// Used at half-time session
+pug_cfg_2nd			"esl.rc"		// Used when the match begin (Live config)
+pug_cfg_overtime		"esl-ot.rc"		// Used at Overtime session
+pug_cfg_end			"end.rc"		// Executed when the match ends

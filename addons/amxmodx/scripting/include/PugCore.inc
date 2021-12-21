@@ -3,14 +3,17 @@
 #endif
 #define _PugCore_included
 
-#include <amxmodx>
 #include <amxmisc>
-#include <cstrike>
-#include <fakemeta>
-#include <hamsandwich>
+#include <reapi>
 
-#if AMXX_VERSION_NUM < 200
-	#assert AMX Mod X v1.10 or later library required!
+#pragma semicolon 1
+
+#if AMXX_VERSION_LOCAL_REV_NUM < 5449
+	#assert AMX Mod X version 1.10.0.5449 or later required!
+#endif
+
+#if REAPI_VERSION < 520236
+	#assert ReAPI version 5.20.236 or later required!
 #endif
 
 #pragma reqlib "PugCore"
@@ -18,11 +21,17 @@
 	#pragma loadlib "PugCore"
 #endif
 
-#define PUG_MOD_PLUGIN 		"CS Pug Mod"
-#define PUG_MOD_VERSION		"3.1.1"
+/**
+ * Pug Mod version definition
+ */
+#define PUG_MOD_PLUGIN          "CS Pug Mod"
+#define PUG_MOD_VERSION         "4.0.1"
 #define PUG_MOD_AUTHOR		"SmileY"
 #define PUG_MOD_HEADER		"^4[PUG]^1"
 
+/**
+ * Pug Mod states
+ */
 enum _:PUG_MOD_STATES
 {
 	STATE_DEAD,
@@ -35,19 +44,10 @@ enum _:PUG_MOD_STATES
 	STATE_END
 };
 
-stock const PUG_MOD_STATES_STR[PUG_MOD_STATES][] =
-{
-	"Dead",
-	"Warmup",
-	"Starting",
-	"First Half",
-	"Half Time",
-	"Second Half",
-	"Overtime",
-	"Finished"
-};
-
-stock const PUG_MOD_CS_TEAMS_STR[CsTeams][] =
+/**
+ * Pug Mod Team names (Counter-Strike)
+ */
+stock const PUG_MOD_CS_TEAMS_STR[TeamName][] =
 {
 	"Unassigned",
 	"Terrorists",
@@ -58,8 +58,6 @@ stock const PUG_MOD_CS_TEAMS_STR[CsTeams][] =
 /**
  * Call next Pug Mod State
  *
- * @note This is useful for call Pug Mod states automatically.
- *
  * @noreturn
  */
 native PUG_RunState();
@@ -67,22 +65,24 @@ native PUG_RunState();
 /**
  * Called just after the Pug Mod change the state
  *
- * @note This is useful to do what you want :D
- *
  * @param iState		The new state that was called
+ * @param szState               The new state name was called
  *
  * @noreturn
  */
-forward PUG_Event(iState);
+forward PUG_Event(iState,szState[]);
 
 /**
- * Get Pug Mod State
+ * Get Pug Mod State, and optionally retrieves the name of state
  *
- * @note This return current state of pug mod
+ * @param szState       Buffer to copy state name to
+ * @param iLen          Maximum size of buffer
  *
- * @return	Return the state enum
+ * @note                This return current state of pug mod
+ *
+ * @return              Return the state enum index
  */
-native PUG_GetState();
+native PUG_GetState(szState[] = "",iLen = 0);
 
 /**
  * Get a team score
@@ -104,14 +104,22 @@ native PUG_GetScore(iTeam);
  */
 native PUG_GetRound();
 
+/**
+ * Get state of reset rounds
+ *
+ * @note        Return 0 if is not set, 1 otherwise
+ *
+ * @return      Return the state of reset rounds
+ */
+native PUG_GetReset();
 
 /**
- * Stop the pug with a winner: 1 Team TR, 2 Team CT
+ * Stop the pug with a winner: TEAM_TERRORIST, TEAM_CT, TEAM_UNASSIGNED
  *
  * @param iTeam     	The team index to set as winner
  *
- * @note If an invalid team is passed, game will end as tied
+ * @note If team is TEAM_UNASSIGNED, game will end tied
  *
  * @noreturn
  */
-native PUG_SetEnded(iTeam);
+native PUG_SetEnded(TeamName:iWinner);

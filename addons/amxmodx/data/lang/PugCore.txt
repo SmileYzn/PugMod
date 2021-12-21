@@ -1,4 +1,13 @@
 ﻿[en]
+PUG_STATE_DEAD				= Dead
+PUG_STATE_WARMUP			= Warmup
+PUG_STATE_START				= Starting
+PUG_STATE_FIRST_HALF			= First Half
+PUG_STATE_HALFTIME			= Half Time
+PUG_STATE_SECOND_HALF			= Second Half
+PUG_STATE_OVERTIME			= Overtime
+PUG_STATE_END				= Finished
+
 PUG_BUILD_STRING1			= %s Build %s (%s)
 PUG_BUILD_STRING2			= Say ^3.help^1 to view command list
 
@@ -17,91 +26,92 @@ PUG_DESC_STOP				= Force Pug Mod to stop.
 PUG_DESC_HELP 				= Show PUG commands.
 PUG_DESC_HELP_ADMIN 			= Show ADMIN commands.
 
-PUG_LIVE_HUD_MSG			= --- MATCH IS LIVE ---
+PUG_LIVE_HUD_1				= --- MATCH IS LIVE ---
+PUG_LIVE_HUD_2 				= --- BEST OF %i ROUNDS --
 
 PUG_WARMUP_MSG				= Warmup started, get ready!
-PUG_LIVE_1ST 				= First Half started, Good Luck & Have Fun!
-PUG_HALFTIME 				= Half Time started, changing teams automatically.
-PUG_LIVE_2ND 				= Second Half started, Good Luck & Have Fun!
-PUG_LIVE_OT 				= Overtime started, Good Luck & Have Fun!
+PUG_LIVE_1ST 				= First Half started: Good Luck & Have Fun!
+PUG_HALFTIME 				= Half Time started.
+PUG_LIVE_2ND 				= Second Half started: Good Luck & Have Fun!
+PUG_LIVE_OT 				= Overtime started: Good Luck & Have Fun!
+
+PUG_SWAP_TEAMS				= Changing teams automatically.
 
 PUG_KICK_MSG_FULL			= Server is full.
 PUG_KICK_MSG_HLTV			= HLTV not allowed.
 
-PUG_GAME_DESC_LIVE			= TR %i [%s] %i CT
-PUG_GAME_DESC_NOT_LIVE			= Pug Mod: %s
+PUG_TEAM_CHANGE 			= ^3Manual team changes is not allowed.
 
-PUG_ROUND_START 			= Round %i started.
-PUG_ROUND_WON 				= Round %i won by %s.
-PUG_ROUND_DRAW 				= Round %i discarded: No winners.
+PUG_ROUND_START 			= Round ^4%i^1 started.
+PUG_ROUND_WON 				= Round ^4%i^1 won by ^3%s.
+PUG_ROUND_DRAW 				= Round ^4%i^1 discarded: No winners.
 
-PUG_SCORE 				= The ^3%s^1 are winning: %i-%i
+PUG_SCORE 				= ^3%s^1 is winning: %i-%i
 PUG_SCORE_TIED 				= Score is tied: %i-%i
 
 PUG_END_WONALL 				= Game Over! The ^3%s^1 have won the game: %i-%i
 PUG_END_TIED 				= Game Over! Score is tied: %i-%i
 
-PUG_CLIENT_DROP_BAN			= %s banned for %i minutes: %s
-
-PUG_TEAM_SAME 				= You are already on this team.
-PUG_TEAM_AUTO 				= Auto-Select is not allowed.
-PUG_TEAM_SPEC 				= Spectators are not allowed.
-PUG_TEAM_NONE 				= Cannot switch when the game is started.
-PUG_TEAM_FULL 				= This team is already complete.
+PUG_CLIENT_DROP_BAN			= %n banned for %i minutes: %s
 
 PUG_HELP_TITLE 				= Pug Mod Commands
 PUG_HELP_TITLE_ADMIN 			= Admin Commands
 
 [bp]
-PUG_BUILD_STRING1			= %s %s Versao %s (%s)
+PUG_STATE_DEAD				= Nenhum
+PUG_STATE_WARMUP			= Aquecimento
+PUG_STATE_START				= Iniciando
+PUG_STATE_FIRST_HALF			= Primeiro Tempo
+PUG_STATE_HALFTIME			= Intervalo
+PUG_STATE_SECOND_HALF			= Segundo Tempo
+PUG_STATE_OVERTIME			= Overtime
+PUG_STATE_END				= Fim
+
+PUG_BUILD_STRING1			= %s Versão %s (%s)
 PUG_BUILD_STRING2			= Say ^3.help^1 para mais comandos
 
 PUG_STATUS 				= %s (Jogadores: %i) (%i min - %i max)
 PUG_START_PUG 				= ADMIN: Inicou a partida pug.
 PUG_STOP_PUG 				= ADMIN: Parou a partida pug.
 
-PUG_CMD_ERROR 				= Impossivel usar esse comando agora.
-PUG_CMD_OK 				= Acao ^3%s^1 executada com sucesso.
-PUG_CMD_FAIL 				= A acao ^3%s^1 falhou.
+PUG_CMD_ERROR 				= Impossível usar esse comando agora.
+PUG_CMD_OK 				= Acão ^3%s^1 executada com sucesso.
+PUG_CMD_FAIL 				= A acão ^3%s^1 falhou.
 
-PUG_DESC_STATUS				= Mostra o status do PUG.
-PUG_DESC_SCORE 				= Mostra o placar do PUG.
-PUG_DESC_START				= Forca o inicio do Pug Mod.
-PUG_DESC_STOP				= Forca o fim Pug Mod.
-PUG_DESC_HELP 				= Mostra os comandos do PUG.
+PUG_DESC_STATUS				= Mostra o status do Pug Mod.
+PUG_DESC_SCORE 				= Mostra o placar do Pug Mod.
+PUG_DESC_START				= Forçar o início do Pug Mod.
+PUG_DESC_STOP				= Forçar o fim Pug Mod.
+PUG_DESC_HELP 				= Mostra os comandos do Pug Mod.
 PUG_DESC_HELP_ADMIN 			= Mostra os comandos de Admin.
 
-PUG_LIVE_HUD_MSG			= --- MATCH IS LIVE ---
+PUG_LIVE_HUD_1				= --- MATCH IS LIVE ---
+PUG_LIVE_HUD_2 				= --- MELHOR DE %i ROUNDS --
 
 PUG_WARMUP_MSG				= Aquecimento iniciado, prepare-se!
-PUG_LIVE_1ST 				= First Half  iniciado, Good Luck & Have Fun!
-PUG_HALFTIME 				= Half Time iniciado, Trocando os times automaticamente.
-PUG_LIVE_2ND 				= Second Half iniciado, Good Luck & Have Fun!
-PUG_LIVE_OT 				= Overtime iniciado, Good Luck & Have Fun!
+PUG_LIVE_1ST 				= Primeiro tempo  iniciado: Good Luck & Have Fun!
+PUG_HALFTIME 				= Intervalo iniciado.
+PUG_LIVE_2ND 				= Segundo tempo iniciado: Good Luck & Have Fun!
+PUG_LIVE_OT 				= Overtime iniciado: Good Luck & Have Fun!
+
+PUG_SWAP_TEAMS				= Trocando os times automaticamente.
 
 PUG_KICK_MSG_FULL			= Servidor cheio.
-PUG_KICK_MSG_HLTV			= HLTV nao permitido.
+PUG_KICK_MSG_HLTV			= HLTV não permitido.
 
-PUG_GAME_DESC_LIVE			= TR %i [%s] %i CT
-PUG_GAME_DESC_NOT_LIVE			= Pug Mod: %s
+PUG_TEAM_CHANGE 			= ^3Troca manual de times bloqueada.
 
 PUG_ROUND_START 			= Round %i iniciado.
 PUG_ROUND_WON 				= Round %i ganho por %s.
 PUG_ROUND_DRAW 				= Round %i descartado: Nenhum vencedor.
 
-PUG_SCORE 				= Os ^3%s^1 estao vencendo: %i-%i
+PUG_SCORE 				= ^3%s^1 estão vencendo: %i-%i
 PUG_SCORE_TIED 				= Placar empatado: %i-%i
 
 PUG_END_WONALL 				= Fim de Jogo! Os ^3%s^1 venceram: %i-%i
 PUG_END_TIED 				= Fim de Jogo! Placar empatado: %i-%i
 
-PUG_CLIENT_DROP_BAN 			= %s banido por %i minutos: %s
-
-PUG_TEAM_SAME 				= Voce ja esta nesse time.
-PUG_TEAM_AUTO 				= Auto-Select nao permitido.
-PUG_TEAM_SPEC 				= Spectators nao sao permitidos.
-PUG_TEAM_NONE 				= Troca de times nao permitida.
-PUG_TEAM_FULL 				= Esse time ja esta completo.
+PUG_CLIENT_DROP_BAN 			= %n banido por %i minutos: %s
 
 PUG_HELP_TITLE 				= Comandos do Pug Mod
 PUG_HELP_TITLE_ADMIN 			= Comandos do Admin
