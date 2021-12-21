@@ -43,7 +43,7 @@ At the end, server will start a vote map to changelevel to next map automaticall
 <h3>Why CS 1.6 it's sucks</h3>
 <p>
 In first place, You're welcome!<br>
-Actually we have CS:GO a more modern version of the game. But we can still have fun with a game like Counter-Strike that have been played more than 20 years.<br>
+Actually we have CS:GO a more modern version of the game. But we can still have fun with a game like Counter-Strike that have been played more than 20 years.<br>  
 I think i can help community to have more clean servers that want to play a competitive match.
 </p>
 
