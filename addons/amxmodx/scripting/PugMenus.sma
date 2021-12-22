@@ -277,7 +277,6 @@ public PUG_VoteEnd(iVote)
 	{
 		set_task(5.0,"PUG_VoteStart",iVote);
 	}
-
 }
 
 PUG_GetVoteCount(iVote)
@@ -356,12 +355,16 @@ PUG_GetVoteCount(iVote)
 		{
 			rg_swap_all_players();
 			
-			PUG_RunState();
-			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SWAP");
 		}
+		else
+		{
+			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SAME"); 
+		}
 		
-		return g_iSwapTeamVotes[0];
+		PUG_RunState();
+		
+		return 1;
 	}
 	
 	return 0;
