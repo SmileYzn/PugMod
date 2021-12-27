@@ -4,6 +4,7 @@ pug_play_rounds			"30"			// Rounds to play before start overtime
 pug_play_overtime_rounds	"3"			// Win difference to determine a winner in overtime
 pug_play_overtime		"1"			// Play Overtime (0 Sudden Death, 1 Force Overtime, 2 End Tied)
 pug_play_best_rounds		"0"			// Play Best of X rounds (0 disable, or round count to enable)
+pug_play_knife_round		"0"			// Play Knife Round before start match to choose team sides
 pug_allow_spec			"1"			// Allow Spectators in game
 pug_allow_hltv			"1"			// Allow HLTV in game
 pug_handle_time			"10.0"			// Time to PUG change states
