@@ -632,10 +632,10 @@ PUG_ResetRound()
 		
 		PUG_LO3(1);
 		
-		return 1;
+		return true;
 	}
 	
-	return 0;
+	return false;
 }
 
 public PUG_SwapTeams()
