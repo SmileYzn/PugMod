@@ -27,13 +27,13 @@ PUG_DESC_HELP 				= Show PUG commands.
 PUG_DESC_HELP_ADMIN 			= Show ADMIN commands.
 
 PUG_LIVE_HUD_1				= --- MATCH IS LIVE ---
-PUG_LIVE_HUD_2 				= --- BEST OF %i ROUNDS --
+PUG_LIVE_HUD_2 				= --- BEST OF %i ROUNDS ---
 
 PUG_WARMUP_MSG				= Warmup started, get ready!
-PUG_LIVE_1ST 				= First Half started: Good Luck & Have Fun!
+PUG_LIVE_1ST 				= First Half started: ^3Good Luck & Have Fun!
 PUG_HALFTIME 				= Half Time started.
-PUG_LIVE_2ND 				= Second Half started: Good Luck & Have Fun!
-PUG_LIVE_OT 				= Overtime started: Good Luck & Have Fun!
+PUG_LIVE_2ND 				= Second Half started: ^3Good Luck & Have Fun!
+PUG_LIVE_OT 				= Overtime started: ^3Good Luck & Have Fun!
 
 PUG_SWAP_TEAMS				= Changing teams automatically.
 
@@ -86,13 +86,13 @@ PUG_DESC_HELP 				= Mostra os comandos do Pug Mod.
 PUG_DESC_HELP_ADMIN 			= Mostra os comandos de Admin.
 
 PUG_LIVE_HUD_1				= --- MATCH IS LIVE ---
-PUG_LIVE_HUD_2 				= --- MELHOR DE %i ROUNDS --
+PUG_LIVE_HUD_2 				= --- MELHOR DE %i ROUNDS ---
 
 PUG_WARMUP_MSG				= Aquecimento iniciado, prepare-se!
-PUG_LIVE_1ST 				= Primeiro tempo  iniciado: Good Luck & Have Fun!
+PUG_LIVE_1ST 				= Primeiro tempo iniciado: ^3Good Luck & Have Fun!
 PUG_HALFTIME 				= Intervalo iniciado.
-PUG_LIVE_2ND 				= Segundo tempo iniciado: Good Luck & Have Fun!
-PUG_LIVE_OT 				= Overtime iniciado: Good Luck & Have Fun!
+PUG_LIVE_2ND 				= Segundo tempo iniciado: ^3Good Luck & Have Fun!
+PUG_LIVE_OT 				= Overtime iniciado: ^3Good Luck & Have Fun!
 
 PUG_SWAP_TEAMS				= Trocando os times automaticamente.
 
