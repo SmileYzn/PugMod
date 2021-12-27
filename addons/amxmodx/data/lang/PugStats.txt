@@ -5,18 +5,18 @@ PUG_DESC_RDMG 	= Show recived damage.
 PUG_DESC_SUM 	= Round summary.
 
 PUG_HP_NONE 	= No one is alive.
-PUG_HP_CMD 	= ^3%n^1 with %i HP (%i AP)
+PUG_HP_CMD 	= ^3%n^1 with %d HP (%d AP)
 
-PUG_DMG 	= Hit ^3%n^1 %i time(s) (Damage %i)
+PUG_DMG 	= Hit ^3%n^1 %d time(s) (Damage %d)
 PUG_NODMG 	= You do not hit anyone in this round.
 
-PUG_RDMG 	= Hit by ^3%n^1 %i time(s) (Damage %i)
+PUG_RDMG 	= Hit by ^3%n^1 %d time(s) (Damage %d)
 PUG_NORDMG 	= You were not reached in this round.
 
-PUG_SUM 	= (%i dmg / %i hits) to (%i dmg / %i hits) from ^3%n^1 (%i HP)
+PUG_SUM 	= (%d dmg / %d hits) to (%d dmg / %d hits) from ^3%n^1 (%d HP)
 PUG_NOSUM 	= No stats in this round.
 
-PUG_ROUND_DMG 	= (%i dmg / %i hits) to (%i dmg / %i hits) from %n
+PUG_ROUND_DMG 	= (%d dmg / %d hits) to (%d dmg / %d hits) from %n
 
 [bp]
 PUG_DESC_HP 	= Mostra o HP do time adversário.
@@ -25,15 +25,15 @@ PUG_DESC_RDMG 	= Mostra o dano recebido no round.
 PUG_DESC_SUM 	= Mostra o resumo do round.
 
 PUG_HP_NONE 	= Ninguém esta vivo.
-PUG_HP_CMD 	= ^3%n^1 tem %i HP (%i AP)
+PUG_HP_CMD 	= ^3%n^1 tem %d HP (%d AP)
 
-PUG_DMG 	= Acertou ^3%n^1 %i veze(s) (Dano %i)
+PUG_DMG 	= Acertou ^3%n^1 %d veze(s) (Dano %d)
 PUG_NODMG 	= Você não acertou ninguém nesse round.
 
-PUG_RDMG 	= Dano por ^3%n^1 %i veze(s) (Dano %i)
+PUG_RDMG 	= Dano por ^3%n^1 %d veze(s) (Dano %d)
 PUG_NORDMG 	= Voce não foi atingido nesse round.
 
-PUG_SUM 	= (%i dmg / %i hits) em (%i dmg / %i hits) de ^3%n^1 (%i HP)
+PUG_SUM 	= (%d dmg / %d hits) em (%d dmg / %d hits) de ^3%n^1 (%d HP)
 PUG_NOSUM 	= Nehum stats nesse round.
 
-PUG_ROUND_DMG 	= (%i dmg / %i hits) em (%i dmg / %i hits) de %n
+PUG_ROUND_DMG 	= (%d dmg / %d hits) em (%d dmg / %d hits) de %n
