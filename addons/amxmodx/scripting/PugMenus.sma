@@ -8,6 +8,7 @@ enum _:VOTE_TYPE
 	VOTE_MAPS = 2021,
 	VOTE_TEAM,
 	VOTE_LEAD,
+	VOTE_SWAP,
 	VOTE_STOP
 };
 
@@ -19,11 +20,13 @@ new g_iPlayersMin;
 new g_iMapVote;
 new g_iMapVoteType;
 new g_iTeamEnforcement;
+new g_iPlayKnifeRound;
 
 new g_iVoteCount;
 
 new g_iMenuMap;
 new g_iMenuTeams;
+new g_iMenuSwap;
 
 new g_iMapCount;
 new g_szMapList[PUG_MENU_MAPS][MAX_NAME_LENGTH];
@@ -33,6 +36,12 @@ new g_szTeamTypes[PUG_MENU_TEAM][MAX_NAME_LENGTH];
 new g_iTeamVotes[PUG_MENU_TEAM];
 
 new g_iLeader[TeamName];
+
+new g_szSwapTeamType[2][8];
+new g_iSwapTeamVotes[2];
+
+new HookChain:g_hRoundEnd;
+new g_hCurWeapon;
 
 public plugin_init()
 {
@@ -45,6 +54,11 @@ public plugin_init()
 	
 	bind_pcvar_num(create_cvar("pug_vote_map_enabled","1",FCVAR_NONE,"Active vote map in pug (0 Disable, 1 Enable, 2 Random map)"),g_iMapVoteType);
 	bind_pcvar_num(create_cvar("pug_teams_enforcement","-1",FCVAR_NONE,"The teams method for assign teams (-1 Vote, 0 Leaders, 1 Random, 2 None, 3 Skill Balanced, 4 Swap Teams)"),g_iTeamEnforcement);
+	bind_pcvar_num(create_cvar("pug_play_knife_round","0",FCVAR_NONE,"Play Knife Round before start match to choose team sides"),g_iPlayKnifeRound);
+	
+	DisableHookChain(g_hRoundEnd = RegisterHookChain(RG_RoundEnd,"HOOK_RoundEnd",true));
+	
+	disable_event(g_hCurWeapon = register_event("CurWeapon","HOOK_CurWeapon","be","1=1","2!29"));
 }
 
 public OnConfigsExecuted()
@@ -69,6 +83,16 @@ public OnConfigsExecuted()
 	}
 	
 	menu_setprop(g_iMenuTeams,MPROP_EXIT,MEXIT_NEVER);
+	
+	g_iMenuSwap = menu_create("PUG_HUD_SWAP","HANDLER_MenuVote",true);
+	
+	formatex(g_szSwapTeamType[0],sizeof(g_szSwapTeamType[]),"%L",LANG_SERVER,"YES");
+	formatex(g_szSwapTeamType[1],sizeof(g_szSwapTeamType[]),"%L",LANG_SERVER,"NO");
+	
+	menu_additem(g_iMenuSwap,g_szSwapTeamType[0],"0");
+	menu_additem(g_iMenuSwap,g_szSwapTeamType[1],"1");
+	
+	menu_setprop(g_iMenuSwap,MPROP_EXIT,MEXIT_NEVER);
 }
 
 public PUG_Event(iState)
@@ -126,6 +150,23 @@ public PUG_VoteStart(iVote)
 		
 		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMVOTE_START");
 	}
+	else if(iVote == VOTE_SWAP)
+	{
+		new iRoundWinStatus = get_member_game(m_iRoundWinStatus);
+	
+		if(1 <= iRoundWinStatus <= 2)
+		{
+			arrayset(g_iSwapTeamVotes,0,sizeof(g_iSwapTeamVotes));
+		
+			PUG_DisplayMenuTeam(g_iMenuSwap,(iRoundWinStatus == 1) ? "CT" : "TERRORIST");
+			
+			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMVOTE_START");
+		}
+		else
+		{
+			PUG_ChangeTeams(4);
+		}
+	}
 	
 	set_task(15.0,"PUG_VoteEnd",iVote);
 	
@@ -152,6 +193,12 @@ public HANDLER_MenuVote(id,iMenu,iKey)
 			iMode = VOTE_TEAM;
 		
 			g_iTeamVotes[str_to_num(szNum)]++;
+		}
+		else if(iMenu == g_iMenuSwap)
+		{
+			iMode = VOTE_SWAP;
+			
+			g_iSwapTeamVotes[str_to_num(szNum)]++;
 		}
 		
 		client_print_color(0,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_VOTE_CHOOSED",id,szOption);
@@ -192,6 +239,18 @@ public PUG_VoteList(iVote)
 			if(g_iTeamVotes[i])
 			{
 				format(szResult,charsmax(szResult),"%s[%i] %s^n",szResult,g_iTeamVotes[i],g_szTeamTypes[i]);
+			}
+		}
+	}
+	else if(iVote == VOTE_LIST(VOTE_SWAP))
+	{
+		show_hudmessage(0,"%L",LANG_SERVER,"PUG_HUD_SWAP");
+		
+		for(new i;i < 2;i++)
+		{
+			if(g_iSwapTeamVotes[i])
+			{
+				format(szResult,charsmax(szResult),"%s[%i] %s^n",szResult,g_iSwapTeamVotes[i],g_szSwapTeamType[i]);
 			}
 		}
 	}
@@ -292,6 +351,23 @@ PUG_GetVoteCount(iVote)
 		
 		return g_iTeamVotes[iWinner];
 	}
+	else if(iVote == VOTE_SWAP)
+	{
+		if(g_iSwapTeamVotes[0] > g_iSwapTeamVotes[1])
+		{
+			rg_swap_all_players();
+			
+			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SWAP");
+		}
+		else
+		{
+			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SAME"); 
+		}
+		
+		PUG_RunState();
+		
+		return 1;
+	}
 	
 	return 0;
 }
@@ -317,13 +393,13 @@ public PUG_ChangeTeams(iType)
 			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_RANDOM");
 			
-			PUG_RunState();
+			PUG_KnifeRound();
 		}
 		case 2:
 		{
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SAME");
 			
-			PUG_RunState();
+			PUG_KnifeRound();
 		}
 		case 3:
 		{
@@ -331,7 +407,7 @@ public PUG_ChangeTeams(iType)
 			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SKILL");
 			
-			PUG_RunState();
+			PUG_KnifeRound();
 		}
 		case 4:
 		{
@@ -339,7 +415,17 @@ public PUG_ChangeTeams(iType)
 			
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_SWAP");
 			
-			PUG_RunState();
+			PUG_KnifeRound();
+		}
+		case 5:
+		{
+			PUG_LO3(1);
+			
+			enable_event(g_hCurWeapon);
+			
+			EnableHookChain(g_hRoundEnd);
+			
+			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_KNIFE");
 		}
 	}
 }
@@ -506,7 +592,7 @@ public PUG_LeaderMenu(id)
 	}
 	else
 	{
-		PUG_RunState();
+		PUG_KnifeRound();
 		
 		remove_task(VOTE_LEAD);
 	}
@@ -557,5 +643,69 @@ public PUG_LeaderGetPlayer(id,iPlayer)
 	else
 	{
 		PUG_LeaderMenu(id);
+	}
+}
+
+PUG_KnifeRound()
+{
+	if(g_iPlayKnifeRound)
+	{
+		PUG_LO3(1);
+		
+		enable_event(g_hCurWeapon);
+		
+		EnableHookChain(g_hRoundEnd);
+		
+		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAMS_KNIFE");
+		
+		return true;
+	}
+	
+	PUG_RunState();
+	
+	return false;
+}
+
+public HOOK_CurWeapon(id)
+{
+	engclient_cmd(id,"weapon_knife");
+	
+	return PLUGIN_HANDLED;
+}
+
+public HOOK_RoundEnd(WinStatus:Status,ScenarioEventEndRound:Event)
+{
+	if(Status != WINSTATUS_NONE)
+	{
+		if(ROUND_CTS_WIN <= Event <= ROUND_TERRORISTS_WIN)
+		{
+			DisableHookChain(g_hRoundEnd);
+			
+			disable_event(g_hCurWeapon);
+			
+			PUG_VoteStart(VOTE_SWAP);
+		}
+		else
+		{
+			PUG_LO3(1);
+			
+			client_print_color(0,print_team_default,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_DRAW_ROUND");
+		}
+	}
+}
+
+public PUG_LO3(iDelay)
+{
+	if(1 <= iDelay <= 3)
+	{
+		set_task(float(iDelay+1),"PUG_LO3",iDelay+1);
+		
+		set_cvar_num("sv_restart",iDelay);
+	}
+	else
+	{
+		set_hudmessage(0,255,0,-1.0,0.3,0,6.0,6.0);
+		
+		show_hudmessage(0,"%L",LANG_SERVER,"PUG_TEAM_TYPE_5");
 	}
 }
