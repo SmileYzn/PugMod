@@ -25,7 +25,7 @@
  * Pug Mod version definition
  */
 #define PUG_MOD_PLUGIN          "CS Pug Mod"
-#define PUG_MOD_VERSION         "4.0.2"
+#define PUG_MOD_VERSION         "4.0.1"
 #define PUG_MOD_AUTHOR		"SmileY"
 #define PUG_MOD_HEADER		"^4[PUG]^1"
 
