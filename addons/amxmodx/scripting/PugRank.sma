@@ -9,7 +9,6 @@ enum _:ePlayerStats
 	Shot,					// Test
 	Hit,					// Test
 	Damage,					// Test
-	Float:WinShare, 		// Create
 
 	RoundPlay, 				// Test
 	RoundLose, 				// Test
@@ -20,13 +19,14 @@ enum _:ePlayerStats
 	BombExplode, 			// Test
 
 	Streak[MAX_PLAYERS],	// Test
-	Versus[MAX_PLAYERS],	// Create
+	Versus[MAX_PLAYERS],	// Test
 };
 
 new g_Stats[MAX_PLAYERS+1][ePlayerStats];
 
 new g_iRoundKill[MAX_PLAYERS+1];
 new g_iRoundDamage[MAX_PLAYERS+1][MAX_PLAYERS+1];
+new g_iRoundVersus[MAX_PLAYERS+1];
 
 new HookChain:g_hCSGameRules_PlayerKilled;
 new HookChain:g_hCBasePlayer_TakeDamage;
@@ -62,7 +62,9 @@ public client_putinserver(id)
 {
 	arrayset(g_Stats[id],0,sizeof(g_Stats[]));
 
-	arrayset(g_iRoundKill[id],0,sizeof(g_iRoundKill[]));
+	g_iRoundKill[id] = 0;
+		
+	g_iRoundVersus[id] = 0;
 }
 
 public PUG_Event(iState)
@@ -126,6 +128,27 @@ public HOOK_CSGameRules_PlayerKilled(const Victim,const Killer,const Inflictor)
 			{
 				g_Stats[iPlayer][Assist]++;
 			}
+			
+			if(!g_iRoundVersus[iPlayer] && is_user_alive(iPlayer))
+			{
+				new szTeam[12] = {0};
+				
+				if(1 <= get_user_team(iPlayer,szTeam,charsmax(szTeam)) <= 2)
+				{
+					new iPlayers[MAX_PLAYERS],iNum;
+					get_players(iPlayers,iNum,"ae",szTeam);
+					
+					if(iNum == 1)
+					{
+						get_players(iPlayers,iNum,"ae",(szTeam[0] == 'T') ? "CT" : "TERRORIST");
+						
+						if(iNum)
+						{
+							g_iRoundVersus[iPlayer] = iNum;
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -165,6 +188,8 @@ public HOOK_CSGameRules_OnRoundFreezeEnd()
 	for(new iPlayer = 1;iPlayer <= MaxClients;iPlayer++)
 	{
 		g_iRoundKill[iPlayer] = 0;
+		
+		g_iRoundVersus[iPlayer] = 0;
 
 		arrayset(g_iRoundDamage[iPlayer],0,sizeof(g_iRoundDamage[]));
 	}
@@ -174,36 +199,36 @@ public HOOK_RoundEnd(WinStatus:Status,ScenarioEventEndRound:Event,Float:tmDelay)
 {
 	if(Status != WINSTATUS_NONE && Status != WINSTATUS_DRAW)
 	{
-		new iPlayers[MAX_PLAYERS],iNum;
-
-		get_players(iPlayers,iNum,"h");
-
-		new iPlayer;
-
 		new TeamName:iWinner = (Status == WINSTATUS_TERRORISTS) ? TEAM_TERRORIST : TEAM_CT;
 
 		new TeamName:iTeam = TEAM_UNASSIGNED;
 
-		for(new i;i < iNum;i++)
+		for(new iPlayer;iPlayer <= MaxClients;iPlayer++)
 		{
-			iPlayer = iPlayers[i];
-
 			g_Stats[iPlayer][RoundPlay]++;
 
 			g_Stats[iPlayer][Streak][g_iRoundKill[iPlayer]]++;
-
-			iTeam = get_member_s(iPlayer,m_iTeam);
-
-			if(TEAM_TERRORIST <= iTeam <= TEAM_CT)
-			{
-				if(iWinner == iTeam)
+			
+			if(is_user_connected(iPlayer))
+			{			
+				iTeam = get_member_s(iPlayer,m_iTeam);
+	
+				if(TEAM_TERRORIST <= iTeam <= TEAM_CT)
 				{
-					g_Stats[iPlayer][RoundWin]++;
-				}
-				else
-				{
-					g_Stats[iPlayer][RoundLose]++;
-				}
+					if(iWinner == iTeam)
+					{
+						g_Stats[iPlayer][RoundWin]++;
+						
+						if(g_iRoundVersus[iPlayer] > 0)
+						{
+							g_Stats[iPlayer][Versus][g_iRoundVersus[iPlayer]]++;
+						}
+					}
+					else
+					{
+						g_Stats[iPlayer][RoundLose]++;
+					}
+				}				
 			}
 		}
 	}
