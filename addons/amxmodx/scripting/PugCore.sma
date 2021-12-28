@@ -287,7 +287,7 @@ public PUG_Next()
 		}
 		case STATE_OVERTIME:
 		{
-			if((g_iRound[STATE_OVERTIME] % (g_iPlayOvertimeRounds+1)) == 0)
+			if((THIS_GetRound() % g_iPlayOvertimeRounds) == 0)
 			{
 				g_iState = STATE_HALFTIME;
 			}
