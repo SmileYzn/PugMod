@@ -24,10 +24,10 @@
 /**
  * Pug Mod version definition
  */
-#define PUG_MOD_PLUGIN          "CS Pug Mod"
-#define PUG_MOD_VERSION         "4.0.4"
-#define PUG_MOD_AUTHOR		"SmileY"
-#define PUG_MOD_HEADER		"^4[PUG]^1"
+#define PUG_MOD_PLUGIN      "CS Pug Mod"
+#define PUG_MOD_VERSION     "4.0.5"
+#define PUG_MOD_AUTHOR      "SmileY"
+#define PUG_MOD_HEADER      "^4[PUG]^1"
 
 /**
  * Pug Mod states
@@ -93,7 +93,7 @@ native PUG_GetState(szState[] = "",iLen = 0);
  *
  * @return      Return score on success, -1 on fail
  */
-native PUG_GetScore(iTeam);
+native PUG_GetScore(TeamName:iTeam);
 
 /**
  * Get current round count
