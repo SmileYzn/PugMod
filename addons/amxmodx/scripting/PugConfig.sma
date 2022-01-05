@@ -19,10 +19,15 @@ public plugin_init()
 
 public plugin_cfg()
 {
-	PUG_Event(STATE_DEAD,"Dead");
+	PUG_ExecConfig(STATE_DEAD);
 }
 
 public PUG_Event(iState)
+{
+	PUG_ExecConfig(iState);
+}
+
+PUG_ExecConfig(iState)
 {
 	new szPath[PLATFORM_MAX_PATH];
 	PUG_GetFilePath(g_szConfig[iState],szPath,charsmax(szPath));
