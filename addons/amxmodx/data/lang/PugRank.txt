@@ -1,0 +1,13 @@
+﻿[en]
+PUG_DESC_RANK		= View your ranking for a specific type of stats
+PUG_DESC_STATS		= <name> - View specific player's stats or your own
+
+PUG_RANK_TITLE		= Leader Rankings
+PUG_STATS_TITLE		= Player Stats
+
+[bp]
+PUG_DESC_RANK		= Veja o ranking para uma estatística específica
+PUG_DESC_STATS		= <nome> - Veja as estatística de um jogador ou a sua
+
+PUG_RANK_TITLE		= Liderança de Ranking
+PUG_STATS_TITLE		= Estatísticas do Jogador
