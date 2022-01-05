@@ -46,7 +46,7 @@ PUG_ROUND_START 			= Round ^4%i^1 started.
 PUG_ROUND_WON 				= Round ^4%i^1 won by ^3%s.
 PUG_ROUND_DRAW 				= Round ^4%i^1 discarded: No winners.
 
-PUG_SCORE 				= ^3%s^1 is winning: %i-%i
+PUG_SCORE 				= The ^3%s^1 are winning: %i-%i
 PUG_SCORE_TIED 				= Score is tied: %i-%i
 
 PUG_END_WONALL 				= Game Over! The ^3%s^1 have won the game: %i-%i
@@ -105,7 +105,7 @@ PUG_ROUND_START 			= Round %i iniciado.
 PUG_ROUND_WON 				= Round %i ganho por %s.
 PUG_ROUND_DRAW 				= Round %i descartado: Nenhum vencedor.
 
-PUG_SCORE 				= ^3%s^1 estão vencendo: %i-%i
+PUG_SCORE 				= Os ^3%s^1 estão vencendo: %i-%i
 PUG_SCORE_TIED 				= Placar empatado: %i-%i
 
 PUG_END_WONALL 				= Fim de Jogo! Os ^3%s^1 venceram: %i-%i
