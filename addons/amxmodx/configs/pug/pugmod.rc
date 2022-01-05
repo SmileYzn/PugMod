@@ -30,3 +30,9 @@ pug_cfg_halftime		"halftime.rc"		// Used at half-time session
 pug_cfg_2nd			"esl.rc"		// Used when the match begin (Live config)
 pug_cfg_overtime		"esl-ot.rc"		// Used at Overtime session
 pug_cfg_end			"end.rc"		// Executed when the match ends
+
+pug_db_host			""			// Stats DB Host
+pug_db_name			""			// Stats DB Name
+pug_db_user			""			// Stats DB User
+pug_db_pass			""			// Stats DB Pass
+pug_db_link			""			// Stats DB Link (Ie. http://statspage.com)
