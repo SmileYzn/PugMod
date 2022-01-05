@@ -145,6 +145,7 @@ stock PUG_BuildHelpFile(iLevel)
 		if(iCommands)
 		{
 			new iFile = fopen(szPath,"wt");
+			
 			fputs(iFile,"<style type='text/css'>body{background:#000;margin:2px;color:#FFB000;font-family:Tahoma}</style><table width='100%%'>");
 			
 			new szString[MAX_NAME_LENGTH],iFlag,szInfo[128];
