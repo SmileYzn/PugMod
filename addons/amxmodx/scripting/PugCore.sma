@@ -113,8 +113,6 @@ public OnConfigsExecuted()
 	PUG_BuildHelpFile(ADMIN_ALL);
 	PUG_BuildHelpFile(ADMIN_LEVEL_A);
 	
-	PUG_BuildCvarsFile("pugmod.rc",false);
-	
 	formatex(g_szStates[STATE_DEAD],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_DEAD");
 	formatex(g_szStates[STATE_WARMUP],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_WARMUP");
 	formatex(g_szStates[STATE_START],charsmax(g_szStates[]),"%L",LANG_SERVER,"PUG_STATE_START");
@@ -269,7 +267,7 @@ public PUG_Next()
 		}
 		case STATE_SECOND_HALF:
 		{
-			if(PUG_GetTotalScore(TEAM_TERRORIST) + PUG_GetTotalScore(TEAM_CT) == g_iPlayRounds)
+			if((PUG_GetTotalScore(TEAM_TERRORIST) == (g_iPlayRounds / 2)) && (PUG_GetTotalScore(TEAM_CT) == (g_iPlayRounds / 2)))
 			{
 				if(g_iPlayOvertime == 1)
 				{
@@ -354,18 +352,10 @@ public THIS_SetEnded(iPlugin,iParams)
 		if(TEAM_TERRORIST <= iWinner <= TEAM_CT)
 		{
 			new TeamName:iLosers = (iWinner == TEAM_TERRORIST) ? TEAM_CT : TEAM_TERRORIST;
+
+			arrayset(g_iScore[iWinner],THIS_GetRound(),sizeof(g_iScore[]));
 			
-			g_iRound[STATE_FIRST_HALF]  = (g_iPlayRounds/2);
-			g_iRound[STATE_SECOND_HALF] = 1;
-			g_iRound[STATE_OVERTIME]    = 0;
-			
-			g_iScore[iWinner][STATE_FIRST_HALF]  = g_iRound[STATE_FIRST_HALF];
-			g_iScore[iWinner][STATE_SECOND_HALF] = g_iRound[STATE_SECOND_HALF];
-			g_iScore[iWinner][STATE_OVERTIME]    = g_iRound[STATE_OVERTIME];
-			
-			g_iScore[iLosers][STATE_FIRST_HALF]  = 0;
-			g_iScore[iLosers][STATE_SECOND_HALF] = 0;
-			g_iScore[iLosers][STATE_OVERTIME]    = 0;
+			arrayset(g_iScore[iLosers],0,sizeof(g_iScore[]));
 		}
 	}
 	
@@ -681,14 +671,18 @@ bool:PUG_CheckRound()
 		{
 			new iScoreTR = PUG_GetTotalScore(TEAM_TERRORIST);
 			new iScoreCT = PUG_GetTotalScore(TEAM_CT);
+			new iDivisor = (g_iPlayRounds / 2);
 			
-			if((iScoreTR > (g_iPlayRounds / 2)) || (iScoreCT > (g_iPlayRounds / 2)))
+			if((iScoreTR > iDivisor) || (iScoreCT > iDivisor))
 			{
 				return true;
 			}
-			else if(g_iPlayOvertime && (iScoreTR == (g_iPlayRounds / 2)) && (iScoreCT == (g_iPlayRounds / 2)))
+			else if((iScoreTR == iDivisor) && (iScoreCT == iDivisor))
 			{
-				return true;
+				if(g_iPlayOvertime == 1)
+				{
+					return true;
+				}
 			}	
 		}
 	}
