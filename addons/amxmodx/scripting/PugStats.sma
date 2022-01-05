@@ -152,7 +152,7 @@ public HOOK_TeamScore()
 		new szTeam[4] = {0};
 		get_msg_arg_string(1,szTeam,charsmax(szTeam));
 		
-		set_msg_arg_int(2,ARG_SHORT,(szTeam[0] == 'T') ? PUG_GetScore(1) : PUG_GetScore(2));
+		set_msg_arg_int(2,ARG_SHORT,(szTeam[0] == 'T') ? PUG_GetScore(TEAM_TERRORIST) : PUG_GetScore(TEAM_CT));
 	}
 	
 	if(g_iStatsGameDescription)
@@ -161,7 +161,7 @@ public HOOK_TeamScore()
 		
 		if(bRunning)
 		{
-			formatex(szText,charsmax(szText),"%s: TR %i - %i CT",g_szState,PUG_GetScore(1),PUG_GetScore(2));
+			formatex(szText,charsmax(szText),"%s: TR %i - %i CT",g_szState,PUG_GetScore(TEAM_TERRORIST),PUG_GetScore(TEAM_CT));
 		}
 		else
 		{
