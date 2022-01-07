@@ -8,8 +8,8 @@
 
 #pragma semicolon 1
 
-#if AMXX_VERSION_LOCAL_REV_NUM < 5449
-	#assert AMX Mod X version 1.10.0.5449 or later required!
+#if AMXX_VERSION_LOCAL_REV_NUM < 5461
+	#assert AMX Mod X version 1.10.0.5461 or later required!
 #endif
 
 #if REAPI_VERSION < 520236
@@ -25,8 +25,9 @@
  * Pug Mod version definition
  */
 #define PUG_MOD_PLUGIN      "CS Pug Mod"
-#define PUG_MOD_VERSION     "4.0.5"
+#define PUG_MOD_VERSION     "4.0.6"
 #define PUG_MOD_AUTHOR      "SmileY"
+#define PUG_MOD_LINK        "github.com/SmileYzn/PugMod"
 #define PUG_MOD_HEADER      "^4[PUG]^1"
 
 /**
