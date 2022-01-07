@@ -1,7 +1,7 @@
 ﻿[en]
-PUG_DESC_READY 				= Tells the server the Player is ready.
-PUG_DESC_NOTREADY 			= Tells the server the Player is not ready.
-PUG_DESC_FORCEREADY 			= <Player> - Force a Player to ready up status.
+PUG_DESC_READY 				= Tells the server the Player is ready
+PUG_DESC_NOTREADY 			= Tells the server the Player is not ready
+PUG_DESC_FORCEREADY 			= <Player> - Force a Player to ready up status
 
 PUG_FORCE_READY 			= ADMIN: Forced ^3%n^1 to be ready.
 
@@ -18,9 +18,9 @@ PUG_WAIT_HUD_MSG_1			= Waiting To Start^n%i Player(s) Left
 PUG_WAIT_HUD_MSG_2			= Starting Match^n%s
 
 [bp]
-PUG_DESC_READY 				= Jogador está pronto para o jogo.
-PUG_DESC_NOTREADY 			= Jogador não está mais pronto.
-PUG_DESC_FORCEREADY 			= <Player> - Forçar o jogador a ficar pronto.
+PUG_DESC_READY 				= Jogador está pronto para o jogo
+PUG_DESC_NOTREADY 			= Jogador não está mais pronto
+PUG_DESC_FORCEREADY 			= <Player> - Forçar o jogador a ficar pronto
 
 PUG_FORCE_READY 			= ADMIN: Forçou ^3%n^1 a estar pronto.
 
