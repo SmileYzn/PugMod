@@ -24,3 +24,6 @@ mp_respawn_immunity_effects	"0"
 mp_respawn_immunity_force_unset	"1"
 mp_give_player_c4		"1"
 mp_show_scenarioicon		"1"
+
+// Server Restart
+sv_restart			"1"
