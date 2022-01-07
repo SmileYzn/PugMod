@@ -85,7 +85,7 @@ new HookChain:g_hCBasePlayer_AddAccount;
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Ranking)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	register_plugin("Pug Mod (Ranking)",PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"Ranking And Stats tracker");
 
 	register_dictionary("PugRank.txt");
 
@@ -496,7 +496,7 @@ public HOOK_CBasePlayer_AddAccount(id,iAmount,RewardType:Type)
 
 public SQL_SavePlayer(id)
 {
-	if(g_hDbTuple)
+	if(g_hDbTuple && is_user_connected(id))
 	{
 		new szData[3] = {SQL_SAVE_USER};
 		
