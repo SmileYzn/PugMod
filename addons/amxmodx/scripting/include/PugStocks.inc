@@ -2,6 +2,7 @@
 	#endinput
 #endif
 #define _PugStocks_included
+
 /**
  * Get Pug Mod configuration directory
  *
@@ -118,6 +119,7 @@ stock PUG_GetMapList(szData[][],iLen)
 		}
 		
 		fclose(iFile);
+
 		return iCount;
 	}
 	
@@ -135,7 +137,7 @@ stock PUG_GetMapList(szData[][],iLen)
  */
 stock PUG_BuildHelpFile(iLevel)
 {
-	new szPath[64];	
+	new szPath[PLATFORM_MAX_PATH];	
 	PUG_GetFilePath((iLevel == ADMIN_ALL) ? "help.htm" : "admin.htm",szPath,charsmax(szPath));
 	
 	if(!file_exists(szPath))
@@ -145,24 +147,31 @@ stock PUG_BuildHelpFile(iLevel)
 		if(iCommands)
 		{
 			new iFile = fopen(szPath,"wt");
-			
+
 			fputs(iFile,"<style type='text/css'>body{background:#000;margin:2px;color:#FFB000;font-family:Tahoma}</style><table width='100%%'>");
 			
-			new szString[MAX_NAME_LENGTH],iFlag,szInfo[128];
+			new szName[MAX_NAME_LENGTH],szInfo[128];
+
+			new iFlag,bool:bTranslate;
 			
-			for(new i;i < iCommands;i++)
+			for(new iCommand;iCommand < iCommands;iCommand++)
 			{
-				get_concmd(i,szString,charsmax(szString),iFlag,szInfo,charsmax(szInfo),iLevel);
-				
-				if((szString[0] == ((iLevel == ADMIN_ALL) ? '.' : '!')) && szInfo[0])
+				get_concmd(iCommand,szName,charsmax(szName),iFlag,szInfo,charsmax(szInfo),iLevel,-1,bTranslate);
+
+				if(szInfo[0] && (szName[0] == ((iLevel == ADMIN_ALL) ? '.' : '!')))
 				{
-					replace_all(szInfo,sizeof(szInfo),"<","&#60;");
-					replace_all(szInfo,sizeof(szInfo),">","&#62;");
-					
-					fprintf(iFile,"<tr><td>%s</td><td>%s</td></tr>",szString,szInfo);
+					if(bTranslate)
+					{
+						format(szInfo,charsmax(szInfo),"%L",LANG_SERVER,szInfo);
+					}
+
+					replace_string(szInfo,sizeof(szInfo),"<","&#60;");
+					replace_string(szInfo,sizeof(szInfo),">","&#62;");
+
+					fprintf(iFile,"<tr><td>%s</td><td>%s</td></tr>",szName,szInfo);
 				}
 			}
-			
+
 			fclose(iFile);
 		}
 	}
@@ -179,14 +188,14 @@ stock PUG_BuildHelpFile(iLevel)
  */
 stock PUG_BuildCvarsFile(szFile[],bool:bHelp)
 {
-	new szPath[64];	
+	new szPath[PLATFORM_MAX_PATH];	
 	PUG_GetFilePath(szFile,szPath,charsmax(szPath));
 	
 	if(!file_exists(szPath))
 	{
-		new iCvarsNum = get_plugins_cvarsnum();
+		new iNum = get_plugins_cvarsnum();
 		
-		if(iCvarsNum)
+		if(iNum)
 		{
 			new iFile = fopen(szPath,"wt");
 			
@@ -195,26 +204,26 @@ stock PUG_BuildCvarsFile(szFile[],bool:bHelp)
 				fputs(iFile,"<style type='text/css'>body{background:#000;margin:2px;color:#FFB000;font-family:Tahoma}</style><table width='100%%'>");
 			}
 			
-			new szName[MAX_NAME_LENGTH],iFlag,iPlugin,iHandle,szDesc[128],szValue[MAX_NAME_LENGTH];
+			new szName[MAX_NAME_LENGTH],iFlag,iPlugin,iHandle,szInfo[128],szValue[MAX_NAME_LENGTH];
 			
-			for(new i;i < iCvarsNum;i++)
+			for(new id;id < iNum;id++)
 			{
-				if(get_plugins_cvar(i,szName,charsmax(szName),iFlag,iPlugin,iHandle,szDesc,charsmax(szDesc)))
+				if(get_plugins_cvar(id,szName,charsmax(szName),iFlag,iPlugin,iHandle,szInfo,charsmax(szInfo)))
 				{
 					if((szName[0] == 'p') && (szName[1] == 'u') && (szName[2] == 'g'))
 					{
 						if(bHelp)
 						{
-							replace_all(szDesc,sizeof(szDesc),"<","&#60;");
-							replace_all(szDesc,sizeof(szDesc),">","&#62;");
+							replace_string(szInfo,sizeof(szInfo),"<","&#60;");
+							replace_string(szInfo,sizeof(szInfo),">","&#62;");
 							
-							fprintf(iFile,"<tr><td>%s</td><td>%s</td></tr>",szName,szDesc);
+							fprintf(iFile,"<tr><td>%s</td><td>%s</td></tr>",szName,szInfo);
 						}
 						else
 						{
 							get_pcvar_string(iHandle,szValue,charsmax(szValue));
 							
-							fprintf(iFile,"%s		^"%s^"			// %s^n",szName,szValue,szDesc);
+							fprintf(iFile,"%s		^"%s^"			// %s^n",szName,szValue,szInfo);
 						}
 					}
 				}
