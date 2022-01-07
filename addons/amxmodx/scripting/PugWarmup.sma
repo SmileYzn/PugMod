@@ -6,7 +6,7 @@ new HookChain:g_hCBasePlayer_HasRestrictItem;
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Warmup)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	register_plugin("Pug Mod (Warmup)",PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"Warmup And Weapon Controller");
 	
 	DisableHookChain(g_hCBasePlayer_AddAccount = RegisterHookChain(RG_CBasePlayer_AddAccount,"HOOK_CBasePlayer_AddAccount",false));
 	

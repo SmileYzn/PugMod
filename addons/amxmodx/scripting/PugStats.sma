@@ -23,7 +23,7 @@ new HookChain:g_hRoundEnd;
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Stats)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	register_plugin("Pug Mod (Stats)",PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"Round Stats Tracker");
 
 	register_dictionary("PugStats.txt");
 	

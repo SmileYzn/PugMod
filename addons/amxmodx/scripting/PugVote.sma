@@ -28,7 +28,7 @@ new g_iMapVotes[PUG_MENU_MAPS];
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Vote Vote)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	register_plugin("Pug Mod (Vote Vote)",PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"Player Vote Menu And Commands");
 	
 	register_dictionary("PugVote.txt");
 	
@@ -44,7 +44,7 @@ public plugin_init()
 	
 	bind_pcvar_num(create_cvar("pug_vote_timeout_time","60",FCVAR_NONE,"Seconds to pause round when timeout is running"),g_iVoteTimeoutTime);
 	
-	PUG_RegCommand("vote","PUG_VoteMenu",ADMIN_ALL,"PUG_VOTE_DESC");	
+	PUG_RegCommand("vote","PUG_VoteMenu",ADMIN_ALL,"PUG_VOTE_DESC");
 }
 
 public plugin_cfg()

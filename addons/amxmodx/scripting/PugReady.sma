@@ -16,7 +16,7 @@ new bool:g_bReadySystem;
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Ready System)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	register_plugin("Pug Mod (Ready System)",PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"Ready System And Match Controller");
 	
 	register_dictionary("PugReady.txt");
 	

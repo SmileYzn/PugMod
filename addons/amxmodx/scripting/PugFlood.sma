@@ -9,7 +9,7 @@ new Float:g_Flooding[MAX_PLAYERS+1];
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Anti Flood)",AMXX_VERSION_STR,"AMXX Dev Team");
+	register_plugin("Pug Mod (Anti Flood)",AMXX_VERSION_STR,"AMXX Dev Team","amxmmodx.org","Anti Flood for chat commands");
 
 	register_clcmd("say","PUG_FilterCommand");
 	register_clcmd("say_team","PUG_FilterCommand");

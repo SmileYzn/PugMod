@@ -45,7 +45,7 @@ new g_hCurWeapon;
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Menus)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	register_plugin("Pug Mod (Menus)",PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"Vote Menu Control");
 	
 	register_dictionary("PugMenus.txt");
 	

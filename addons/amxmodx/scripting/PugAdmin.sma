@@ -3,7 +3,7 @@
 
 public plugin_init()
 {
-	register_plugin("Pug Mod (Admin)",PUG_MOD_VERSION,PUG_MOD_AUTHOR);
+	register_plugin("Pug Mod (Admin)",PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"Administrator Commands");
 	
 	register_dictionary("PugAdmin.txt");
 	
