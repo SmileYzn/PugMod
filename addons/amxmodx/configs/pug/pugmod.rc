@@ -14,6 +14,7 @@ pug_ready_type			"1"			// Ready system type (1 Ready System, 0 Timer Counter)
 pug_ready_timer			"60.0"			// Time limit to start match
 pug_vote_map_enabled		"1"			// Active vote map in pug (0 Disable, 1 Enable, 2 Random map)
 pug_teams_enforcement		"-1"			// The teams method for assign teams (-1 Vote, 0 Leaders, 1 Random, 2 None, 3 Skill Balanced, 4 Swap Teams, 5 Knife Round)
+pug_teams_enforcement_menu	"123456"		// The assign method options visible on vote menu
 pug_stats_round_end		"1"			// Display round stats at console when round end
 pug_stats_scoreboard		"1"			// Store team scores on scoreboard after swap teams
 pug_stats_game_desc		"1"			// Show scores and match status at game description
