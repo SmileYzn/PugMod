@@ -19,12 +19,12 @@ PUG_CMD_ERROR 				= Unable to use this command now.
 PUG_CMD_OK 				= The action %s has been executed.
 PUG_CMD_FAIL 				= The action %s has failed.
 
-PUG_DESC_STATUS				= Show the PUG status.
-PUG_DESC_SCORE 				= Show the PUG scores.
-PUG_DESC_START				= Force Pug Mod to start.
-PUG_DESC_STOP				= Force Pug Mod to stop.
-PUG_DESC_HELP 				= Show PUG commands.
-PUG_DESC_HELP_ADMIN 			= Show ADMIN commands.
+PUG_DESC_STATUS				= Show the PUG status
+PUG_DESC_SCORE 				= Show the PUG scores
+PUG_DESC_START				= Force Pug Mod to start
+PUG_DESC_STOP				= Force Pug Mod to stop
+PUG_DESC_HELP 				= Show PUG commands
+PUG_DESC_HELP_ADMIN 			= Show ADMIN commands
 
 PUG_LIVE_HUD_1				= --- MATCH IS LIVE ---
 PUG_LIVE_HUD_2 				= --- BEST OF %i ROUNDS ---
@@ -40,7 +40,11 @@ PUG_SWAP_TEAMS				= Changing teams automatically.
 PUG_KICK_MSG_FULL			= Server is full.
 PUG_KICK_MSG_HLTV			= HLTV not allowed.
 
-PUG_TEAM_CHANGE 			= ^3Manual team changes is not allowed.
+PUG_TEAM_SAME				= You are already on this team.
+PUG_TEAM_SPEC				= ^3Spectators^1 are not allowed.
+PUG_TEAM_AUTO				= Auto Team Select is not allowed.
+PUG_TEAM_FULL				= This team is full.
+PUG_TEAM_LIVE 				= Cannot switch when the game is started.
 
 PUG_ROUND_START 			= Round ^4%i^1 started.
 PUG_ROUND_WON 				= Round ^4%i^1 won by ^3%s.
@@ -78,12 +82,12 @@ PUG_CMD_ERROR 				= Impossível usar esse comando agora.
 PUG_CMD_OK 				= Acão ^3%s^1 executada com sucesso.
 PUG_CMD_FAIL 				= A acão ^3%s^1 falhou.
 
-PUG_DESC_STATUS				= Mostra o status do Pug Mod.
-PUG_DESC_SCORE 				= Mostra o placar do Pug Mod.
-PUG_DESC_START				= Forçar o início do Pug Mod.
-PUG_DESC_STOP				= Forçar o fim Pug Mod.
-PUG_DESC_HELP 				= Mostra os comandos do Pug Mod.
-PUG_DESC_HELP_ADMIN 			= Mostra os comandos de Admin.
+PUG_DESC_STATUS				= Mostra o status do Pug Mod
+PUG_DESC_SCORE 				= Mostra o placar do Pug Mod
+PUG_DESC_START				= Forçar o início do Pug Mod
+PUG_DESC_STOP				= Forçar o fim Pug Mod
+PUG_DESC_HELP 				= Mostra os comandos do Pug Mod
+PUG_DESC_HELP_ADMIN 			= Mostra os comandos de Admin
 
 PUG_LIVE_HUD_1				= --- MATCH IS LIVE ---
 PUG_LIVE_HUD_2 				= --- MELHOR DE %i ROUNDS ---
@@ -99,7 +103,11 @@ PUG_SWAP_TEAMS				= Trocando os times automaticamente.
 PUG_KICK_MSG_FULL			= Servidor cheio.
 PUG_KICK_MSG_HLTV			= HLTV não permitido.
 
-PUG_TEAM_CHANGE 			= ^3Troca manual de times bloqueada.
+PUG_TEAM_SAME				= Você já está nesse time.
+PUG_TEAM_SPEC				= ^3Espectadores^1 não são permitidos.
+PUG_TEAM_AUTO				= A Funcão ^3Auto Seleção^1 está bloqueada.
+PUG_TEAM_FULL				= Esse time está completo.
+PUG_TEAM_LIVE 				= Troca de times não permitida durante o jogo.
 
 PUG_ROUND_START 			= Round %i iniciado.
 PUG_ROUND_WON 				= Round %i ganho por %s.
