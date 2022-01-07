@@ -10,7 +10,6 @@ pug_allow_hltv			"1"			// Allow HLTV in game
 pug_handle_time			"10.0"			// Time to PUG change states
 pug_drop_ban_time		"15"			// Minutes of ban players that leave from game in live
 pug_force_join_team		"1"			// Force players join when connect to server
-pug_block_pick_team		"1"			// Block players from choosing teams
 pug_ready_type			"1"			// Ready system type (1 Ready System, 0 Timer Counter)
 pug_ready_timer			"60.0"			// Time limit to start match
 pug_vote_map_enabled		"1"			// Active vote map in pug (0 Disable, 1 Enable, 2 Random map)
@@ -36,3 +35,8 @@ pug_db_name			""			// Stats DB Name
 pug_db_user			""			// Stats DB User
 pug_db_pass			""			// Stats DB Pass
 pug_db_link			""			// Stats DB Link (Ie. http://statspage.com)
+
+pug_hltv_port			""			// HLTV Proxy Remote Port
+pug_hltv_host			""			// HLTV Proxy Remote Address
+pug_hltv_pass			""			// HLTV Proxy Rcon Password
+pug_hltv_prefix			""			// HLTV Proxy Demo Name Prefix
