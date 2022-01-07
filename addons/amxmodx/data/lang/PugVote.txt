@@ -1,6 +1,6 @@
 [en]
 PUG_VOTE_DESC		= Open main vote menu
-PUG_VOTE_MENU		= Call Vote:
+PUG_VOTE_MENU		= Vote Menu:
 
 PUG_VOTE_KICK_MENU 	= Vote Kick
 PUG_VOTE_KICK_MAIN 	= Choose a player to vote.
@@ -38,7 +38,7 @@ PUG_VOTE_STOP_END	= Game Over! The ^3%s^1 Surrendered!
 
 [bp]
 PUG_VOTE_DESC		= Abre o menu de votações
-PUG_VOTE_MENU		= Iniciar votação:
+PUG_VOTE_MENU		= Vote Menu:
 
 PUG_VOTE_KICK_MENU 	= Vote Kick
 PUG_VOTE_KICK_MAIN 	= Escolha um jogador.
