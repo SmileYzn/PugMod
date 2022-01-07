@@ -21,6 +21,7 @@ new g_iMapVote;
 new g_iMapVoteType;
 new g_iTeamEnforcement;
 new g_iPlayKnifeRound;
+new g_szTeamEnforcement[PUG_MENU_TEAM+1];
 
 new g_iVoteCount;
 
@@ -53,9 +54,11 @@ public plugin_init()
 	bind_pcvar_num(get_cvar_pointer("pug_players_min"),g_iPlayersMin);
 	
 	bind_pcvar_num(create_cvar("pug_vote_map_enabled","1",FCVAR_NONE,"Active vote map in pug (0 Disable, 1 Enable, 2 Random map)"),g_iMapVoteType);
-	bind_pcvar_num(create_cvar("pug_teams_enforcement","-1",FCVAR_NONE,"The teams method for assign teams (-1 Vote, 0 Leaders, 1 Random, 2 None, 3 Skill Balanced, 4 Swap Teams)"),g_iTeamEnforcement);
+	bind_pcvar_num(create_cvar("pug_teams_enforcement","-1",FCVAR_NONE,"The teams method for assign teams (-1 Vote, 0 Leaders, 1 Random, 2 None, 3 Skill Balanced, 4 Swap Teams, 5 Knife Round)"),g_iTeamEnforcement);
 	bind_pcvar_num(create_cvar("pug_play_knife_round","0",FCVAR_NONE,"Play Knife Round before start match to choose team sides"),g_iPlayKnifeRound);
 	
+	bind_pcvar_string(create_cvar("pug_teams_enforcement_menu","123456",FCVAR_NONE,"The assign method options visible on vote menu"),g_szTeamEnforcement,charsmax(g_szTeamEnforcement));
+
 	DisableHookChain(g_hRoundEnd = RegisterHookChain(RG_RoundEnd,"HOOK_RoundEnd",true));
 	
 	disable_event(g_hCurWeapon = register_event("CurWeapon","HOOK_CurWeapon","be","1=1","2!29"));
@@ -78,8 +81,11 @@ public OnConfigsExecuted()
 	for(new i = 0;i < PUG_MENU_TEAM;i++)
 	{
 		formatex(g_szTeamTypes[i],charsmax(g_szTeamTypes[]),"%L",LANG_SERVER,fmt("PUG_TEAM_TYPE_%i",i));
-		
-		menu_additem(g_iMenuTeams,g_szTeamTypes[i],fmt("%i",i));
+
+		if(g_szTeamEnforcement[i])
+		{
+			menu_additem(g_iMenuTeams,g_szTeamTypes[i],fmt("%i",i));
+		}
 	}
 	
 	menu_setprop(g_iMenuTeams,MPROP_EXIT,MEXIT_NEVER);
