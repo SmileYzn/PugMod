@@ -6,7 +6,7 @@
 #define PUG_CHECK_TEAM(%0)	(TEAM_TERRORIST <= get_member_s(%0,m_iTeam) <= TEAM_CT)
 
  /**
- * Get players count in teams
+ * Get players count in all teams
  *
  * @param Bots	If true, will also count bots
  *
@@ -17,6 +17,7 @@
 	new iPlayers[MAX_PLAYERS],iNum[2];
 	
 	get_players(iPlayers,iNum[0],bBots ? "he" : "che","TERRORIST");
+
 	get_players(iPlayers,iNum[1],bBots ? "he" : "che","CT");
 	
 	return (iNum[0] + iNum[1]);
