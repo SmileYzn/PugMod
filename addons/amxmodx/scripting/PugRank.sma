@@ -18,7 +18,8 @@ enum _:eQueryType
 	SQL_SAVE_USER,
 	SQL_SAVE_GAME,
 	SQL_SAVE_STAT,
-	SQL_SAVE_WEAP
+	SQL_SAVE_WEAP,
+	SQL_SAVE_ROUND
 };
 
 new Handle:g_hDbTuple;
@@ -44,8 +45,10 @@ enum _:ePlayerStats
 	BombDefuse,
 	BombExplode,
 
+	HitBox[HitBoxGroup],
+
 	Streak[MAX_PLAYERS],
-	Versus[MAX_PLAYERS],
+	Versus[MAX_PLAYERS]
 };
  
 enum _:eWeaponStats
@@ -58,10 +61,20 @@ enum _:eWeaponStats
 	WEAPON_DAMAGE
 };
 
+enum _:eRoundStats
+{
+	PlayerKiller[MAX_PLAYERS],
+	PlayerVictim[MAX_PLAYERS],
+	FragHeadShot[MAX_PLAYERS],
+	FragWeaponId[MAX_PLAYERS]
+};
+
 new g_iGameIndex;
+new g_iGameRound;
 
 new g_iStats[MAX_PLAYERS+1][ePlayerStats];
 new g_iStatsWeapon[MAX_PLAYERS+1][WeaponIdType][eWeaponStats];
+new g_iRoundStats[eRoundStats];
 
 new g_iRoundBombPlanter;
 new g_iRoundBombDefuser;
@@ -151,7 +164,7 @@ public HOOK_CBasePlayer_GetIntoGame(id)
 	}
 	else
 	{
-		set_task(5.0,"SQL_SavePlayer",id);
+		set_task(8.0,"SQL_SavePlayer",id);
 	}
 }
 
@@ -234,7 +247,7 @@ public PUG_Stats(id)
 
 			if(is_user_bot(iPlayer))
 			{
-				format(szParam,charsmax(szParam),"%s_%n",szParam,iPlayer);
+				format(szParam,charsmax(szParam),"%s:%n",szParam,iPlayer);
 			}
 		}
 		else
@@ -265,6 +278,10 @@ public HOOK_CSGameRules_PlayerKilled(const Victim,const Killer,const Inflictor)
 			g_iStats[Killer][Headshot]++;
 		}
 
+		format(g_iRoundStats[PlayerKiller],MAX_PLAYERS-1,"%s %d",g_iRoundStats[PlayerKiller],get_user_userid(Killer));
+		format(g_iRoundStats[PlayerVictim],MAX_PLAYERS-1,"%s %d",g_iRoundStats[PlayerVictim],get_user_userid(Victim));
+		format(g_iRoundStats[FragHeadShot],MAX_PLAYERS-1,"%s %d",g_iRoundStats[FragHeadShot],bHeadshotKilled);
+
 		new iActiveItem = get_member_s(Killer,m_pActiveItem);
 
 		if(!is_nullent(iActiveItem))
@@ -279,6 +296,8 @@ public HOOK_CSGameRules_PlayerKilled(const Victim,const Killer,const Inflictor)
 			{
 				g_iStatsWeapon[Killer][iWeapon][WEAPON_HEADSHOT]++;
 			}
+
+			format(g_iRoundStats[FragWeaponId],MAX_PLAYERS-1,"%s %d",g_iRoundStats[FragWeaponId],iWeapon);
 		}
 
 		new szTeam[12] = {0};
@@ -319,9 +338,13 @@ public HOOK_CBasePlayer_TakeDamage(This,pevInflictor,pevAttacker,Float:fDamage)
 	{
 		new iDamage = get_member_s(This,m_lastDamageAmount);
 
+		new HitBoxGroup:iPlace = get_member_s(This,m_LastHitGroup);
+
 		g_iStats[pevAttacker][Hit]++;
 		
 		g_iStats[pevAttacker][Damage] += iDamage;
+
+		g_iStats[pevAttacker][HitBox][iPlace]++;
 
 		g_iRoundDamage[pevAttacker][This] += iDamage;
 
@@ -384,15 +407,17 @@ public HOOK_CSGameRules_OnRoundFreezeEnd()
 	g_iRoundDamageTeam[TEAM_CT] = 0;
 
 	g_iRoundDamageTeam[TEAM_TERRORIST] = 0;
+
+	arrayset(g_iRoundStats,0,sizeof(g_iRoundStats));
 }
 
 public HOOK_RoundEnd(WinStatus:Status,ScenarioEventEndRound:Event,Float:tmDelay)
 {
 	if(WINSTATUS_CTS <= Status <= WINSTATUS_TERRORISTS)
 	{
-		new TeamName:iWinner = (Status == WINSTATUS_TERRORISTS) ? TEAM_TERRORIST : TEAM_CT;
+		g_iGameRound++;
 
-		new TeamName:iTeam = TEAM_UNASSIGNED;
+		new TeamName:iWinner = (Status == WINSTATUS_TERRORISTS) ? TEAM_TERRORIST : TEAM_CT;
 
 		if(Event == ROUND_TARGET_BOMB)
 		{
@@ -412,7 +437,7 @@ public HOOK_RoundEnd(WinStatus:Status,ScenarioEventEndRound:Event,Float:tmDelay)
 		new iPlayers[MAX_PLAYERS],iNum;
 		get_players(iPlayers,iNum,"h");
 		
-		new iPlayer;
+		new iPlayer,TeamName:iTeam;
 
 		new Float:fRoundWinShare = 0.0;
 
@@ -458,6 +483,8 @@ public HOOK_RoundEnd(WinStatus:Status,ScenarioEventEndRound:Event,Float:tmDelay)
 				}
 			}	
 		}
+
+		SQL_SaveRound(Status,Event);
 	}
 }
 
@@ -508,7 +535,7 @@ public SQL_SavePlayer(id)
 
 		if(is_user_bot(id))
 		{
-			format(szAuth,charsmax(szAuth),"%s_%n",szAuth,id);
+			format(szAuth,charsmax(szAuth),"%s:%n",szAuth,id);
 		}
 
 		new szQuery[512] = {0};
@@ -524,14 +551,7 @@ public SQL_SavePlayer(id)
 			szAuth
 		);
 		
-		SQL_ThreadQuery
-		(
-			g_hDbTuple,
-			"SQL_Handler",
-			szQuery,
-			szData,
-			sizeof(szData)
-		);
+		SQL_ThreadQuery(g_hDbTuple,"SQL_Handler",szQuery,szData,sizeof(szData));
 	}
 }
 
@@ -541,7 +561,7 @@ SQL_SaveGame()
 	{
 		new szData[2] = {SQL_SAVE_GAME};
 		
-		new szQuery[512] = {0};
+		new szQuery[300] = {0};
 		
 		if(!g_iGameIndex)
 		{
@@ -577,7 +597,7 @@ SQL_SaveGame()
 				szQuery,
 				charsmax(szQuery),
 				"UPDATE game SET rounds = %d, score1 = %d, score2 = %d, winner = %d WHERE id = %d;",
-				PUG_GetRound(),
+				g_iGameRound,
 				iScoreTR,
 				iScoreCT,
 				iTeamWin,
@@ -600,17 +620,19 @@ SQL_SaveStats(id)
 			szData[0] = SQL_SAVE_STAT;
 			szData[1] = id;
 
-			new szQuery[2048] = {};
+			new szQuery[2500] = {};
 
-			formatex
+			formatex // 25 values: CONTINUE HERE
 			(
 				szQuery,
 				charsmax(szQuery),
-				"INSERT INTO playerStats VALUES (null, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %f, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, NOW(), 1)",
+				"INSERT INTO playerStats VALUES (null, %d, %d,  %d, %d,  %d, %d, %d, %d, %d, %d, %d, %d,  %d, %d, %d, %f,  %d, %d, %d,  ('%d,%d,%d,%d,%d,%d,%d,%d,%d'), ('%d,%d,%d,%d,%d'), ('%d,%d,%d,%d,%d'), NOW(), 1)",
 
 				g_iGameIndex,
-				g_iStats[id][Index],
-				get_member_s(id,m_iTeam),
+				g_iStats[id][Index], // 2
+
+				get_user_userid(id),
+				get_member_s(id,m_iTeam), // 4
 				
 				g_iStats[id][Kill],
 				g_iStats[id][Assist],
@@ -619,29 +641,44 @@ SQL_SaveStats(id)
 				g_iStats[id][Shot],
 				g_iStats[id][Hit],
 				g_iStats[id][Damage],
-				g_iStats[id][Money],
+				g_iStats[id][Money], // 12
 
 				g_iStats[id][RoundPlay],
 				g_iStats[id][RoundLose],
 				g_iStats[id][RoundWin],
-				g_iStats[id][RoundWinShare],
+				g_iStats[id][RoundWinShare], // 16
 				
 				g_iStats[id][BombPlant],
 				g_iStats[id][BombDefuse],
-				g_iStats[id][BombExplode],
+				g_iStats[id][BombExplode], // 20
+
+				g_iStats[id][HitBox][HITGROUP_GENERIC],
+				g_iStats[id][HitBox][HITGROUP_HEAD],
+				g_iStats[id][HitBox][HITGROUP_CHEST],
+				g_iStats[id][HitBox][HITGROUP_STOMACH],
+				g_iStats[id][HitBox][HITGROUP_LEFTARM],
+				g_iStats[id][HitBox][HITGROUP_RIGHTARM],
+				g_iStats[id][HitBox][HITGROUP_LEFTLEG],
+				g_iStats[id][HitBox][HITGROUP_RIGHTLEG],
+				g_iStats[id][HitBox][HITGROUP_SHIELD], // 29
 				
 				g_iStats[id][Streak][1],
 				g_iStats[id][Streak][2],
 				g_iStats[id][Streak][3],
 				g_iStats[id][Streak][4],
-				g_iStats[id][Streak][5],
+				g_iStats[id][Streak][5], // 34
 				
 				g_iStats[id][Versus][1],
 				g_iStats[id][Versus][2],
 				g_iStats[id][Versus][3],
 				g_iStats[id][Versus][4],
-				g_iStats[id][Versus][5]
+				g_iStats[id][Versus][5] // 39
 			);
+
+			if(!is_user_bot(id))
+			{
+				server_print(szQuery);
+			}
 
 			for(new WeaponIdType:iWeapon;iWeapon <= WEAPON_P90;iWeapon++)
 			{
@@ -675,6 +712,36 @@ SQL_SaveStats(id)
 	}
 }
 
+SQL_SaveRound(WinStatus:Status,ScenarioEventEndRound:Event)
+{
+	if(Event != ROUND_NONE)
+	{
+		new szData[2] = {SQL_SAVE_ROUND};
+
+		new szQuery[512] = {0};
+
+		formatex
+		(
+			szQuery,
+			charsmax(szQuery),
+			"INSERT INTO roundStats VALUES (null, %d, %d, %d, %d, '%s', '%s', '%s', '%s', NOW(), 1)",
+
+			g_iGameIndex,
+			g_iGameRound,
+
+			Status,
+			Event,
+
+			trim(g_iRoundStats[PlayerKiller]),
+			trim(g_iRoundStats[PlayerVictim]),
+			trim(g_iRoundStats[FragHeadShot]),
+			trim(g_iRoundStats[FragWeaponId])
+		);
+
+		SQL_ThreadQuery(g_hDbTuple,"SQL_Handler",szQuery,szData,sizeof(szData));
+	}
+}
+
 public SQL_Handler(iFailState,Handle:hQuery,szError[],iErrorNum,szData[],iDataSize,Float:fQueueTime)
 {
 	if(iFailState == TQUERY_SUCCESS)
@@ -700,6 +767,15 @@ public SQL_Handler(iFailState,Handle:hQuery,szError[],iErrorNum,szData[],iDataSi
 				}
 			}
 		}
+	}
+	else
+	{
+		server_print(szError);
+
+		new szQuery[2048] = {0};
+		SQL_GetQueryString(hQuery,szQuery,charsmax(szQuery));
+
+		server_print(szQuery);
 	}
 	
 	if(hQuery != Empty_Handle)
