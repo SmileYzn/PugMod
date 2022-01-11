@@ -549,8 +549,8 @@ public PUG_LeaderMenu(id)
 {
 	new iPlayers[MAX_PLAYERS],iNum;
 	get_players(iPlayers,iNum,"eh","SPECTATOR");
-		
-	if(iNum)
+	
+	if(iNum && (PUG_GetPlayersNum(true) < g_iPlayersMax))
 	{
 		if(is_user_connected(id) && PUG_CHECK_TEAM(id))
 		{
