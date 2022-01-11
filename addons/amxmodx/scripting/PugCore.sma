@@ -165,10 +165,13 @@ public PUG_ForceTeamJoin(id)
 	if(is_user_connected(id))
 	{
 		new TeamName:iTeam = TEAM_SPECTATOR;
-		
-		if(PUG_GetPlayersNum() < g_iPlayersMax)
+
+		if(g_iState != STATE_START)
 		{
-			iTeam = rg_get_join_team_priority();
+			if(PUG_GetPlayersNum() < g_iPlayersMax)
+			{
+				iTeam = rg_get_join_team_priority();
+			}
 		}
 		
 		rg_join_team(id,iTeam);
@@ -204,28 +207,54 @@ PUG_CheckTeam(id,iTeamNew)
 {
 	new iTeamOld = get_user_team(id);
 
-	if(iTeamNew == iTeamOld)
+	if(iTeamNew == 5)
 	{
-		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_SAME");
+		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_AUTO");
 
 		return PLUGIN_HANDLED;
 	}
-	else if(iTeamNew == 6)
+
+	if(iTeamNew == iTeamOld)
 	{
-		if(!g_iAllowSpec || !access(id,ADMIN_LEVEL_A))
+		client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_SAME");
+
+		return PLUGIN_HANDLED;
+	}
+
+	if(iTeamOld == 0)
+	{
+		if(g_iState == STATE_START)
 		{
-			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_SPEC");
+			if(g_iAllowSpec)
+			{
+				rg_join_team(id,TEAM_SPECTATOR);
+			}
 
 			return PLUGIN_HANDLED;
 		}
 	}
-	else if(iTeamNew == 5)
-	{
-		client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_AUTO");
 
-		return PLUGIN_HANDLED;
+	if(STATE_START <= g_iState <= STATE_OVERTIME)
+	{
+		if(1 <= iTeamOld <= 2)
+		{
+			client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_LIVE");
+
+			return PLUGIN_HANDLED;
+		}
 	}
-	else if(1 <= iTeamNew <= 2)
+
+	if(iTeamNew == 6)
+	{
+		if(!g_iAllowSpec || !access(id,ADMIN_LEVEL_A))
+		{
+			client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_SPEC");
+
+			return PLUGIN_HANDLED;
+		}
+	}
+	
+	if(1 <= iTeamNew <= 2)
 	{
 		new iPlayers[MAX_PLAYERS],iNum;
 
@@ -233,19 +262,9 @@ PUG_CheckTeam(id,iTeamNew)
 
 		if(iNum >= (g_iPlayersMax / 2))
 		{
-			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_FULL");
+			client_print_color(id,id,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_FULL");
 
 			return PLUGIN_HANDLED;
-		}
-
-		if(STATE_FIRST_HALF <= g_iState <= STATE_OVERTIME)
-		{
-			if(1 <= iTeamOld <= 2)
-			{
-				client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_TEAM_LIVE");
-
-				return PLUGIN_HANDLED;
-			}
 		}
 	}
 
