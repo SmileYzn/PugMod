@@ -1,5 +1,6 @@
 drop table if exists playerStats;
 drop table if exists weaponStats;
+drop table if exists roundStats;
 drop table if exists player;
 drop table if exists game;
 drop table if exists weapon;
@@ -39,6 +40,7 @@ create table playerStats
     gameFK int,
     playerFK int,
     
+    slot int,
     team int,
     kills int,
     assist int,
@@ -58,17 +60,9 @@ create table playerStats
     bombDefuse int,
     bombExplode int,
     
-    kills1 int,
-    kills2 int,
-    kills3 int,
-    kills4 int,
-    kills5 int,
-    
-    versus1 int,
-    versus2 int,
-    versus3 int,
-    versus4 int,
-    versus5 int,
+    hitbox set('0','0','0','0','0','0','0','0','0'),
+    streak set('0','0','0','0','0'),
+    versus set('0','0','0','0','0'),
     
     now datetime default current_timestamp,
     active int default 1,
@@ -139,5 +133,26 @@ create table weaponStats
     foreign key(gameFK) references game(id),
     foreign key(playerFK) references player(id),
     foreign key(weaponFK) references weapon(id)
+);
+
+
+create table roundStats
+(
+    id int not null auto_increment primary key,
+    
+    gameFK int,
+    
+    number int,
+    winner int,
+    scenario int,
+    killers varchar(255),
+    victims varchar(255),
+    headshots varchar(255),
+    weapons varchar(255),
+    
+    now datetime default current_timestamp,
+    active int default 1,
+    
+    foreign key(gameFK) references game(id)
 );
 
