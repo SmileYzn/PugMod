@@ -1,0 +1,65 @@
+name: CI
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+
+jobs:
+  build:
+    name: Compile
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        amxmodx: ['1.10']
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup AMXXPawn Compiler
+        uses: wopox1337/setup-amxxpawn@v1.0.1
+        with:
+          version: ${{ matrix.amxmodx }}
+
+      - name: Setup latest ReAPI includes
+        env:
+          REPO: "s1lentq/reapi"
+        run: |
+          mkdir -p dep/reapi
+          cd dep/reapi
+          curl \
+            --silent \
+            https://api.github.com/repos/$REPO/releases/latest | \
+            grep "browser_download_url" | \
+            grep -Eo 'https://[^\"]*' | \
+            xargs wget
+          7z x *.zip
+          echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
+
+      - name: Compile plugins
+        working-directory: addons/amxmodx/scripting/
+        env:
+          REAPI_INCLUDE: ${{env.REAPI_INCLUDE_PATH}}
+        run: |
+          compile() {
+            sourcefile=$1
+            amxxfile="$(echo $sourcefile | sed -e 's/\.sma$/.amxx/')"
+            output_path="../plugins/$amxxfile"
+            mkdir -p $(dirname $output_path)
+            printf "\n\nCompiling $sourcefile ... \n"
+            amxxpc $sourcefile -o"$output_path" \
+              -i"include" \
+              -i"$REAPI_INCLUDE"
+          }
+          export -f compile
+          find * -type f -name "*.sma" -exec bash -c 'compile "$0"' {} \;
+
+      - name: Move files
+        run: |
+          mkdir publish
+          mv addons/ publish/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: PUGMod-dev
+          path: publish/*
