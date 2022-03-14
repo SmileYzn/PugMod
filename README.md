@@ -22,7 +22,7 @@ At the end, server will start a vote map to changelevel to next map automaticall
     <li>ReGameDLL_CS</li>
     <li>Metamod</li>
     <li>AMX Mod X 1.10</li>
-</ul>
+</ul> 
 
 <h3>Features</h3>
 <ul>
