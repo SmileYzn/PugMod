@@ -16,6 +16,14 @@ Players must be choose a team, say .ready in chat and wait for server start the 
 At the end, server will start a vote map to changelevel to next map automatically.<br>
 </p>
 
+<h3>Requirements</h3>
+<ul>
+    <li>ReHLDS</li>
+    <li>ReGameDLL_CS</li>
+    <li>Metamod</li>
+    <li>AMX Mod X 1.10</li>
+</ul>
+
 <h3>Features</h3>
 <ul>
 <li>Automatic Ready System (Timer based like CS:GO does or Ready System method)</li>
