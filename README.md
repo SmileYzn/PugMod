@@ -4,16 +4,16 @@
 <p align="center">
     <a href="https://github.com/SmileYzn/PugMod/releases/latest">
     <img src="https://img.shields.io/github/downloads/SmileYzn/PugMod/total?label=Download%40latest&style=flat-square&logo=github&logoColor=white"
-         alt="Build status">
+         alt="Build status"></a>
     <a href="https://github.com/SmileYzn/PugMod/actions">
     <img src="https://img.shields.io/github/workflow/status/SmileYzn/PugMod/CI/master?style=flat-square&logo=github&logoColor=white"
-         alt="Build status">
+         alt="Build status"></a>
     <a href="https://github.com/SmileYzn/PugMod/releases">
     <img src="https://img.shields.io/github/v/release/SmileYzn/PugMod?include_prereleases&style=flat-square&logo=github&logoColor=white"
-         alt="Release">
+         alt="Release"></a>
     <a href="https://www.amxmodx.org/downloads-new.php">
     <img src="https://img.shields.io/badge/AMXModX-%3E%3D1.10.0-blue?style=flat-square"
-         alt="AMXModX dependency">
+         alt="AMXModX dependency"></a>
 </p>
 
 
