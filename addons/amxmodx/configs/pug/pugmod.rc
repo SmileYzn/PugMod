@@ -1,7 +1,7 @@
 ﻿pug_players_min			"10"			// Minimum of players to start a game
 pug_players_max			"10"			// Maximum of players allowed in game
 pug_play_rounds			"30"			// Rounds to play before start overtime
-pug_play_overtime_rounds	"3"			// Win difference to determine a winner in overtime
+pug_play_overtime_rounds	"3"			// Rounds per half on overtime
 pug_play_overtime		"1"			// Play Overtime (0 Sudden Death, 1 Force Overtime, 2 End Tied)
 pug_play_best_rounds		"0"			// Play Best of X rounds (0 disable, or round count to enable)
 pug_play_knife_round		"0"			// Play Knife Round before start match to choose team sides

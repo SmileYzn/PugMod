@@ -57,7 +57,7 @@ public plugin_init()
 	bind_pcvar_num(create_cvar("pug_players_max","10",FCVAR_NONE,"Maximum of players allowed in game"),g_iPlayersMax);
 	
 	bind_pcvar_num(create_cvar("pug_play_rounds","30",FCVAR_NONE,"Rounds to play before start overtime"),g_iPlayRounds);
-	bind_pcvar_num(create_cvar("pug_play_overtime_rounds","3",FCVAR_NONE,"Win difference to determine a winner in overtime"),g_iPlayOvertimeRounds);
+	bind_pcvar_num(create_cvar("pug_play_overtime_rounds","3",FCVAR_NONE,"Rounds per half on overtime"),g_iPlayOvertimeRounds);
 	bind_pcvar_num(create_cvar("pug_play_overtime","1",FCVAR_NONE,"Play Overtime (0 Sudden Death, 1 Force Overtime, 2 End Tied)"),g_iPlayOvertime);
 	
 	bind_pcvar_num(create_cvar("pug_play_best_rounds","0",FCVAR_NONE,"Play Best of X rounds (0 disable, or round count to enable)"),g_iPlayBestRounds);
