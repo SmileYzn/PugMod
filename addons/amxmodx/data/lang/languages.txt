@@ -4,4 +4,4 @@ LANG_NAME_NATIVE 	= English
 
 [bp]
 LANG_NAME 		= Brazil Portuguese
-LANG_NAME_NATIVE 	= Portugues Brasil
+LANG_NAME_NATIVE 	= Português Brasil

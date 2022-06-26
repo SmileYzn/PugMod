@@ -14,7 +14,7 @@ PUG_VOTEMAP_NEXTMAP 		= Changing map to ^3%s^1...
 PUG_VOTEMAP_START 		= Choose the start map.
 PUG_NO_VOTES 			= No votes.
 PUG_NO_PLAYERS			= Not enough players.
-PUG_VOTE_CHOOSED 		= ^3%n^1 choosed ^3%s^1
+PUG_VOTE_CHOOSED 		= ^3%n^1 chooses ^3%s^1
 PUG_VOTEMAP_FAIL 		= The map choice has failed:
 
 PUG_TEAMVOTE_START 		= Select teams started.
@@ -24,11 +24,11 @@ PUG_TEAMS_LEADER		= The Leaders will choose Players.
 PUG_TEAMS_RANDOM 		= Mixing teams now.
 PUG_TEAMS_SAME 			= The teams will remain the same.
 PUG_TEAMS_SKILL 		= Balancing teams by skills.
-PUG_TEAMS_SWAP			= Swaping teams now.
+PUG_TEAMS_SWAP			= Swapping teams now.
 PUG_TEAMS_KNIFE			= Starting Knife Round! ^3Get Ready!!
 
 PUG_LEADER_NEW 			= ^3%n^1 is leader of ^3%s^1
-PUG_LEADER_PICK 		= ^3%n^1 choosed ^3%n^1
+PUG_LEADER_PICK 		= ^3%n^1 chooses ^3%n^1
 
 PUG_DRAW_ROUND			= ^4No Winner!^1 Restarting Knife Round..
 
@@ -42,12 +42,12 @@ PUG_TEAM_TYPE_1 		= Misturar Times
 PUG_TEAM_TYPE_2 		= Sem Sorteio
 PUG_TEAM_TYPE_3 		= Balancear Skill
 PUG_TEAM_TYPE_4			= Trocar Times
-PUG_TEAM_TYPE_5 		= Round Faca
+PUG_TEAM_TYPE_5 		= Iniciar Round Faca
 
 PUG_VOTEMAP_NEXTMAP 		= O próximo mapa será ^3%s^1...
 PUG_VOTEMAP_START 		= Escolha do mapa iniciada.
 PUG_NO_VOTES 			= Nenhum voto.
-PUG_NO_PLAYERS			= Jogadres insuficientes.
+PUG_NO_PLAYERS			= Jogadores insuficientes.
 PUG_VOTE_CHOOSED 		= ^3%n^1 escolheu ^3%s^1
 PUG_VOTEMAP_FAIL 		= A escolha do mapa falhou:
 

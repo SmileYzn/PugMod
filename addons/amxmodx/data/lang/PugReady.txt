@@ -9,7 +9,7 @@ PUG_READY 				= ^3%n^1 is ready.
 PUG_NOTREADY 				= ^3%n^1 is not ready.
 
 PUG_READY_START 			= Say ^4.ready^1 to continue
-PUG_ALL_READY 				= All playres are ready!
+PUG_ALL_READY 				= All players are ready!
 
 PUG_LIST_NOTREADY 			= Not Ready (%i of %i):
 PUG_LIST_READY 				= Ready (%i of %i):
