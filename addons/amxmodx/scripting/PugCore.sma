@@ -355,14 +355,7 @@ public PUG_Next()
 		}
 		case STATE_OVERTIME:
 		{
-			if((THIS_GetRound() % g_iPlayOvertimeRounds) == 0)
-			{
-				g_iState = STATE_HALFTIME;
-			}
-			else
-			{
-				g_iState = STATE_END;
-			}
+			g_iState = (PUG_GetOvertimeWinner() != TEAM_UNASSIGNED) ? STATE_END : STATE_HALFTIME;
 		}
 		case STATE_END:
 		{
@@ -677,6 +670,28 @@ TeamName:PUG_GetWinner()
 	return TEAM_UNASSIGNED;
 }
 
+TeamName:PUG_GetOvertimeWinner()
+{
+	if (PUG_CheckOvertimeWinner(TEAM_TERRORIST))
+	{
+		return TEAM_TERRORIST;
+	}
+	if (PUG_CheckOvertimeWinner(TEAM_CT))
+	{
+		return TEAM_CT;
+	}
+	return TEAM_UNASSIGNED;
+}
+
+bool:PUG_CheckOvertimeWinner(TeamName: TEAM_NAME)
+{
+	new iFinishedHalves = g_iRound[STATE_OVERTIME] / g_iPlayOvertimeRounds;
+	new iFinishedOTs = iFinishedHalves / 2;
+	new Score = g_iScore[TEAM_NAME][STATE_OVERTIME] - (iFinishedOTs * g_iPlayOvertimeRounds);
+	new parseScore = Score % (g_iPlayOvertimeRounds * 2);
+	return parseScore > g_iPlayOvertimeRounds;
+}
+
 PUG_ResetRound()
 {
 	if(g_iRoundReset)
@@ -786,15 +801,11 @@ bool:PUG_CheckRound()
 	}
 	else if(g_iState == STATE_OVERTIME)
 	{
-		if((THIS_GetRound() % g_iPlayOvertimeRounds == 0))
+		if (PUG_GetOvertimeWinner() != TEAM_UNASSIGNED)
 		{
 			return true;
 		}
-		else if((g_iScore[TEAM_TERRORIST][STATE_OVERTIME] - g_iScore[TEAM_CT][STATE_OVERTIME]) > g_iPlayOvertimeRounds)
-		{
-			return true;
-		}
-		else if((g_iScore[TEAM_CT][STATE_OVERTIME] - g_iScore[TEAM_TERRORIST][STATE_OVERTIME]) > g_iPlayOvertimeRounds)
+		else if(g_iRound[STATE_OVERTIME] % g_iPlayOvertimeRounds == 0)
 		{
 			return true;
 		}
