@@ -464,12 +464,10 @@ public PUG_Event(iState)
 			
 			if (PUG_CheckSwapTeams())
 			{
-				client_print_color(0,print_team_red,"Invertendo os lados");
 				set_task(g_fHandleTime,"PUG_SwapTeams");
 			}
 			else
 			{
-				client_print_color(0,print_team_red,"Permanecem os lados");
 				set_task(g_fHandleTime,"PUG_ProceedWithoutSwapTeams");
 			}
 		}
@@ -744,16 +742,11 @@ public PUG_ProceedWithoutSwapTeams()
 
 bool:PUG_CheckSwapTeams()
 {
-	client_print_color(0,print_team_red,"FH: %i de %i / SH: %i de %i / OT: %i de %i", g_iRound[STATE_FIRST_HALF], (g_iPlayRounds / 2), g_iRound[STATE_SECOND_HALF], (g_iPlayRounds / 2), g_iRound[STATE_OVERTIME], g_iPlayOvertimeRounds);
-	if (g_iRound[STATE_FIRST_HALF] == (g_iPlayRounds / 2))
+	if ((g_iRound[STATE_FIRST_HALF] == (g_iPlayRounds / 2)) &&
+			(g_iRound[STATE_SECOND_HALF] == (g_iPlayRounds / 2)) &&
+			((g_iRound[STATE_OVERTIME] % (g_iPlayOvertimeRounds * 2)) == 0))
 	{
-		if (g_iRound[STATE_SECOND_HALF] == (g_iPlayRounds / 2))
-		{
-			if ((g_iRound[STATE_OVERTIME] % (g_iPlayOvertimeRounds * 2)) == 0)
-			{
-				return false;
-			}
-		}
+		return false;
 	}
 	return true;
 }
