@@ -14,7 +14,7 @@ PUG_VOTEMAP_NEXTMAP 		= Changing map to ^3%s^1...
 PUG_VOTEMAP_START 		= Choose the start map.
 PUG_NO_VOTES 			= No votes.
 PUG_NO_PLAYERS			= Not enough players.
-PUG_VOTE_CHOOSED 		= ^3%n^1 chooses ^3%s^1
+PUG_VOTE_CHOOSED 		= ^3%n^1 chose ^3%s^1
 PUG_VOTEMAP_FAIL 		= The map choice has failed:
 
 PUG_TEAMVOTE_START 		= Select teams started.
@@ -28,7 +28,7 @@ PUG_TEAMS_SWAP			= Swapping teams now.
 PUG_TEAMS_KNIFE			= Starting Knife Round! ^3Get Ready!!
 
 PUG_LEADER_NEW 			= ^3%n^1 is leader of ^3%s^1
-PUG_LEADER_PICK 		= ^3%n^1 chooses ^3%n^1
+PUG_LEADER_PICK 		= ^3%n^1 chose ^3%n^1
 
 PUG_DRAW_ROUND			= ^4No Winner!^1 Restarting Knife Round..
 
