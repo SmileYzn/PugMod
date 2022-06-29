@@ -649,8 +649,8 @@ void:PUG_RestoreFrags()
 	{
 		id = iPlayers[i];
 
-		g_iPlayersData[id][iFrags] = set_user_frags(id, g_iPlayersData[id][iFrags]);
-		g_iPlayersData[id][iDeaths] = cs_set_user_deaths(id, g_iPlayersData[id][iDeaths]);
+		set_user_frags(id, g_iPlayersData[id][iFrags]);
+		cs_set_user_deaths(id, g_iPlayersData[id][iDeaths]);
 	}
 }
 
