@@ -44,6 +44,14 @@ new HookChain:g_hCBasePlayer_GetIntoGame;
 new HookChain:g_hCSGameRules_OnRoundFreezeEnd;
 new HookChain:g_hRoundEnd;
 
+enum dData
+{
+    iFrags,
+    iDeaths
+}
+
+new g_iPlayersData[33][dData];
+
 public plugin_init()
 {
 	register_plugin(PUG_MOD_PLUGIN,PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"The Core of Pug Mod");
@@ -604,6 +612,10 @@ public PUG_HelpAdmin(id,Level)
 
 public PUG_LO3(iDelay)
 {
+	if(iDelay == 1)
+	{
+		PUG_StoreFrags();
+	}
 	if(1 <= iDelay <= 3)
 	{
 		set_task(float(iDelay+1),"PUG_LO3",iDelay+1);
@@ -617,11 +629,47 @@ public PUG_LO3(iDelay)
 		if(!g_iRoundReset)
 		{
 			show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_1");
+			PUG_RestoreFrags();
 		}
 		else
 		{
 			show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_2",g_iRoundReset);
 		}
+	}
+}
+
+void:PUG_RestoreFrags()
+{
+	new iPlayers[32], iNum;
+	get_players(iPlayers, iNum);
+	if(!iNum)
+		return;
+
+	for(new i, id;i < iNum;i++)
+	{
+		id = iPlayers[i];
+
+		g_iPlayersData[id][iFrags] = set_user_frags(id, g_iPlayersData[id][iFrags]);
+		g_iPlayersData[id][iDeaths] = cs_set_user_deaths(id, g_iPlayersData[id][iDeaths]);
+	}
+}
+
+void:PUG_StoreFrags()
+{
+	if (g_iState != STATE_SECOND_HALF && g_iState != STATE_OVERTIME)
+		return;
+		
+	new iPlayers[32], iNum;
+	get_players(iPlayers, iNum);
+	if(!iNum)
+		return;
+
+	for(new i, id;i < iNum;i++)
+	{
+		id = iPlayers[i];
+
+		g_iPlayersData[id][iFrags] = get_user_frags(id);
+		g_iPlayersData[id][iDeaths] = get_user_deaths(id);
 	}
 }
 
