@@ -25,3 +25,17 @@ PUG_KILL 	= ADMIN: Matou %n.
 PUG_RCON 	= ADMIN: Executou um comando.
 PUG_MAP 	= ADMIN: Alterou o mapa.
 PUG_BAN 	= ADMIN: Baniu %n.
+
+[es]
+PUG_DESC_KICK 	= <jugador> [razon] - Expulsar a un jugador
+PUG_DESC_KILL 	= <jugador> - Matar a un jugador
+PUG_DESC_RCON 	= <comando> - Enviar un comando rcon al servidor
+PUG_DESC_MAP 	= <mapa> - Cambiar el mapa
+PUG_DESC_MSG 	= <texto> - Enviar un mensaje de chat a todos los jugadores
+PUG_DESC_BAN 	= <jugador> [minutos] - Banear permanentemente a un jugador
+
+PUG_KICK 	= ADMIN: Expulsó a %n del servidor.
+PUG_KILL 	= ADMIN: Mató a %n.
+PUG_RCON 	= ADMIN: Ejecutó un comando.
+PUG_MAP 	= ADMIN: Cambió el mapa.
+PUG_BAN 	= ADMIN: Baneó a %n permanentemente.

@@ -41,3 +41,25 @@ CANT_PERF_DEAD 	= Aquela acão não pode ser executada com o cliente morto "%s"
 CANT_PERF_BOT 	= Aquela acão não pode ser executada com bot "%s"
 ON 		= Ligado
 OFF 		= Desligado
+
+[es]
+BACK = Atras
+EXIT = Salir
+MORE = Mas
+NONE = Ninguno
+ADMIN = ADMIN
+PLAYER = JUGADOR
+ERROR = error
+YES = Si
+NO = No
+BAN = banear
+KICK = expulsar
+NO_ACC_COM = No tienes acceso a este comando
+USAGE = Uso
+MORE_CL_MATCHT = Hay mas de un cliente que coincide con tu argumento
+CL_NOT_FOUND = No se encontro ningun cliente con ese nombre o ese identificador
+CLIENT_IMM = El cliente "%s" tiene inmunidad
+CANT_PERF_DEAD = Esta accion no se puede aplicar a un cliente muerto "%s"
+CANT_PERF_BOT = Esta accion no se puede aplicar a un bot "%s"
+ON = Activado
+OFF = Desactivado

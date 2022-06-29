@@ -35,3 +35,22 @@ PUG_LIST_READY 				= Prontos (%i de %i):
 
 PUG_WAIT_HUD_MSG_1			= Aguardando^nFalta(m) %i Jogador(es)
 PUG_WAIT_HUD_MSG_2			= Iniciando Partida Em^n%s
+
+[es]
+PUG_DESC_READY 				= Le dice al servidor que el jugador está listo
+PUG_DESC_NOTREADY 			= Le dice al servidor que el jugador no está listo
+PUG_DESC_FORCEREADY 		= <Jugador> - Forzar a un jugador a estar listo
+
+PUG_FORCE_READY 			= ADMIN: Forzó a ^3%n^1 a estar listo.
+
+PUG_READY 					= ^3%n^1 está listo.
+PUG_NOTREADY 				= ^3%n^1 no está listo.
+
+PUG_READY_START 			= Escribe ^4.ready^1 para continuar
+PUG_ALL_READY 				= Todos los jugadores están listos!
+
+PUG_LIST_NOTREADY 			= No listos (%i of %i):
+PUG_LIST_READY 				= Listos (%i of %i):
+
+PUG_WAIT_HUD_MSG_1			= Esperando para empezar^n%i Jugador(es) restante(s)
+PUG_WAIT_HUD_MSG_2			= Comenzando la partida^n%s

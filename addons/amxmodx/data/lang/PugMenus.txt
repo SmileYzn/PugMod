@@ -65,3 +65,37 @@ PUG_LEADER_NEW 			= ^3%n^1 e o capitão dos ^3%s^1
 PUG_LEADER_PICK 		= ^3%n^1 escolheu ^3%n^1
 
 PUG_DRAW_ROUND			= ^4Nenhum vencedor!^1 Reiniciando Round Faca!!
+
+[es]
+PUG_HUD_MAP 			= Elige el mapa:
+PUG_HUD_TEAM 			= Modo de juego:
+PUG_HUD_SWAP			= Intercambiar equipos:
+
+PUG_TEAM_TYPE_0 		= Capitanes
+PUG_TEAM_TYPE_1 		= Aleatorio
+PUG_TEAM_TYPE_2 		= Sin sortear
+PUG_TEAM_TYPE_3 		= Balancerar habilidades
+PUG_TEAM_TYPE_4			= Intercambiar equipos
+PUG_TEAM_TYPE_5			= Ronda a Cuchillo
+
+PUG_VOTEMAP_NEXTMAP 	= Cambiando el mapa a ^3%s^1...
+PUG_VOTEMAP_START 		= Elige el mapa de inicio.
+PUG_NO_VOTES 			= Sin votos.
+PUG_NO_PLAYERS			= No hay suficientes jugadores.
+PUG_VOTE_CHOOSED 		= ^3%n^1 eligió ^3%s^1
+PUG_VOTEMAP_FAIL 		= La elección del mapa ha fallado:
+
+PUG_TEAMVOTE_START 		= Comenzaron los equipos seleccionados.
+PUG_TEAMVOTE_FAIL 		= La elección de los equipos falló:
+
+PUG_TEAMS_LEADER		= Los capitanes elegirán jugadores.
+PUG_TEAMS_RANDOM 		= Mezclando equipos ahora.
+PUG_TEAMS_SAME 			= Los equipos seguirán siendo los mismos..
+PUG_TEAMS_SKILL 		= Equilibrar equipos por habilidades.
+PUG_TEAMS_SWAP			= Intercambio de equipos ahora.
+PUG_TEAMS_KNIFE			= Comenzando la ronda de cuchillo! ^3Prepárate!!
+
+PUG_LEADER_NEW 			= ^3%n^1 es capitán de ^3%s^1
+PUG_LEADER_PICK 		= ^3%n^1 eligió ^3%n^1
+
+PUG_DRAW_ROUND			= ^4Sin ganador!^1 Reiniciando la ronda de cuchillo..

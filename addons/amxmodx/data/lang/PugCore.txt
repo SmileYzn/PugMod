@@ -123,3 +123,66 @@ PUG_CLIENT_DROP_BAN 			= %n banido por %i minutos: %s
 
 PUG_HELP_TITLE 				= Comandos do Pug Mod
 PUG_HELP_TITLE_ADMIN 			= Comandos do Admin
+
+[es]
+PUG_STATE_DEAD				= Muerto
+PUG_STATE_WARMUP			= Calentamiento
+PUG_STATE_START				= Comenzando
+PUG_STATE_FIRST_HALF		= Primera mitad
+PUG_STATE_HALFTIME			= Medio tiempo
+PUG_STATE_SECOND_HALF		= Segunda mitad
+PUG_STATE_OVERTIME			= Tiempo extra
+PUG_STATE_END				= Finalizado
+
+PUG_BUILD_STRING1			= %s Versión %s (%s)
+PUG_BUILD_STRING2			= Escribe ^3.help^1 para ver la lista de comandos
+
+PUG_STATUS 					= %s (Jugadores: %i) (%i min - %i max)
+PUG_START_PUG 				= ADMIN: Comenzo la partida de PugMod.
+PUG_STOP_PUG 				= ADMIN: Detuvo la partida de PugMod.
+
+PUG_CMD_ERROR 				= No se puede usar este comando ahora.
+PUG_CMD_OK 					= La accion %s ha sido ejecutada.
+PUG_CMD_FAIL 				= La accion %s ha fallado.
+
+PUG_DESC_STATUS				= Mostrar el estado de PUG
+PUG_DESC_SCORE 				= Mostrar las puntuaciones PUG
+PUG_DESC_START				= Forzar el inicio de Pug Mod
+PUG_DESC_STOP				= Forzar a que se detenga Pug Mod
+PUG_DESC_HELP 				= Mostrar los comandos de PUG
+PUG_DESC_HELP_ADMIN 			= Mostrar los comandos de ADMINISTRADOR
+
+PUG_LIVE_HUD_1				= --- MATCH IS LIVE ---
+PUG_LIVE_HUD_2 				= --- MEJOR DE %i RONDAS ---
+
+PUG_WARMUP_MSG				= Comenzo el calentamiento, prepárate!
+PUG_LIVE_1ST 				= Comenzo el primera mitad: ^3Buena suerte, diviértete!
+PUG_HALFTIME 				= Comenzo el medio tiempo.
+PUG_LIVE_2ND 				= Comenzo la segunda mitad: ^3Buena suerte, diviértete!
+PUG_LIVE_OT 				= Comenzó el tiempo extra: ^3Buena suerte, diviértete!
+
+PUG_SWAP_TEAMS				= Cambiando equipos automaticamente.
+
+PUG_KICK_MSG_FULL			= El servidor esta lleno.
+PUG_KICK_MSG_HLTV			= HLTV no esta permitido.
+
+PUG_TEAM_SAME				= Ya estás en este equipo..
+PUG_TEAM_SPEC				= Los ^3Espectadores^1 no están permitidos.
+PUG_TEAM_AUTO				= La selección automática de equipo no está permitida.
+PUG_TEAM_FULL				= Este equipo esta lleno.
+PUG_TEAM_LIVE 				= No se puede cambiar cuando se inicia el juego.
+
+PUG_ROUND_START 			= Ronda ^4%i^1 comenzada.
+PUG_ROUND_WON 				= Ronda ^4%i^1 ganada por ^3%s.
+PUG_ROUND_DRAW 				= Ronda ^4%i^1 empatada: No hay ganadores.
+
+PUG_SCORE 					= El equipo ^3%s^1 esta ganando: %i-%i
+PUG_SCORE_TIED 				= La puntuación está empatada: %i-%i
+
+PUG_END_WONALL 				= Juego terminado! El equipo ^3%s^1 ha ganado el juego: %i-%i
+PUG_END_TIED 				= Juego terminado! La puntuación está empatada: %i-%i
+
+PUG_CLIENT_DROP_BAN			= %n ha sido baneado por %i minutos: %s
+
+PUG_HELP_TITLE 				= Comandos de Mod Pug
+PUG_HELP_TITLE_ADMIN 		= Comandos de administrador

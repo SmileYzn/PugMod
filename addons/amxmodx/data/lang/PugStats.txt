@@ -37,3 +37,23 @@ PUG_SUM 	= (%d dmg / %d hits) em (%d dmg / %d hits) de ^3%n^1 (%d HP)
 PUG_NOSUM 	= Nehum stats nesse round.
 
 PUG_ROUND_DMG 	= (%d dmg / %d hits) em (%d dmg / %d hits) de %n
+
+[es]
+PUG_DESC_HP 	= Salud de otros jugadores
+PUG_DESC_DMG 	= Daño hecho a otros jugadores
+PUG_DESC_RDMG 	= Mostrar daño recibido
+PUG_DESC_SUM 	= Resumen de la ronda
+
+PUG_HP_NONE = Nadie está vivo.
+PUG_HP_CMD 	= ^3%n^1 con %d vida (%d chaleco)
+
+PUG_DMG 	= Aciertos a ^3%n^1 %d vez(ces) (Daño %d)
+PUG_NODMG 	= No acertaste a nadie en esta ronda..
+
+PUG_RDMG 	= Acierto por ^3%n^1 %d vez(ces) (Daño %d)
+PUG_NORDMG 	= No fuiste dañado en esta ronda.
+
+PUG_SUM 	= (%d daño / %d aciertos) a (%d daño / %d aciertos) de ^3%n^1 (%d vida)
+PUG_NOSUM 	= No hay estadísticas en esta ronda.
+
+PUG_ROUND_DMG = (%d daño / %d aciertos) a (%d daño / %d aciertos) de %n

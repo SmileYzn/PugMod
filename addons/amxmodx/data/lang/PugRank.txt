@@ -11,3 +11,10 @@ PUG_DESC_STATS		= <nome> - Veja as estatística de um jogador ou a sua
 
 PUG_RANK_TITLE		= Liderança de Ranking
 PUG_STATS_TITLE		= Estatísticas do Jogador
+
+[es]
+PUG_DESC_RANK		= Ver su ranking para un tipo específico de estadísticas
+PUG_DESC_STATS		= <nombre> - Ver las estadísticas de un jugador específico o las tuyas
+
+PUG_RANK_TITLE		= Ranking de líderes
+PUG_STATS_TITLE		= Estadísticas del jugador
