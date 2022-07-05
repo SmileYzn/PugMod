@@ -13,7 +13,7 @@ PUG_VOTE_MAP_MENU	= Vote Map
 PUG_VOTE_MAP_MAIN	= Pick up a map to nominate.
 PUG_VOTE_MAP_VOTE 	= An vote session is running, try again later.
 PUG_VOTE_MAP_VOTED 	= You already nominated: ^3%s
-PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomitated ^4%s^1: Lacking ^4%i^1 votes to change map.
+PUG_VOTE_MAP_PICK1 	= ^3%s^1 nominated ^4%s^1: Lacking ^4%i^1 votes to change map.
 PUG_VOTE_MAP_PICK2 	= Say ^3.vote^1 if you want to nominate a map.
 PUG_VOTE_MAP_CHANGE 	= Changing map to ^4%s^1...
 
