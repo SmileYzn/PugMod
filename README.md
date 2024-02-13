@@ -1,7 +1,7 @@
 <h1 align="center">CS Pick Up Game - Archived</h1>
 <p align="center">Counter-Strike 1.6 Pickup Game Play for Amx Mod X</p>
 
-<h1 align="center"><a href="https://github.com/SmileYzn/RePugMod">New pure ReHLDS + ReGameDLL_CS version: RePugMod</a></h1>
+<h1 align="center"><a href="https://github.com/SmileYzn/MatchBot/">Use new Metamod plugin: MatchBOT</a></h1>
 
 <p align="center">
     <a href="https://github.com/SmileYzn/PugMod/releases/latest"><img src="https://img.shields.io/github/downloads/SmileYzn/PugMod/total?label=Download%40latest&style=flat-square&logo=github&logoColor=white" alt="Build status"></a>
