@@ -17,7 +17,7 @@ PUG_DESC_KICK 	= <player> [motivo] - Kickar o jogador
 PUG_DESC_KILL 	= <player> - Matar o jogador alvo
 PUG_DESC_RCON 	= <comando> - Enviar um comando ao servidor
 PUG_DESC_MAP 	= <mapa> - Alterar o mapa
-PUG_DESC_MSG 	= <text> - Envar uma mensagem global
+PUG_DESC_MSG 	= <text> - Enviar uma mensagem global
 PUG_DESC_BAN 	= <player> [minutos] - Banir permanentemente o alvo
 
 PUG_KICK 	= ADMIN: Kickou %n do servidor.

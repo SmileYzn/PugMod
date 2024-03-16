@@ -1,7 +1,7 @@
 ﻿[en]
 PUG_DESC_HP 	= Health of other players
 PUG_DESC_DMG 	= Damage done to other players
-PUG_DESC_RDMG 	= Show recived damage
+PUG_DESC_RDMG 	= Show received damage
 PUG_DESC_SUM 	= Round summary
 
 PUG_HP_NONE 	= No one is alive.
@@ -34,6 +34,6 @@ PUG_RDMG 	= Dano por ^3%n^1 %d veze(s) (Dano %d)
 PUG_NORDMG 	= Voce não foi atingido nesse round.
 
 PUG_SUM 	= (%d dmg / %d hits) em (%d dmg / %d hits) de ^3%n^1 (%d HP)
-PUG_NOSUM 	= Nehum stats nesse round.
+PUG_NOSUM 	= Nenhum stats nesse round.
 
 PUG_ROUND_DMG 	= (%d dmg / %d hits) em (%d dmg / %d hits) de %n

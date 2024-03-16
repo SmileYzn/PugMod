@@ -105,7 +105,7 @@ PUG_KICK_MSG_HLTV			= HLTV não permitido.
 
 PUG_TEAM_SAME				= Você já está nesse time.
 PUG_TEAM_SPEC				= ^3Espectadores^1 não são permitidos.
-PUG_TEAM_AUTO				= A Funcão ^3Auto Seleção^1 está bloqueada.
+PUG_TEAM_AUTO				= A Função ^3Auto Seleção^1 está bloqueada.
 PUG_TEAM_FULL				= Esse time está completo.
 PUG_TEAM_LIVE 				= Troca de times não permitida durante o jogo.
 

@@ -4,6 +4,8 @@
 #define _PugCore_included
 
 #include <amxmisc>
+#include <cstrike>
+#include <fun>
 #include <reapi>
 
 #pragma semicolon 1

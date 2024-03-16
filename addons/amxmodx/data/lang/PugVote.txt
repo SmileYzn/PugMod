@@ -13,7 +13,7 @@ PUG_VOTE_MAP_MENU	= Vote Map
 PUG_VOTE_MAP_MAIN	= Pick up a map to nominate.
 PUG_VOTE_MAP_VOTE 	= An vote session is running, try again later.
 PUG_VOTE_MAP_VOTED 	= You already nominated: ^3%s
-PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomitated ^4%s^1: Lacking ^4%i^1 votes to change map.
+PUG_VOTE_MAP_PICK1 	= ^3%s^1 nominated ^4%s^1: Lacking ^4%i^1 votes to change map.
 PUG_VOTE_MAP_PICK2 	= Say ^3.vote^1 if you want to nominate a map.
 PUG_VOTE_MAP_CHANGE 	= Changing map to ^4%s^1...
 
@@ -37,20 +37,20 @@ PUG_VOTE_STOP_MSG2	= Say ^4.vote^1 to vote for stop the match.
 PUG_VOTE_STOP_END	= Game Over! The ^3%s^1 Surrendered!
 
 [bp]
-PUG_VOTE_DESC		= Abre o menu de votaÁıes
+PUG_VOTE_DESC		= Abre o menu de vota√ß√µes
 PUG_VOTE_MENU		= Vote Menu:
 
 PUG_VOTE_KICK_MENU 	= Vote Kick
 PUG_VOTE_KICK_MAIN 	= Escolha um jogador.
 PUG_VOTE_KICK_NEED	= Faltam ^3%i^1 jogadores para o vote kick.
 PUG_VOTE_KICK_MSG	= Kickado por Vote Kick.
-PUG_VOTE_KICK_KICKED	= ^3%s^1 Kickado: ^4%i^1 votos alcancados.
+PUG_VOTE_KICK_KICKED	= ^3%s^1 Kickado: ^4%i^1 votos alcan√ßados.
 PUG_VOTE_KICK_VOTED	= ^3%s^1 votou em %s: Mais ^4%i^1 votos para kickar.
 
 PUG_VOTE_MAP_MENU	= Votar Mapa
 PUG_VOTE_MAP_MAIN	= Escolha um mapa para nomear.
-PUG_VOTE_MAP_VOTE 	= Uma votaÁ„o esta em execucao, tente novamente.
-PUG_VOTE_MAP_VOTED	= Voce j· escolheu: ^3%s
+PUG_VOTE_MAP_VOTE 	= Uma vota√ß√£o esta em execu√ß√£o, tente novamente.
+PUG_VOTE_MAP_VOTED	= Voce j√° escolheu: ^3%s
 PUG_VOTE_MAP_PICK1 	= ^3%s^1 nomeou ^4%s^1: Restando ^4%i^1 votos para alterar.
 PUG_VOTE_MAP_PICK2 	= Say ^3.vote^1 se voce quer nomear um mapa.
 PUG_VOTE_MAP_CHANGE 	= Alterando mapa para ^4%s^1...
@@ -58,18 +58,18 @@ PUG_VOTE_MAP_CHANGE 	= Alterando mapa para ^4%s^1...
 PUG_VOTE_TIMEOUT_MENU	= Votar Pausa
 PUG_VOTE_TIMEOUT_MSG1 	= ^3%s^1 (^3%s^1) votou para pausar o jogo. Faltam ^4%i^1 voto(s) para pausa.
 PUG_VOTE_TIMEOUT_MSG2	= Say ^4.vote^1 para votar a pausa.
-PUG_VOTE_TIMEOUT_PAUSE	= O jogo ser· pausado em ^3%i^1 segundos no prÛximo round.
-PUG_VOTE_TIMEOUT_PAUSE2	= A partida j· ser· pausada no prÛximo round.
-PUG_VOTE_TIMEOUT_VOTED 	= VocÍ j· votou para pausar o jogo.
-PUG_VOTE_TIMEOUT_TEAM 	= O time ^3%s^1 n„o pode mais pausar o jogo.
-PUG_VOTE_TIMEOUT_LIVE	= A partida ainda n„o comeÁou.
+PUG_VOTE_TIMEOUT_PAUSE	= O jogo ser√° pausado em ^3%i^1 segundos no pr√≥ximo round.
+PUG_VOTE_TIMEOUT_PAUSE2	= A partida j√° ser√° pausada no pr√≥ximo round.
+PUG_VOTE_TIMEOUT_VOTED 	= Voc√™ j√° votou para pausar o jogo.
+PUG_VOTE_TIMEOUT_TEAM 	= O time ^3%s^1 n√£o pode mais pausar o jogo.
+PUG_VOTE_TIMEOUT_LIVE	= A partida ainda n√£o come√ßou.
 PUG_VOTE_TIMEOUT_PAUSED = Round pausado por ^3%i^1 segundos.
 PUG_VOTE_TIMEOUT_HUD 	= --- ROUND PAUSADO ---^n%s
 
 PUG_VOTE_STOP_MENU 	= Se Render
-PUG_VOTE_STOP_LIVE	= A partida ainda n„o comeÁou.
-PUG_VOTE_STOP_TEAM	= VocÍ deve entrar em um time primeiro.
-PUG_VOTE_STOP_VOTED	= VocÍ j· votou para cancelar a partida.
+PUG_VOTE_STOP_LIVE	= A partida ainda n√£o come√ßou.
+PUG_VOTE_STOP_TEAM	= Voc√™ deve entrar em um time primeiro.
+PUG_VOTE_STOP_VOTED	= Voc√™ j√° votou para cancelar a partida.
 PUG_VOTE_STOP_MSG1 	= ^3%s^1 (^3%s^1) votou para se render. Faltam ^4%i^1 voto(s) para cancelar a partida.
 PUG_VOTE_STOP_MSG2	= Say ^4.vote^1 para votar o encerramento da partida.
 PUG_VOTE_STOP_END	= Fim de jogo! Os ^3%s^1 se renderam!

@@ -44,6 +44,14 @@ new HookChain:g_hCBasePlayer_GetIntoGame;
 new HookChain:g_hCSGameRules_OnRoundFreezeEnd;
 new HookChain:g_hRoundEnd;
 
+enum dData
+{
+    iFrags,
+    iDeaths
+}
+
+new g_iPlayersData[33][dData];
+
 public plugin_init()
 {
 	register_plugin(PUG_MOD_PLUGIN,PUG_MOD_VERSION,PUG_MOD_AUTHOR,PUG_MOD_LINK,"The Core of Pug Mod");
@@ -57,7 +65,7 @@ public plugin_init()
 	bind_pcvar_num(create_cvar("pug_players_max","10",FCVAR_NONE,"Maximum of players allowed in game"),g_iPlayersMax);
 	
 	bind_pcvar_num(create_cvar("pug_play_rounds","30",FCVAR_NONE,"Rounds to play before start overtime"),g_iPlayRounds);
-	bind_pcvar_num(create_cvar("pug_play_overtime_rounds","3",FCVAR_NONE,"Win difference to determine a winner in overtime"),g_iPlayOvertimeRounds);
+	bind_pcvar_num(create_cvar("pug_play_overtime_rounds","3",FCVAR_NONE,"Rounds per half on overtime"),g_iPlayOvertimeRounds);
 	bind_pcvar_num(create_cvar("pug_play_overtime","1",FCVAR_NONE,"Play Overtime (0 Sudden Death, 1 Force Overtime, 2 End Tied)"),g_iPlayOvertime);
 	
 	bind_pcvar_num(create_cvar("pug_play_best_rounds","0",FCVAR_NONE,"Play Best of X rounds (0 disable, or round count to enable)"),g_iPlayBestRounds);
@@ -355,14 +363,7 @@ public PUG_Next()
 		}
 		case STATE_OVERTIME:
 		{
-			if((THIS_GetRound() % g_iPlayOvertimeRounds) == 0)
-			{
-				g_iState = STATE_HALFTIME;
-			}
-			else
-			{
-				g_iState = STATE_END;
-			}
+			g_iState = (PUG_GetOvertimeWinner() != TEAM_UNASSIGNED) ? STATE_END : STATE_HALFTIME;
 		}
 		case STATE_END:
 		{
@@ -462,7 +463,14 @@ public PUG_Event(iState)
 		{
 			client_print_color(0,print_team_red,"%s %L",PUG_MOD_HEADER,LANG_SERVER,"PUG_HALFTIME");
 			
-			set_task(g_fHandleTime,"PUG_SwapTeams");
+			if (PUG_CheckSwapTeams())
+			{
+				set_task(g_fHandleTime,"PUG_SwapTeams");
+			}
+			else
+			{
+				set_task(g_fHandleTime,"PUG_ProceedWithoutSwapTeams");
+			}
 		}
 		case STATE_SECOND_HALF:
 		{
@@ -604,6 +612,10 @@ public PUG_HelpAdmin(id,Level)
 
 public PUG_LO3(iDelay)
 {
+	if(iDelay == 1)
+	{
+		PUG_StoreFrags();
+	}
 	if(1 <= iDelay <= 3)
 	{
 		set_task(float(iDelay+1),"PUG_LO3",iDelay+1);
@@ -617,11 +629,47 @@ public PUG_LO3(iDelay)
 		if(!g_iRoundReset)
 		{
 			show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_1");
+			PUG_RestoreFrags();
 		}
 		else
 		{
 			show_hudmessage(0,"%L",LANG_SERVER,"PUG_LIVE_HUD_2",g_iRoundReset);
 		}
+	}
+}
+
+void:PUG_RestoreFrags()
+{
+	new iPlayers[32], iNum;
+	get_players(iPlayers, iNum);
+	if(!iNum)
+		return;
+
+	for(new i, id;i < iNum;i++)
+	{
+		id = iPlayers[i];
+
+		set_user_frags(id, g_iPlayersData[id][iFrags]);
+		cs_set_user_deaths(id, g_iPlayersData[id][iDeaths]);
+	}
+}
+
+void:PUG_StoreFrags()
+{
+	if (g_iState != STATE_SECOND_HALF && g_iState != STATE_OVERTIME)
+		return;
+		
+	new iPlayers[32], iNum;
+	get_players(iPlayers, iNum);
+	if(!iNum)
+		return;
+
+	for(new i, id;i < iNum;i++)
+	{
+		id = iPlayers[i];
+
+		g_iPlayersData[id][iFrags] = get_user_frags(id);
+		g_iPlayersData[id][iDeaths] = get_user_deaths(id);
 	}
 }
 
@@ -668,6 +716,28 @@ TeamName:PUG_GetWinner()
 	}
 	
 	return TEAM_UNASSIGNED;
+}
+
+TeamName:PUG_GetOvertimeWinner()
+{
+	if (PUG_CheckOvertimeWinner(TEAM_TERRORIST))
+	{
+		return TEAM_TERRORIST;
+	}
+	if (PUG_CheckOvertimeWinner(TEAM_CT))
+	{
+		return TEAM_CT;
+	}
+	return TEAM_UNASSIGNED;
+}
+
+bool:PUG_CheckOvertimeWinner(TeamName: TEAM_NAME)
+{
+	new iFinishedHalves = g_iRound[STATE_OVERTIME] / g_iPlayOvertimeRounds;
+	new iFinishedOTs = iFinishedHalves / 2;
+	new Score = g_iScore[TEAM_NAME][STATE_OVERTIME] - (iFinishedOTs * g_iPlayOvertimeRounds);
+	new parseScore = Score % (g_iPlayOvertimeRounds * 2);
+	return parseScore > g_iPlayOvertimeRounds;
 }
 
 PUG_ResetRound()
@@ -723,6 +793,27 @@ public PUG_SwapTeams()
 	}
 }
 
+public PUG_ProceedWithoutSwapTeams()
+{
+	rg_restart_round();
+
+	if((g_iState == STATE_HALFTIME) && (PUG_GetPlayersNum(true) >= g_iPlayersMin))
+	{
+		PUG_Next();
+	}
+}
+
+bool:PUG_CheckSwapTeams()
+{
+	if ((g_iRound[STATE_FIRST_HALF] == (g_iPlayRounds / 2)) &&
+			(g_iRound[STATE_SECOND_HALF] == (g_iPlayRounds / 2)) &&
+			((g_iRound[STATE_OVERTIME] % (g_iPlayOvertimeRounds * 2)) == 0))
+	{
+		return false;
+	}
+	return true;
+}
+
 bool:PUG_CheckRound()
 {
 	if(g_iState == STATE_FIRST_HALF)
@@ -758,15 +849,11 @@ bool:PUG_CheckRound()
 	}
 	else if(g_iState == STATE_OVERTIME)
 	{
-		if((THIS_GetRound() % g_iPlayOvertimeRounds) == 0)
+		if (PUG_GetOvertimeWinner() != TEAM_UNASSIGNED)
 		{
 			return true;
 		}
-		else if((g_iScore[TEAM_TERRORIST][STATE_OVERTIME] - g_iScore[TEAM_CT][STATE_OVERTIME]) > g_iPlayOvertimeRounds)
-		{
-			return true;
-		}
-		else if((g_iScore[TEAM_CT][STATE_OVERTIME] - g_iScore[TEAM_TERRORIST][STATE_OVERTIME]) > g_iPlayOvertimeRounds)
+		else if(g_iRound[STATE_OVERTIME] % g_iPlayOvertimeRounds == 0)
 		{
 			return true;
 		}
