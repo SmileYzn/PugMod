@@ -66,7 +66,6 @@ public:
     std::map<size_t, P_SPAWN> GetSpawns();
     bool GetPlayerSpawnSpot(CBasePlayer *Player);
     bool CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance);
-    void CheckMapConditions();
     void GetIntoGame(CBasePlayer *Player);
     void PlayerSpawn(CBasePlayer *Player);
     void OnSpawnEquip(CBasePlayer *Player, bool addDefault, bool equipGame);

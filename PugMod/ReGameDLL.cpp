@@ -234,13 +234,6 @@ bool ReGameDLL_CBasePlayer_GetIntoGame(IReGameHook_CBasePlayer_GetIntoGame *chai
 	return Result;
 }
 
-void ReGameDLL_CSGameRules_CheckMapConditions(IReGameHook_CSGameRules_CheckMapConditions *chain)
-{
-	chain->callNext();
-
-	gPugDM.CheckMapConditions();
-}
-
 void ReGameDLL_CSGameRules_RestartRound(IReGameHook_CSGameRules_RestartRound *chain)
 {
 	gPugReady.RestartRound();

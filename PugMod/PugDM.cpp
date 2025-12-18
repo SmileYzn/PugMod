@@ -71,11 +71,6 @@ void CPugDM::Init()
         CSGameRules()->m_bMapHasVIPSafetyZone = false;
     }
 
-    if (this->m_Spawn.size() < 1)
-    {
-        g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_MpFreeForAll, "0");
-    }
-
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3Deathmatch^1 enabled until match start."), gPugCvar.m_Tag->string);
 }
 
@@ -105,7 +100,7 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
     {
         if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
         {
-            if (this->m_Spawn.size())
+            if (this->m_Spawn.size() > 0)
             {
                 do
                 {
@@ -191,22 +186,6 @@ bool CPugDM::CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance)
     }
 
     return true;
-}
-
-void CPugDM::CheckMapConditions()
-{
-    if (this->m_Run)
-    {
-        if (g_pGameRules)
-        {
-            CSGameRules()->m_bMapHasBombTarget = false;
-            CSGameRules()->m_bMapHasBombZone = false;
-            CSGameRules()->m_bMapHasRescueZone = false;
-            CSGameRules()->m_bMapHasBuyZone = false;
-            CSGameRules()->m_bMapHasEscapeZone = false;
-            CSGameRules()->m_bMapHasVIPSafetyZone = false;
-        }
-    }
 }
 
 void CPugDM::GetIntoGame(CBasePlayer *Player)

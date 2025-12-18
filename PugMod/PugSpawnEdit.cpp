@@ -466,6 +466,8 @@ void CPugSpawnEdit::AddSpawn(CBasePlayer* Player, int Team)
 
 	Info.Vecs = Player->edict()->v.origin;
 
+	Info.Vecs.z += 15.0f; // test
+
 	Info.Angles = Player->edict()->v.angles;
 
 	Info.Team = Team;
