@@ -38,7 +38,7 @@ mkdir -p "$dllPath"
 yes | cp -f "$buildFile" "$dllPath"
 
 # Prevent from HLDS found Steam path in my home directory
-export HOME=
+# export HOME=
 
 # Run HLDS
 eval "cd $hldsPath && $hldsRunCommand"

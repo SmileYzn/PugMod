@@ -1,10 +1,8 @@
 #pragma once
 
-constexpr auto SPAWN_POINT_MIN_DISTANCE = 250.0f;
-
-constexpr hudtextparms_t g_DM_HudInfo = {-1.0f, 0.90f, 2, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 1.1f, 1.1f, 1};
-constexpr hudtextparms_t g_DM_HudHeal = {-1.0f, 0.60f, 2, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 2.0f, 2.0f, 2};
-constexpr hudtextparms_t g_DM_HudHits = {-1.0f, 0.55f, 2, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 0.8f, 0.8f, 3};
+constexpr hudtextparms_t g_DM_HudInfo = {-1.0f, 0.90f, 0, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 1.1f, 0.0f, 1};
+constexpr hudtextparms_t g_DM_HudHeal = {-1.0f, 0.65f, 0, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF, 0.0f, 0.0f, 2.0f, 0.0f, 2};
+constexpr hudtextparms_t g_DM_HudHits = {-1.0f, 0.55f, 0, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0.0f, 0.0f, 0.8f, 0.0f, 3};
 
 constexpr const char* g_DM_SoundHeadshot = "spk \"sound/fvox/blip\"";
 

@@ -110,7 +110,7 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
 
                     if (!Spawn->second.Vecs.IsZero())
                     {
-                        if (this->CheckDistance(Player, Spawn->second.Vecs, SPAWN_POINT_MIN_DISTANCE))
+                        if (this->CheckDistance(Player, Spawn->second.Vecs, gPugCvar.m_DM_SpawnDistance->value))
                         {
                             Player->edict()->v.origin = Spawn->second.Vecs + Vector(0.0f, 0.0f, 1.0f);
 
@@ -168,9 +168,9 @@ bool CPugDM::CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance)
 
         if (Target)
         {
-            if (Target->entindex() != Player->entindex())
+            if (Target->IsPlayer() && Target->IsAlive())
             {
-                if (Target->IsAlive())
+                if (Target->entindex() != Player->entindex())
                 {
                     return false;
                 }
@@ -784,7 +784,7 @@ bool CPugDM::ResetScore(CBasePlayer *Player)
         {
             if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
             {
-                if (Player->edict()->v.frags > 0.0f)
+                if (Player->edict()->v.frags > 10.0f)
                 {
                     this->m_Info[Player->entindex()].m_Headshots = 0.0f;
 

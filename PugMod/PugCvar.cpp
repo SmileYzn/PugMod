@@ -380,6 +380,12 @@ void CPugCvar::ServerActivate()
     // Default "1"
     this->m_DM_Enable = this->Register("pug_dm_enable", "1");
 
+    // Minimum distance between players for a player to respawn
+    // WARNING: Minimum recomended is 250.0
+    //
+    // Default "250.0"
+    this->m_DM_SpawnDistance = this->Register("pug_dm_spawn_distance", "250.0");
+
     // Hide kill feed from other players
     //
     // 0 Disabled

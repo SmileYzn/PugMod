@@ -67,6 +67,7 @@ public:
 	cvar_t* m_SmokeBugFix;
 
 	cvar_t* m_DM_Enable;
+	cvar_t* m_DM_SpawnDistance;
 	cvar_t* m_DM_HideKillFeed;
 	cvar_t* m_DM_HitIndicator;
 	cvar_t* m_DM_HSOnlyMode;
