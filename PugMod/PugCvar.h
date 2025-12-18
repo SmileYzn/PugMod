@@ -17,6 +17,7 @@ public:
 	cvar_t* m_SvRestart;
 	cvar_t* m_SvRestartRound;
 	cvar_t* m_MpBuyTime;
+	cvar_t* m_MpFreeForAll;
 
 	cvar_t* m_Tag;
 	cvar_t* m_Language;

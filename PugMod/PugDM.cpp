@@ -71,6 +71,11 @@ void CPugDM::Init()
         CSGameRules()->m_bMapHasVIPSafetyZone = false;
     }
 
+    if (this->m_Spawn.size() < 1)
+    {
+        g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_MpFreeForAll, "0");
+    }
+
     gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::RED, _T("^4[%s]^1 ^3Deathmatch^1 enabled until match start."), gPugCvar.m_Tag->string);
 }
 
@@ -151,6 +156,13 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
                         }
                     }
                 } while (true);
+            }
+            else
+            {
+                if (gPugCvar.m_MpFreeForAll->value != 0.0f)
+                {
+                    g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_MpFreeForAll, "0");
+                }
             }
         }
     }

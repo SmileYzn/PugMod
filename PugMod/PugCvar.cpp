@@ -34,6 +34,9 @@ void CPugCvar::ServerActivate()
     // mp_buytime
     this->m_MpBuyTime = CVAR_GET_POINTER("mp_buytime");
 
+    // mp_freeforall
+    this->m_MpFreeForAll = CVAR_GET_POINTER("mp_freeforall");
+
     // Log Tag
     //
     // Default "PUG"
