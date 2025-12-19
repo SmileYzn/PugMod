@@ -173,7 +173,15 @@ void CPugCurl::CallbackResult(CURL* ch, size_t Size, const char* Memory)
 						}
 						catch (nlohmann::ordered_json::parse_error& e)
 						{
-							LOG_CONSOLE(PLID, "[%s] %s", __func__, e.what());
+							auto Error = e.what();
+
+							if (Error)
+							{
+								if (Error[0U] != '\0')
+								{
+									LOG_CONSOLE(PLID, "[%s] %s", __func__, Error);
+								}
+							}
 						}
 					}
 				}
