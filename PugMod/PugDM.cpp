@@ -31,7 +31,7 @@ void CPugDM::Load()
 
 void CPugDM::SetSpawn(vec3_t Vecs, vec3_t Angles, int Team, vec3_t VAngles)
 {
-    if (!Vecs.IsZero() && !Angles.IsZero())
+    if (!Vecs.IsZero())
     {
         P_SPAWN Spawn = {Vecs, Angles, Team, VAngles};
 
@@ -89,7 +89,7 @@ void CPugDM::Stop()
     }
 }
 
-std::map<size_t, P_SPAWN> CPugDM::GetSpawns()
+std::map<int, P_SPAWN> CPugDM::GetSpawns()
 {
     return this->m_Spawn;
 }

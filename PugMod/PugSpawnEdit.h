@@ -30,7 +30,7 @@ public:
 	void RespawnPlayer(CBasePlayer* Player, int SpawnIndex);
 private:
 	string_t m_InfoTarget = 0;
-	std::map<size_t, P_SPAWN> m_Spawns = {};
+	std::map<int, P_SPAWN> m_Spawns = {};
 	std::map<int, edict_t*> m_Entities = {};
 	std::map<int, int> m_Marked = {};
 };

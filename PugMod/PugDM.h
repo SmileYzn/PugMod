@@ -63,7 +63,7 @@ public:
     void Load();
     void Init();
     void Stop();
-    std::map<size_t, P_SPAWN> GetSpawns();
+    std::map<int, P_SPAWN> GetSpawns();
     bool GetPlayerSpawnSpot(CBasePlayer *Player);
     bool CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance);
     void GetIntoGame(CBasePlayer *Player);
@@ -91,7 +91,7 @@ public:
 
 private:
     bool m_Run = false;
-    std::map<size_t, P_SPAWN> m_Spawn = {};
+    std::map<int, P_SPAWN> m_Spawn = {};
     std::vector<P_WEAPON> m_Weapon = {};
     std::map<int, P_DM_INFO> m_Info = {};
 };
