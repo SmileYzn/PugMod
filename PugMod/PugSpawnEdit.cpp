@@ -674,6 +674,8 @@ void CPugSpawnEdit::Save(CBasePlayer* Player)
 				File << "\n";
 			}
 
+			File.close();
+
 			gPugDM.Load();
 			
 			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%u^1 Spawns saved to file: ^3%s.cfg"), gPugCvar.m_Tag->string, this->m_Spawns.size(), STRING(gpGlobals->mapname));
@@ -682,8 +684,6 @@ void CPugSpawnEdit::Save(CBasePlayer* Player)
 		{
 			gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Failed to open: ^3%s.cfg"), gPugCvar.m_Tag->string, STRING(gpGlobals->mapname));
 		}
-
-		File.close();
 	}
 	else
 	{

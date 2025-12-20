@@ -36,34 +36,31 @@ void CPugServerCmd::AddClientCmd()
 
 void CPugServerCmd::AddSpawn()
 {
-    vec3_t Vecs     = {0.0f, 0.0f, 0.0f};
-    vec3_t Angles   = {0.0f, 0.0f, 0.0f};
-    int Team        = 0;
-    vec3_t VAngles  = {0.0f, 0.0f, 0.0f};
-
     if (CMD_ARGC() >= 7)
     {
-        Vecs.x = std::stof(CMD_ARGV(1));
-        Vecs.y = std::stof(CMD_ARGV(2));
-        Vecs.z = std::stof(CMD_ARGV(3));
+        P_SPAWN Spawn = {};
 
-        Angles.x = std::stof(CMD_ARGV(4));
-        Angles.y = std::stof(CMD_ARGV(5));
-        Angles.z = std::stof(CMD_ARGV(6));
+        Spawn.Vecs.x = Q_atof(CMD_ARGV(1));
+        Spawn.Vecs.y = Q_atof(CMD_ARGV(2));
+        Spawn.Vecs.z = Q_atof(CMD_ARGV(3));
+
+        Spawn.Angles.x = Q_atof(CMD_ARGV(4));
+        Spawn.Angles.y = Q_atof(CMD_ARGV(5));
+        Spawn.Angles.z = Q_atof(CMD_ARGV(6));
 
         if (CMD_ARGC() >= 8)
         {
-            Team = std::stoi(CMD_ARGV(7));
+            Spawn.Team = Q_atoi(CMD_ARGV(7));
         }
         
         if (CMD_ARGC() >= 11)
         {
-            VAngles.x = std::stof(CMD_ARGV(8));
-            VAngles.y = std::stof(CMD_ARGV(9));
-            VAngles.z = std::stof(CMD_ARGV(10));
+            Spawn.VAngles.x = Q_atof(CMD_ARGV(8));
+            Spawn.VAngles.y = Q_atof(CMD_ARGV(9));
+            Spawn.VAngles.z = Q_atof(CMD_ARGV(10));
         }
 
-        gPugDM.SetSpawn(Vecs, Angles, Team, VAngles);
+        gPugDM.SetSpawn(Spawn);
     }
     else
     {
@@ -75,7 +72,7 @@ void CPugServerCmd::AddWeapon()
 {
     if (CMD_ARGC() >= 4)
     {
-        gPugDM.SetWeapon(CMD_ARGV(1), CMD_ARGV(2), std::stoi(CMD_ARGV(3)));
+        gPugDM.SetWeapon(CMD_ARGV(1), CMD_ARGV(2), Q_atoi(CMD_ARGV(3)));
     }
     else
     {
@@ -87,11 +84,7 @@ void CPugServerCmd::AddCvar()
 {
     if (CMD_ARGC() >= 3)
     {
-        gPugCvarControl.Add
-        (
-            CMD_ARGV(1),
-            CMD_ARGV(2)
-        );
+        gPugCvarControl.Add(CMD_ARGV(1), CMD_ARGV(2));
     }
     else
     {

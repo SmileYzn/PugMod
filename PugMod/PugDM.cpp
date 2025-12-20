@@ -29,12 +29,10 @@ void CPugDM::Load()
     gPugUtil.ServerCommand("exec %s/cfg/weaponlist.cfg", gPugUtil.GetPath());
 }
 
-void CPugDM::SetSpawn(vec3_t Vecs, vec3_t Angles, int Team, vec3_t VAngles)
+void CPugDM::SetSpawn(P_SPAWN Spawn)
 {
-    if (!Vecs.IsZero())
+    if (!Spawn.Vecs.IsZero())
     {
-        P_SPAWN Spawn = {Vecs, Angles, Team, VAngles};
-
         this->m_Spawn.insert(std::make_pair(this->m_Spawn.size(), Spawn));
     }
 }

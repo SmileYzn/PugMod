@@ -58,7 +58,7 @@ class CPugDM
 public:
     void ServerActivate();
     void ServerDeactivate();
-    void SetSpawn(vec3_t Vecs, vec3_t Angles, int Team, vec3_t VAngles);
+    void SetSpawn(P_SPAWN Spawn);
     void SetWeapon(std::string Name, std::string Label, int Bot);
     void Load();
     void Init();
