@@ -191,7 +191,5 @@ void CPugCurl::CallbackResult(CURL* ch, size_t Size, const char* Memory)
 				LOG_CONSOLE(PLID, "[%s] Response: HTTP Code %ld, check pug_api_address and pug_api_timeout.", Plugin_info.logtag, HttpResponseCode);
 			}
 		}
-
-		curl_easy_cleanup(ch);
 	}
 }
