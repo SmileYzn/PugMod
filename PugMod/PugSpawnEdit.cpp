@@ -436,7 +436,7 @@ bool CPugSpawnEdit::IsStuck(int EntityIndex)
     {
         TraceResult trResult = {};
 
-        TRACE_HULL(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? 3 : 1, pEntity, &trResult);
+        TRACE_HULL(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? head_hull : human_hull, pEntity, &trResult);
 
         return (trResult.fStartSolid || trResult.fAllSolid || !trResult.fInOpen);
     }
