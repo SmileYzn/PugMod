@@ -1,5 +1,5 @@
 # HLDS Path
-$hldsPath = "D:\Files\Desktop\hlds";
+$hldsPath = "C:\27020";
 
 # Test HLDS Path
 if (!(Test-Path($hldsPath)))
@@ -9,7 +9,7 @@ if (!(Test-Path($hldsPath)))
 }
 
 # Executable path
-$hldsExecutable = "D:\Files\Desktop\hlds\hlds.exe";
+$hldsExecutable = "C:\27020\hlds.exe";
 
 # Plugin Name
 $pluginName = ((Get-Item .).Name).ToLower();
