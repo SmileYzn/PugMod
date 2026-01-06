@@ -139,7 +139,7 @@ typedef struct S_ROUND_STATS
 		this->Versus = 0;
 		this->PlayerDamage.clear();
 	}
-} P_ROUND_STATS, * LP_ROUND_STATS;
+} P_ROUND_STATS, *LP_ROUND_STATS;
 
 // Player Stats
 typedef struct S_PLAYER_STATS
