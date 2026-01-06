@@ -279,7 +279,7 @@ typedef struct S_PLAYER_STATS
 		// Dominations
 		this->Domination.clear();
 	}
-} P_PLAYER_STATS, * LP_PLAYER_STATS;
+} P_PLAYER_STATS, *LP_PLAYER_STATS;
 
 // Player Chat
 typedef struct S_PLAYER_CHAT

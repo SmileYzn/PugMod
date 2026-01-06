@@ -1245,9 +1245,7 @@ void CPugStats::DumpData()
 					{"ADR", Stats.second.RoundPlay > 0 ? static_cast<float>(Stats.second.Damage / Stats.second.RoundPlay) : 0.0f},
 					{"ACC", Stats.second.Shots > 0 ? static_cast<float>(100.0f * Stats.second.Hits / Stats.second.Shots) : 0.0f},
 					{"EFF", Stats.second.Frags > 0 ? static_cast<float>(100.0f * Stats.second.Frags / (Stats.second.Frags + Stats.second.Deaths)) : 0.0f},
-					//
-					// Round Win Share
-					{"RoundWinShare", Stats.second.RoundWinShare > 0.0f ? (Stats.second.RoundWinShare / static_cast<float>(Stats.second.RoundWin)) : 0.0f},
+					{"RWS", Stats.second.RoundWinShare > 0.0f ? (Stats.second.RoundWinShare / static_cast<float>(Stats.second.RoundWin)) : 0.0f},
 					//
 					// Misc Frags
 					{"BlindFrags", Stats.second.BlindFrags},
