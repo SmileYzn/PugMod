@@ -1239,12 +1239,12 @@ void CPugStats::DumpData()
 					//
 					// Formulas
 					{"Score", (Stats.second.Frags - Stats.second.Deaths)},
-					{"KD", Stats.second.Deaths > 0 ? static_cast<float>(Stats.second.Frags / Stats.second.Deaths) : 0.0f},
+					{"KDR", Stats.second.Deaths > 0 ? static_cast<float>(Stats.second.Frags / Stats.second.Deaths) : 0.0f},
 					{"KDA", Stats.second.Deaths > 0 ? static_cast<float>((Stats.second.Frags + Stats.second.Assists) / Stats.second.Deaths) : 0.0f},
 					{"HSP", Stats.second.Frags > 0 ? static_cast<float>((Stats.second.Headshots / Stats.second.Frags) * 100) : 0.0f},
 					{"ADR", Stats.second.RoundPlay > 0 ? static_cast<float>(Stats.second.Damage / Stats.second.RoundPlay) : 0.0f},
 					{"ACC", Stats.second.Shots > 0 ? static_cast<float>(100.0f * Stats.second.Hits / Stats.second.Shots) : 0.0f},
-					{"EFF", Stats.second.Frags > 0 ? static_cast<float>(100.0 * Stats.second.Frags / (Stats.second.Frags + Stats.second.Deaths)) : 0.0f},
+					{"EFF", Stats.second.Frags > 0 ? static_cast<float>(100.0f * Stats.second.Frags / (Stats.second.Frags + Stats.second.Deaths)) : 0.0f},
 					//
 					// Round Win Share
 					{"RoundWinShare", Stats.second.RoundWinShare > 0.0f ? (Stats.second.RoundWinShare / static_cast<float>(Stats.second.RoundWin)) : 0.0f},
