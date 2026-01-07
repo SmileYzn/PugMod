@@ -202,7 +202,7 @@ typedef struct S_PLAYER_STATS
 	std::array<int, MAX_CLIENTS + 1U> Versus;
 	
 	// BETA: HitBox
-	std::map<int, P_HITBOX_STATS> HitBox;
+	std::array<P_HITBOX_STATS, 9U> HitBox;
 
 	// BETA: Weapon Stats
 	std::map<int, P_WEAPON_STATS> Weapon;
@@ -270,8 +270,8 @@ typedef struct S_PLAYER_STATS
 		// Versus: 1 vs X win situations
 		this->Versus = {};
 
-		// HitBox (0 Hits, 1 Damage, 2 Hits Received, 3 Damage Received)
-		this->HitBox.clear();
+		// HitBox (0 Hits, 1 Damage, 2 Hits Received, 3 Damage Received, 4 Frags, 5 Deaths)
+		this->HitBox = {};
 
 		// Weapon Stats
 		this->Weapon.clear();
@@ -304,7 +304,7 @@ typedef struct S_PLAYER_DATA
 	int	Winner;					// BETA: Is Winner of match
 	int IsBot;					// BETA: Is BOT
 
-	// Player Stats
+	// Player Stats (Per Half)
 	std::map<int, P_PLAYER_STATS> Stats;
 
 	// Player chat log
