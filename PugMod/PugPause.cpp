@@ -79,17 +79,17 @@ void CPugPause::RestartRound()
 
             gPugTask.Create(E_TASK::PAUSE_MATCH, 0.5f, true, PauseTime);
 
-            auto TimeUnit = CTimeFormat::GetTimeLength(PauseTime, CTimeFormat::TIMEUNIT_SECONDS).c_str();
+            auto TimeUnit = CTimeFormat::GetTimeLength(PauseTime, CTimeFormat::TIMEUNIT_SECONDS);
 
-            if (TimeUnit)
+            if (TimeUnit.length() > 0)
             {
                 if (this->m_Team == UNASSIGNED)
                 {
-                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Match paused: Match will continue in ^3%s^1."), gPugCvar.m_Tag->string, TimeUnit);
+                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Match paused: Match will continue in ^3%s^1."), gPugCvar.m_Tag->string, TimeUnit.c_str());
                 }
                 else
                 {
-                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Match paused by ^3%s^1: Match will continue in ^3%s^1."), gPugCvar.m_Tag->string, g_Pug_TeamName[this->m_Team], TimeUnit);
+                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Match paused by ^3%s^1: Match will continue in ^3%s^1."), gPugCvar.m_Tag->string, g_Pug_TeamName[this->m_Team], TimeUnit.c_str());
                 }
             }
         }

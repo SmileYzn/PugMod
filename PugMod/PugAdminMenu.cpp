@@ -186,7 +186,12 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
 				for (auto const& Time : BanTimes)
 				{
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, Time, CTimeFormat::GetTimeLength(Time, CTimeFormat::TIMEUNIT_MINUTES).c_str());
+                    auto TimeUnit = CTimeFormat::GetTimeLength(Time, CTimeFormat::TIMEUNIT_MINUTES);
+
+                    if (TimeUnit.length() > 0)
+                    {
+                        gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, Time, TimeUnit.c_str());
+                    }
 				}
 
                 gPugMenu[Player->entindex()].Show(Player);
