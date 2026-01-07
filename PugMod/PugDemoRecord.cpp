@@ -68,11 +68,10 @@ void CPugDemoRecord::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Item.Info)
         {
-            char File[128] = {0};
-            
+            char File[64] = {0};
             Q_snprintf(File, sizeof(File), "pug-%s-%u.dem", STRING(gpGlobals->mapname), (unsigned int)time(NULL));
 
-            gPugUtil.ClientCommand(Player->edict(), "stop; record \"pug-%s-%u.dem\"", File);
+            gPugUtil.ClientCommand(Player->edict(), "stop; record \"%s\"", File);
 
             gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Recording: ^3%s^1"), gPugCvar.m_Tag->string, File);
         }
