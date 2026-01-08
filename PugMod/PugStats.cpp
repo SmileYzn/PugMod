@@ -1380,14 +1380,14 @@ void CPugStats::DumpData()
 			{"BombDefusing", Result.BombDefusing},
 			{"BombDefusingKit", Result.BombDefusingKit},
 			{"BombDefused", Result.BombDefused},
-			{"BombDefusedKit", Result.BombDefusedKit},
-			//
-			// Kill Streak
-			{"KillStreak", Result.KillStreak},
-			//
-			// Versus
-			{"Versus", Result.Versus}
+			{"BombDefusedKit", Result.BombDefusedKit}
 		};
+		//
+		// Kill Streak
+		Data["Player"][Player.first]["KillStreak"] = Result.KillStreak;
+		//
+		// Versus
+		Data["Player"][Player.first]["Versus"] = Result.Versus;
 		//
 		// Hitbox Stats
 		for (size_t i = 0; i < Result.HitBox.size(); i++)
