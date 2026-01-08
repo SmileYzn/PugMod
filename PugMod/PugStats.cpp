@@ -1338,14 +1338,14 @@ void CPugStats::DumpData()
 			{"Suicides", Result.Suicides},
 			//
 			// Formulas
-			{"Score", (Result.Frags - Result.Deaths)},
-			{"KDR", Result.Deaths > 0 ? static_cast<float>(Result.Frags / Result.Deaths) : 0.0f},
-			{"KDA", Result.Deaths > 0 ? static_cast<float>((Result.Frags + Result.Assists) / Result.Deaths) : 0.0f},
-			{"HSP", Result.Frags > 0 ? static_cast<float>(100.0f * Result.Headshots / Result.Frags) : 0.0f},
-			{"ADR", Result.RoundPlay > 0 ? static_cast<float>(Result.Damage / Result.RoundPlay) : 0.0f},
-			{"ACC", Result.Shots > 0 ? static_cast<float>(100.0f * Result.Hits / Result.Shots) : 0.0f},
-			{"EFF", (Result.Frags + Result.Deaths) > 0 ? static_cast<float>(100.0f * Result.Frags / (Result.Frags + Result.Deaths)) : 0.0f},
-			{"RWS", Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / static_cast<float>(Result.RoundWin)) : 0.0f},
+			{"Score", (int)(Result.Frags - Result.Deaths)},
+			{"KDR", Result.Deaths > 0 ? (float)(Result.Frags / Result.Deaths) : 0.0f},
+			{"KDA", Result.Deaths > 0 ? (float)((Result.Frags + Result.Assists) / Result.Deaths) : 0.0f},
+			{"HSP", Result.Frags > 0 ? (float)(100.0f * Result.Headshots / Result.Frags) : 0.0f},
+			{"ADR", Result.RoundPlay > 0 ? (float)(Result.Damage / Result.RoundPlay) : 0.0f},
+			{"ACC", Result.Shots > 0 ? (float)(100.0f * Result.Hits / Result.Shots) : 0.0f},
+			{"EFF", (Result.Frags + Result.Deaths) > 0 ? (float)(100.0f * Result.Frags / (Result.Frags + Result.Deaths)) : 0.0f},
+			{"RWS", Result.RoundWinShare > 0.0f ? (float)(Result.RoundWinShare / (float)(Result.RoundWin)) : 0.0f},
 			//
 			// Misc Frags
 			{"BlindFrags", Result.BlindFrags},
