@@ -1179,7 +1179,7 @@ void CPugStats::OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEn
 void CPugStats::DumpData()
 {
 	// Data
-	nlohmann::ordered_json Data;
+	nlohmann::json Data;
 
 	// Match
 	Data["Match"] =
@@ -1201,6 +1201,9 @@ void CPugStats::DumpData()
 		{"MaxPlayers", this->m_Match.MaxPlayers}
 	};
 
+	// Player Result Stats
+	P_PLAYER_STATS Result = {};
+
 	// Player Loop
 	for (auto & Player : this->m_Player)
 	{
@@ -1216,11 +1219,11 @@ void CPugStats::DumpData()
 			{"IsBot", Player.second.IsBot},
 		};
 
-		// Player Result Stats
-		P_PLAYER_STATS Result = {};
-		
+		// Clear Result
+		Q_memset(&Result, 0, sizeof(Result));
+
 		// Player Stats
-		for (auto const & Stats : Player.second.Stats)
+		for (auto & Stats : Player.second.Stats)
 		{
 			if (Stats.first == STATE_FIRST_HALF || Stats.first == STATE_SECOND_HALF || Stats.first == STATE_OVERTIME)
 			{
@@ -1299,7 +1302,7 @@ void CPugStats::DumpData()
 				}
 				//
 				// Weapon Stats
-				for (auto const & Weapon : Stats.second.Weapon)
+				for (auto & Weapon : Stats.second.Weapon)
 				{
 					Result.Weapon[Weapon.first].Frags += Weapon.second.Frags;
 					Result.Weapon[Weapon.first].Deaths += Weapon.second.Deaths;
@@ -1312,7 +1315,7 @@ void CPugStats::DumpData()
 				}
 				//
 				// Domination / Revenge
-				for (auto const & Domination : Stats.second.Domination)
+				for (auto & Domination : Stats.second.Domination)
 				{
 					Result.Domination[Domination.first].DominationBegin += Domination.second.DominationBegin;
 					Result.Domination[Domination.first].Domination += Domination.second.Domination;
@@ -1336,16 +1339,6 @@ void CPugStats::DumpData()
 			{"DamageReceived", Result.DamageReceived},
 			{"Money", Result.Money},
 			{"Suicides", Result.Suicides},
-			//
-			// Formulas
-			{"Score", static_cast<int>(Result.Frags - Result.Deaths)},
-			{"KDR", Result.Deaths > 0 ? static_cast<double>(Result.Frags / Result.Deaths) : 0},
-			{"KDA", Result.Deaths > 0 ? static_cast<double>((Result.Frags + Result.Assists) / Result.Deaths) : 0},
-			{"HSP", Result.Frags > 0 ? static_cast<double>(100 * Result.Headshots / Result.Frags) : 0},
-			{"ADR", Result.RoundPlay > 0 ? static_cast<double>(Result.Damage / Result.RoundPlay) : 0},
-			{"ACC", Result.Shots > 0 ? static_cast<double>(100 * Result.Hits / Result.Shots) : 0},
-			{"EFF", (Result.Frags + Result.Deaths) > 0 ? static_cast<double>(100 * Result.Frags / (Result.Frags + Result.Deaths)) : 0},
-			{"RWS", Result.RoundWinShare > 0.0f ? static_cast<double>(Result.RoundWinShare / (float)(Result.RoundWin)) : 0},
 			//
 			// Misc Frags
 			{"BlindFrags", Result.BlindFrags},
@@ -1380,7 +1373,17 @@ void CPugStats::DumpData()
 			{"BombDefusing", Result.BombDefusing},
 			{"BombDefusingKit", Result.BombDefusingKit},
 			{"BombDefused", Result.BombDefused},
-			{"BombDefusedKit", Result.BombDefusedKit}
+			{"BombDefusedKit", Result.BombDefusedKit},
+			//
+			// Formulas
+			{"Score", (Result.Deaths > 0 ? static_cast<int>(Result.Frags - Result.Deaths) : 0.0f)},
+			{"KDR", (Result.Deaths > 0 ? static_cast<float>(Result.Frags / Result.Deaths) : 0.0f)},
+			{"KDA", (Result.Deaths > 0 ? static_cast<float>((Result.Frags + Result.Assists) / Result.Deaths) : 0.0f)},
+			{"HSP", (Result.Frags > 0 ? static_cast<float>(100.0f * Result.Headshots / Result.Frags) : 0.0f)},
+			{"ADR", (Result.RoundPlay > 0 ? static_cast<float>(Result.Damage / Result.RoundPlay) : 0.0f)},
+			{"ACC", (Result.Shots > 0 ? static_cast<float>(100.0f * Result.Hits / Result.Shots) : 0.0f)},
+			{"EFF", ((Result.Frags + Result.Deaths) > 0 ? static_cast<float>(100.0f * Result.Frags / (Result.Frags + Result.Deaths)) : 0.0f)},
+			{"RWS", (Result.RoundWinShare > 0.0f ? static_cast<float>(Result.RoundWinShare / (float)(Result.RoundWin)) : 0.0f)},
 		};
 		//
 		// Kill Streak
@@ -1404,7 +1407,7 @@ void CPugStats::DumpData()
 		}
 		//
 		// Weapon Stats
-		for (auto const & Weapon : Result.Weapon)
+		for (auto & Weapon : Result.Weapon)
 		{
 			Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
 			{
@@ -1420,7 +1423,7 @@ void CPugStats::DumpData()
 		}
 		//
 		// Domination / Revenge
-		for (auto const & Domination : Result.Domination)
+		for (auto & Domination : Result.Domination)
 		{
 			Data["Player"][Player.first]["Domination"][Domination.first] = 
 			{
@@ -1431,7 +1434,7 @@ void CPugStats::DumpData()
 		}
 		//
 		// Chat Log
-		for (auto const & Chat : Player.second.ChatLog)
+		for (auto & Chat : Player.second.ChatLog)
 		{
 			Data["Chat"].push_back
 			({
@@ -1447,7 +1450,7 @@ void CPugStats::DumpData()
 	}
 	//
 	// Round events
-	for (auto const & Event : this->m_RoundEvent)
+	for (auto & Event : this->m_RoundEvent)
 	{
 		Data["Events"].push_back
 		({
