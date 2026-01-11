@@ -1178,309 +1178,330 @@ void CPugStats::OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEn
 
 void CPugStats::DumpData()
 {
-	// Data
-	nlohmann::json Data;
-
-	// Match
-	Data["Match"] =
+	try
 	{
-		{"StartTime", this->m_Match.StartTime},
-		{"EndTime", this->m_Match.EndTime},
-		{"HostName", this->m_Match.HostName},
-		{"Map", this->m_Match.Map},
-		{"Address", this->m_Match.Address},
-		{"ScoreTRs", this->m_Match.Score[TERRORIST]},
-		{"ScoreCTs", this->m_Match.Score[CT]},
-		{"Winner", this->m_Match.Winner},
-		{"Rounds", this->m_Match.Rounds},
-		{"MaxRounds", this->m_Match.MaxRounds},
-		{"MaxRoundsOT", this->m_Match.MaxRoundsOT},
-		{"GameMode", this->m_Match.GameMode},
-		{"KnifeRound", this->m_Match.KnifeRound},
-		{"MinPlayers", this->m_Match.MinPlayers},
-		{"MaxPlayers", this->m_Match.MaxPlayers}
-	};
+		// Data
+		nlohmann::ordered_json Data;
 
-	// Player Result Stats
-	P_PLAYER_STATS Result = {};
-
-	// Player Loop
-	for (auto & Player : this->m_Player)
-	{
-		// Player Data
-		Data["Player"][Player.first]["Data"] =
+		// Match (OK)
+		Data["Match"] =
 		{
-			{"JoinGameTime", Player.second.JoinGameTime},
-			{"DisconnectTime", Player.second.DisconnectTime},
-			{"Auth", Player.first},
-			{"Name", Player.second.Name},
-			{"Team", Player.second.Team},
-			{"Winner", Player.second.Winner},
-			{"IsBot", Player.second.IsBot},
+			{"StartTime", this->m_Match.StartTime},
+			{"EndTime", this->m_Match.EndTime},
+			{"HostName", this->m_Match.HostName},
+			{"Map", this->m_Match.Map},
+			{"Address", this->m_Match.Address},
+			{"ScoreTRs", this->m_Match.Score[TERRORIST]},
+			{"ScoreCTs", this->m_Match.Score[CT]},
+			{"Winner", this->m_Match.Winner},
+			{"Rounds", this->m_Match.Rounds},
+			{"MaxRounds", this->m_Match.MaxRounds},
+			{"MaxRoundsOT", this->m_Match.MaxRoundsOT},
+			{"GameMode", this->m_Match.GameMode},
+			{"KnifeRound", this->m_Match.KnifeRound},
+			{"MinPlayers", this->m_Match.MinPlayers},
+			{"MaxPlayers", this->m_Match.MaxPlayers}
 		};
 
-		// Clear Result
-		Q_memset(&Result, 0, sizeof(Result));
-
-		// Player Stats
-		for (auto & Stats : Player.second.Stats)
+		// Player Loop
+		for (auto & Player : this->m_Player)
 		{
-			if (Stats.first == STATE_FIRST_HALF || Stats.first == STATE_SECOND_HALF || Stats.first == STATE_OVERTIME)
+			// Player Result Stats
+			P_PLAYER_STATS Result = {};
+			
+			// Player Data (OK)
+			Data["Player"][Player.first]["Data"] =
 			{
-				// Player stats
-				Result.Frags += Stats.second.Frags;
-				Result.Deaths += Stats.second.Deaths;
-				Result.Assists += Stats.second.Assists;
-				Result.Headshots += Stats.second.Headshots;
-				Result.Shots += Stats.second.Shots;
-				Result.Hits += Stats.second.Hits;
-				Result.HitsReceived += Stats.second.HitsReceived;
-				Result.Damage += Stats.second.Damage;
-				Result.DamageReceived += Stats.second.DamageReceived;
-				Result.Money += Stats.second.Money;
-				Result.Suicides += Stats.second.Suicides;
-				//
-				// Round Win Share
-				Result.RoundWinShare += Stats.second.RoundWinShare;
-				//
-				// Misc Frags
-				Result.BlindFrags += Stats.second.BlindFrags;
-				Result.BlindDeaths += Stats.second.BlindDeaths;
-				Result.OneShot += Stats.second.OneShot;
-				Result.NoScope += Stats.second.NoScope;
-				Result.FlyFrags += Stats.second.FlyFrags;
-				Result.WallFrags += Stats.second.WallFrags;
-				Result.DoubleKill += Stats.second.DoubleKill;
-				Result.SmokeFrags += Stats.second.SmokeFrags;
-				Result.AssistedFlash += Stats.second.AssistedFlash;
-				//
-				// Knife Duels
-				Result.KnifeDuelWin += Stats.second.KnifeDuelWin;
-				Result.KnifeDuelLose += Stats.second.KnifeDuelLose;
-				//
-				// Entry Frags and Deaths
-				Result.EntryFrags += Stats.second.EntryFrags;
-				Result.EntryDeaths += Stats.second.EntryDeaths;
-				//
-				// Round counter
-				Result.RoundPlay += Stats.second.RoundPlay;
-				Result.RoundWin += Stats.second.RoundWin;
-				Result.RoundLose += Stats.second.RoundLose;
-				//
-				// Bomb counter
-				Result.BombSpawn += Stats.second.BombSpawn;
-				Result.BombDrop += Stats.second.BombDrop;
-				Result.BombPlanting += Stats.second.BombPlanting;
-				Result.BombPlanted += Stats.second.BombPlanted;
-				Result.BombExploded += Stats.second.BombExploded;
-				Result.BombDefusing += Stats.second.BombDefusing;
-				Result.BombDefusingKit += Stats.second.BombDefusingKit;
-				Result.BombDefused += Stats.second.BombDefused;
-				Result.BombDefusedKit += Stats.second.BombDefusedKit;
-				//
-				// Kill Streak
-				for (size_t i = 0; i < Stats.second.KillStreak.size(); i++)
-				{
-					Result.KillStreak[i] += Stats.second.KillStreak[i];
-				}
-				//
-				// Versus
-				for (size_t i = 0; i < Stats.second.Versus.size(); i++)
-				{
-					Result.Versus[i] += Stats.second.Versus[i];
-				}
-				//
-				// Hitbox Stats
-				for (size_t i = 0; i < Stats.second.HitBox.size(); i++)
-				{
-					Result.HitBox[i].Hits += Stats.second.HitBox[i].Hits;
-					Result.HitBox[i].Damage += Stats.second.HitBox[i].Damage;
-					Result.HitBox[i].HitsReceived += Stats.second.HitBox[i].HitsReceived;
-					Result.HitBox[i].DamageReceived += Stats.second.HitBox[i].DamageReceived;
-					Result.HitBox[i].Frags += Stats.second.HitBox[i].Frags;
-					Result.HitBox[i].Deaths += Stats.second.HitBox[i].Deaths;
-				}
-				//
-				// Weapon Stats
-				for (auto & Weapon : Stats.second.Weapon)
-				{
-					Result.Weapon[Weapon.first].Frags += Weapon.second.Frags;
-					Result.Weapon[Weapon.first].Deaths += Weapon.second.Deaths;
-					Result.Weapon[Weapon.first].Headshots += Weapon.second.Headshots;
-					Result.Weapon[Weapon.first].Shots += Weapon.second.Shots;
-					Result.Weapon[Weapon.first].Hits += Weapon.second.Hits;
-					Result.Weapon[Weapon.first].HitsReceived += Weapon.second.HitsReceived;
-					Result.Weapon[Weapon.first].Damage += Weapon.second.Damage;
-					Result.Weapon[Weapon.first].DamageReceived += Weapon.second.DamageReceived;
-				}
-				//
-				// Domination / Revenge
-				for (auto & Domination : Stats.second.Domination)
-				{
-					Result.Domination[Domination.first].DominationBegin += Domination.second.DominationBegin;
-					Result.Domination[Domination.first].Domination += Domination.second.Domination;
-					Result.Domination[Domination.first].Revenge += Domination.second.Revenge;
-				}
-			}
-		}
-		//
-		// Stats
-		Data["Player"][Player.first]["Stats"] =
-		{
-			// Player stats
-			{"Frags", Result.Frags},
-			{"Deaths", Result.Deaths},
-			{"Assists", Result.Assists},
-			{"Headshots", Result.Headshots},
-			{"Shots", Result.Shots},
-			{"Hits", Result.Hits},
-			{"HitsReceived", Result.HitsReceived},
-			{"Damage", Result.Damage},
-			{"DamageReceived", Result.DamageReceived},
-			{"Money", Result.Money},
-			{"Suicides", Result.Suicides},
-			//
-			// Misc Frags
-			{"BlindFrags", Result.BlindFrags},
-			{"BlindDeaths", Result.BlindDeaths},
-			{"OneShot", Result.OneShot},
-			{"NoScope", Result.NoScope},
-			{"FlyFrags", Result.FlyFrags},
-			{"WallFrags", Result.WallFrags},
-			{"DoubleKill", Result.DoubleKill},
-			{"SmokeFrags", Result.SmokeFrags},
-			{"AssistedFlash", Result.AssistedFlash},
-			//
-			// Knife Duels
-			{"KnifeDuelWin", Result.KnifeDuelWin},
-			{"KnifeDuelLose", Result.KnifeDuelLose},
-			//
-			// Entry Frags and Deaths
-			{"EntryFrags", Result.EntryFrags},
-			{"EntryDeaths", Result.EntryDeaths},
-			//
-			// Round counter
-			{"RoundPlay", Result.RoundPlay},
-			{"RoundWin", Result.RoundWin},
-			{"RoundLose", Result.RoundLose},
-			//
-			// Bomb counter
-			{"BombSpawn", Result.BombSpawn},
-			{"BombDrop", Result.BombDrop},
-			{"BombPlanting", Result.BombPlanting},
-			{"BombPlanted", Result.BombPlanted},
-			{"BombExploded", Result.BombExploded},
-			{"BombDefusing", Result.BombDefusing},
-			{"BombDefusingKit", Result.BombDefusingKit},
-			{"BombDefused", Result.BombDefused},
-			{"BombDefusedKit", Result.BombDefusedKit},
-			//
-			// Formulas
-			{"Score", (Result.Deaths > 0 ? static_cast<int>(Result.Frags - Result.Deaths) : 0.0f)},
-			{"KDR", (Result.Deaths > 0 ? static_cast<float>(Result.Frags / Result.Deaths) : 0.0f)},
-			{"KDA", (Result.Deaths > 0 ? static_cast<float>((Result.Frags + Result.Assists) / Result.Deaths) : 0.0f)},
-			{"HSP", (Result.Frags > 0 ? static_cast<float>(100.0f * Result.Headshots / Result.Frags) : 0.0f)},
-			{"ADR", (Result.RoundPlay > 0 ? static_cast<float>(Result.Damage / Result.RoundPlay) : 0.0f)},
-			{"ACC", (Result.Shots > 0 ? static_cast<float>(100.0f * Result.Hits / Result.Shots) : 0.0f)},
-			{"EFF", ((Result.Frags + Result.Deaths) > 0 ? static_cast<float>(100.0f * Result.Frags / (Result.Frags + Result.Deaths)) : 0.0f)},
-			{"RWS", (Result.RoundWinShare > 0.0f ? static_cast<float>(Result.RoundWinShare / (float)(Result.RoundWin)) : 0.0f)},
-		};
-		//
-		// Kill Streak
-		Data["Player"][Player.first]["KillStreak"] = Result.KillStreak;
-		//
-		// Versus
-		Data["Player"][Player.first]["Versus"] = Result.Versus;
-		//
-		// Hitbox Stats
-		for (size_t i = 0; i < Result.HitBox.size(); i++)
-		{
-			Data["Player"][Player.first]["Hitbox"][std::to_string(i)] =
-			{
-				{"Hits", Result.HitBox[i].Hits},
-				{"Damage", Result.HitBox[i].Damage},
-				{"HitsReceived", Result.HitBox[i].HitsReceived},
-				{"DamageReceived", Result.HitBox[i].DamageReceived},
-				{"Frags", Result.HitBox[i].Frags},
-				{"Deaths", Result.HitBox[i].Deaths}
-			};
-		}
-		//
-		// Weapon Stats
-		for (auto & Weapon : Result.Weapon)
-		{
-			Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
-			{
-				{"Frags", Weapon.second.Frags},
-				{"Deaths", Weapon.second.Deaths},
-				{"Headshots", Weapon.second.Headshots},
-				{"Shots", Weapon.second.Shots},
-				{"Hits", Weapon.second.Hits},
-				{"HitsReceived", Weapon.second.HitsReceived},
-				{"Damage", Weapon.second.Damage},
-				{"DamageReceived", Weapon.second.DamageReceived}
-			};
-		}
-		//
-		// Domination / Revenge
-		for (auto & Domination : Result.Domination)
-		{
-			Data["Player"][Player.first]["Domination"][Domination.first] = 
-			{
-				{"DominationBegin", Domination.second.DominationBegin},
-				{"Domination", Domination.second.Domination},
-				{"Revenge", Domination.second.Revenge}
-			};
-		}
-		//
-		// Chat Log
-		for (auto & Chat : Player.second.ChatLog)
-		{
-			Data["Chat"].push_back
-			({
+				{"JoinGameTime", Player.second.JoinGameTime},
+				{"DisconnectTime", Player.second.DisconnectTime},
 				{"Auth", Player.first},
 				{"Name", Player.second.Name},
-				{"Time", Chat.Time},
-				{"State", Chat.State},
-				{"Team", Chat.Team},
-				{"Alive", Chat.Alive},
-				{"Message", Chat.Message}
-			});
+				{"Team", Player.second.Team},
+				{"Winner", Player.second.Winner},
+				{"IsBot", Player.second.IsBot},
+			};
+			
+			// Player Stats
+			for (auto & Stats : Player.second.Stats)
+			{
+				if (Stats.first == STATE_FIRST_HALF || Stats.first == STATE_SECOND_HALF || Stats.first == STATE_OVERTIME)
+				{
+					// Player stats
+					Result.Frags += Stats.second.Frags;
+					Result.Deaths += Stats.second.Deaths;
+					Result.Assists += Stats.second.Assists;
+					Result.Headshots += Stats.second.Headshots;
+					Result.Shots += Stats.second.Shots;
+					Result.Hits += Stats.second.Hits;
+					Result.HitsReceived += Stats.second.HitsReceived;
+					Result.Damage += Stats.second.Damage;
+					Result.DamageReceived += Stats.second.DamageReceived;
+					Result.Money += Stats.second.Money;
+					Result.Suicides += Stats.second.Suicides;
+					//
+					// Round Win Share
+					Result.RoundWinShare += Stats.second.RoundWinShare;
+					//
+					// Misc Frags
+					Result.BlindFrags += Stats.second.BlindFrags;
+					Result.BlindDeaths += Stats.second.BlindDeaths;
+					Result.OneShot += Stats.second.OneShot;
+					Result.NoScope += Stats.second.NoScope;
+					Result.FlyFrags += Stats.second.FlyFrags;
+					Result.WallFrags += Stats.second.WallFrags;
+					Result.DoubleKill += Stats.second.DoubleKill;
+					Result.SmokeFrags += Stats.second.SmokeFrags;
+					Result.AssistedFlash += Stats.second.AssistedFlash;
+					//
+					// Knife Duels
+					Result.KnifeDuelWin += Stats.second.KnifeDuelWin;
+					Result.KnifeDuelLose += Stats.second.KnifeDuelLose;
+					//
+					// Entry Frags and Deaths
+					Result.EntryFrags += Stats.second.EntryFrags;
+					Result.EntryDeaths += Stats.second.EntryDeaths;
+					//
+					// Round counter
+					Result.RoundPlay += Stats.second.RoundPlay;
+					Result.RoundWin += Stats.second.RoundWin;
+					Result.RoundLose += Stats.second.RoundLose;
+					//
+					// Bomb counter
+					Result.BombSpawn += Stats.second.BombSpawn;
+					Result.BombDrop += Stats.second.BombDrop;
+					Result.BombPlanting += Stats.second.BombPlanting;
+					Result.BombPlanted += Stats.second.BombPlanted;
+					Result.BombExploded += Stats.second.BombExploded;
+					Result.BombDefusing += Stats.second.BombDefusing;
+					Result.BombDefusingKit += Stats.second.BombDefusingKit;
+					Result.BombDefused += Stats.second.BombDefused;
+					Result.BombDefusedKit += Stats.second.BombDefusedKit;
+					//
+					// Kill Streak
+					for (size_t i = 0; i < Stats.second.KillStreak.size(); i++)
+					{
+						Result.KillStreak[i] += Stats.second.KillStreak[i];
+					}
+					//
+					// Versus
+					for (size_t i = 0; i < Stats.second.Versus.size(); i++)
+					{
+						Result.Versus[i] += Stats.second.Versus[i];
+					}
+					//
+					// Hitbox Stats
+					for (size_t i = 0; i < Stats.second.HitBox.size(); i++)
+					{
+						Result.HitBox[i].Hits += Stats.second.HitBox[i].Hits;
+						Result.HitBox[i].Damage += Stats.second.HitBox[i].Damage;
+						Result.HitBox[i].HitsReceived += Stats.second.HitBox[i].HitsReceived;
+						Result.HitBox[i].DamageReceived += Stats.second.HitBox[i].DamageReceived;
+						Result.HitBox[i].Frags += Stats.second.HitBox[i].Frags;
+						Result.HitBox[i].Deaths += Stats.second.HitBox[i].Deaths;
+					}
+					//
+					// Weapon Stats
+					for (auto & Weapon : Stats.second.Weapon)
+					{
+						Result.Weapon[Weapon.first].Frags += Weapon.second.Frags;
+						Result.Weapon[Weapon.first].Deaths += Weapon.second.Deaths;
+						Result.Weapon[Weapon.first].Headshots += Weapon.second.Headshots;
+						Result.Weapon[Weapon.first].Shots += Weapon.second.Shots;
+						Result.Weapon[Weapon.first].Hits += Weapon.second.Hits;
+						Result.Weapon[Weapon.first].HitsReceived += Weapon.second.HitsReceived;
+						Result.Weapon[Weapon.first].Damage += Weapon.second.Damage;
+						Result.Weapon[Weapon.first].DamageReceived += Weapon.second.DamageReceived;
+					}
+					//
+					// Domination / Revenge
+					for (auto & Domination : Stats.second.Domination)
+					{
+						Result.Domination[Domination.first].DominationBegin += Domination.second.DominationBegin;
+						Result.Domination[Domination.first].Domination += Domination.second.Domination;
+						Result.Domination[Domination.first].Revenge += Domination.second.Revenge;
+					}
+				}
+			}
+			//
+			// Formulas
+			auto DIF = (Result.Frags - Result.Deaths);
+			auto KDR = (Result.Deaths > 0 ? (Result.Frags / Result.Deaths) : 0.0f);
+			auto KDA = (Result.Deaths > 0 ? ((Result.Frags + Result.Assists) / Result.Deaths) : 0.0f);
+			auto HSP = (Result.Frags > 0 ? (100.0f * Result.Headshots / Result.Frags) : 0.0f);
+			auto ADR = (Result.RoundPlay > 0 ? (Result.Damage / Result.RoundPlay) : 0.0f);
+			auto ACC = (Result.Shots > 0 ? (100.0f * Result.Hits / Result.Shots) : 0.0f);
+			auto EFF = ((Result.Frags + Result.Deaths) > 0 ? (100.0f * Result.Frags / (Result.Frags + Result.Deaths)) : 0.0f);
+			auto RWS = (Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / (float)(Result.RoundWin)) : 0.0f);
+			//
+			// Stats (OK)
+			Data["Player"][Player.first]["Stats"] =
+			{
+				// Player stats
+				{"Frags", Result.Frags},
+				{"Deaths", Result.Deaths},
+				{"Assists", Result.Assists},
+				{"Headshots", Result.Headshots},
+				{"Shots", Result.Shots},
+				{"Hits", Result.Hits},
+				{"HitsReceived", Result.HitsReceived},
+				{"Damage", Result.Damage},
+				{"DamageReceived", Result.DamageReceived},
+				{"Money", Result.Money},
+				{"Suicides", Result.Suicides},
+				//
+				// Misc Frags
+				{"BlindFrags", Result.BlindFrags},
+				{"BlindDeaths", Result.BlindDeaths},
+				{"OneShot", Result.OneShot},
+				{"NoScope", Result.NoScope},
+				{"FlyFrags", Result.FlyFrags},
+				{"WallFrags", Result.WallFrags},
+				{"DoubleKill", Result.DoubleKill},
+				{"SmokeFrags", Result.SmokeFrags},
+				{"AssistedFlash", Result.AssistedFlash},
+				//
+				// Knife Duels
+				{"KnifeDuelWin", Result.KnifeDuelWin},
+				{"KnifeDuelLose", Result.KnifeDuelLose},
+				//
+				// Entry Frags and Deaths
+				{"EntryFrags", Result.EntryFrags},
+				{"EntryDeaths", Result.EntryDeaths},
+				//
+				// Round counter
+				{"RoundPlay", Result.RoundPlay},
+				{"RoundWin", Result.RoundWin},
+				{"RoundLose", Result.RoundLose},
+				//
+				// Bomb counter
+				{"BombSpawn", Result.BombSpawn},
+				{"BombDrop", Result.BombDrop},
+				{"BombPlanting", Result.BombPlanting},
+				{"BombPlanted", Result.BombPlanted},
+				{"BombExploded", Result.BombExploded},
+				{"BombDefusing", Result.BombDefusing},
+				{"BombDefusingKit", Result.BombDefusingKit},
+				{"BombDefused", Result.BombDefused},
+				{"BombDefusedKit", Result.BombDefusedKit},
+				//
+				// Kill Streak
+				{"KillStreak", Result.KillStreak},
+				//
+				// Versus
+				{"Versus", Result.Versus},
+				//
+				// Formulas
+				{"DIF", DIF},
+				{"KDR", KDR},
+				{"KDA", KDA},
+				{"HSP", HSP},
+				{"ADR", ADR},
+				{"ACC", ACC},
+				{"EFF", EFF},
+				{"RWS", RWS}
+			};
+			//
+			// LOG
+			if (!Player.second.IsBot)
+			{
+				LOG_CONSOLE(PLID, "[%s] F %d D %d A %d", __func__, Result.Frags, Result.Deaths, Result.Assists);
+				LOG_CONSOLE(PLID, "[%s] KDR %.3f KDA %.3f HSP %.3f", __func__, KDR, KDA, HSP);
+			}
+			//
+			// Hitbox Stats (OK)
+			for (size_t i = 0; i < Result.HitBox.size(); i++)
+			{
+				Data["Player"][Player.first]["Hitbox"][std::to_string(i)] =
+				{
+					{"Hits", Result.HitBox[i].Hits},
+					{"Damage", Result.HitBox[i].Damage},
+					{"HitsReceived", Result.HitBox[i].HitsReceived},
+					{"DamageReceived", Result.HitBox[i].DamageReceived},
+					{"Frags", Result.HitBox[i].Frags},
+					{"Deaths", Result.HitBox[i].Deaths}
+				};
+			}/*
+			//
+			// Weapon Stats
+			for (auto & Weapon : Result.Weapon)
+			{
+				Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
+				{
+					{"Frags", Weapon.second.Frags},
+					{"Deaths", Weapon.second.Deaths},
+					{"Headshots", Weapon.second.Headshots},
+					{"Shots", Weapon.second.Shots},
+					{"Hits", Weapon.second.Hits},
+					{"HitsReceived", Weapon.second.HitsReceived},
+					{"Damage", Weapon.second.Damage},
+					{"DamageReceived", Weapon.second.DamageReceived}
+				};
+			}
+			//
+			// Domination / Revenge
+			for (auto & Domination : Result.Domination)
+			{
+				Data["Player"][Player.first]["Domination"][Domination.first] =
+				{
+					{"DominationBegin", Domination.second.DominationBegin},
+					{"Domination", Domination.second.Domination},
+					{"Revenge", Domination.second.Revenge}
+				};
+			}
+			//
+			// Chat Log
+			for (auto & Chat : Player.second.ChatLog)
+			{
+				Data["Chat"] +=
+				{
+					{"Auth", Player.first},
+					{"Name", Player.second.Name},
+					{"Time", Chat.Time},
+					{"State", Chat.State},
+					{"Team", Chat.Team},
+					{"Alive", Chat.Alive},
+					{"Message", Chat.Message}
+				};
+			}*/
 		}
-	}
-	//
-	// Round events
-	for (auto & Event : this->m_RoundEvent)
-	{
-		Data["Events"].push_back
-		({
-			{"Round",Event.Round},
-			{"Time",Event.Time},
-			{"Type",Event.Type},
-			{"ScenarioEvent", Event.ScenarioEvent},
-			{"State", Event.State},
-			{"Winner",Event.Winner},
-			{"Loser",Event.Loser},
-			{"Killer",Event.Killer.c_str()},
-			{"KillerOrigin",{Event.KillerOrigin.x,Event.KillerOrigin.y,Event.KillerOrigin.z}},
-			{"Victim",Event.Victim.c_str()},
-			{"VictimOrigin",{Event.VictimOrigin.x,Event.VictimOrigin.y,Event.VictimOrigin.z}},
-			{"IsHeadShot",Event.IsHeadShot},
-			{"ItemIndex",Event.ItemIndex}
-		});
-	}
-	//
-	// If data is not empty
-	if (!Data.empty())
-	{
-		// Save data in file
-		this->SaveData(Data);
+		
+		// Round events (OK)
+		for (auto & Event : this->m_RoundEvent)
+		{
+			Data["Events"] +=
+			{
+				{"Round",Event.Round},
+				{"Time",Event.Time},
+				{"Type",Event.Type},
+				{"ScenarioEvent", Event.ScenarioEvent},
+				{"State", Event.State},
+				{"Winner",Event.Winner},
+				{"Loser",Event.Loser},
+				{"Killer",Event.Killer.c_str()},
+				{"KillerOrigin",{Event.KillerOrigin.x,Event.KillerOrigin.y,Event.KillerOrigin.z}},
+				{"Victim",Event.Victim.c_str()},
+				{"VictimOrigin",{Event.VictimOrigin.x,Event.VictimOrigin.y,Event.VictimOrigin.z}},
+				{"IsHeadShot",Event.IsHeadShot},
+				{"ItemIndex",Event.ItemIndex}
+			};
+		}
+		
+		// If data is not empty
+		if (!Data.empty())
+		{
+			// Save data in file
+			this->SaveData(Data);
 
-		// Upload data
-		this->UploadData(Data);
-	}
+			// Upload data
+			this->UploadData(Data);
+		}
 
-	Data.clear();
+		Data.clear();
+	}
+	catch (nlohmann::json::exception & ex)
+	{
+		LOG_CONSOLE(PLID, "[%s] %d: %s", __func__, ex.id, ex.what());
+	}
 }
 
 void CPugStats::SaveData(nlohmann::ordered_json Data)
