@@ -1181,8 +1181,8 @@ void CPugStats::DumpData()
 	try
 	{
 		// Data
-		nlohmann::ordered_json Data;
-
+		nlohmann::json Data;
+		//
 		// Match (OK)
 		Data["Match"] =
 		{
@@ -1202,8 +1202,8 @@ void CPugStats::DumpData()
 			{"MinPlayers", this->m_Match.MinPlayers},
 			{"MaxPlayers", this->m_Match.MaxPlayers}
 		};
-
-		// Player Loop
+		//
+		// Players
 		for (auto & Player : this->m_Player)
 		{
 			// Player Result Stats
@@ -1220,8 +1220,8 @@ void CPugStats::DumpData()
 				{"Winner", Player.second.Winner},
 				{"IsBot", Player.second.IsBot},
 			};
-			
-			// Player Stats
+			//
+			// Player Stats (OK)
 			for (auto & Stats : Player.second.Stats)
 			{
 				if (Stats.first == STATE_FIRST_HALF || Stats.first == STATE_SECOND_HALF || Stats.first == STATE_OVERTIME)
@@ -1323,16 +1323,6 @@ void CPugStats::DumpData()
 				}
 			}
 			//
-			// Formulas
-			auto DIF = (Result.Frags - Result.Deaths);
-			auto KDR = (Result.Deaths > 0 ? (Result.Frags / Result.Deaths) : 0.0f);
-			auto KDA = (Result.Deaths > 0 ? ((Result.Frags + Result.Assists) / Result.Deaths) : 0.0f);
-			auto HSP = (Result.Frags > 0 ? (100.0f * Result.Headshots / Result.Frags) : 0.0f);
-			auto ADR = (Result.RoundPlay > 0 ? (Result.Damage / Result.RoundPlay) : 0.0f);
-			auto ACC = (Result.Shots > 0 ? (100.0f * Result.Hits / Result.Shots) : 0.0f);
-			auto EFF = ((Result.Frags + Result.Deaths) > 0 ? (100.0f * Result.Frags / (Result.Frags + Result.Deaths)) : 0.0f);
-			auto RWS = (Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / (float)(Result.RoundWin)) : 0.0f);
-			//
 			// Stats (OK)
 			Data["Player"][Player.first]["Stats"] =
 			{
@@ -1391,27 +1381,20 @@ void CPugStats::DumpData()
 				{"Versus", Result.Versus},
 				//
 				// Formulas
-				{"DIF", DIF},
-				{"KDR", KDR},
-				{"KDA", KDA},
-				{"HSP", HSP},
-				{"ADR", ADR},
-				{"ACC", ACC},
-				{"EFF", EFF},
-				{"RWS", RWS}
+				{"DIF", (Result.Frags - Result.Deaths)},
+				{"KDR", Result.Deaths > 0 ? (Result.Frags / static_cast<float>(Result.Deaths)) : 0.0f},
+				{"KDA", Result.Deaths > 0 ? ((Result.Frags + Result.Assists) / static_cast<float>(Result.Deaths)) : 0.0f},
+				{"HSP", Result.Frags > 0 ? (100.0f * Result.Headshots / static_cast<float>(Result.Frags)) : 0.0f},
+				{"ADR", Result.RoundPlay > 0 ? (Result.Damage / static_cast<float>(Result.RoundPlay)) : 0.0f},
+				{"ACC", Result.Shots > 0 ? (100.0f * Result.Hits / static_cast<float>(Result.Shots)) : 0.0f},
+				{"EFF", (Result.Frags + Result.Deaths) > 0 ? (100.0f * Result.Frags / static_cast<float>(Result.Frags + Result.Deaths)) : 0.0f},
+				{"RWS", Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / static_cast<float>(Result.RoundWin)) : 0.0f},
 			};
-			//
-			// LOG
-			if (!Player.second.IsBot)
-			{
-				LOG_CONSOLE(PLID, "[%s] F %d D %d A %d", __func__, Result.Frags, Result.Deaths, Result.Assists);
-				LOG_CONSOLE(PLID, "[%s] KDR %.3f KDA %.3f HSP %.3f", __func__, KDR, KDA, HSP);
-			}
 			//
 			// Hitbox Stats (OK)
 			for (size_t i = 0; i < Result.HitBox.size(); i++)
 			{
-				Data["Player"][Player.first]["Hitbox"][std::to_string(i)] =
+				Data["Player"][Player.first]["Hitbox"][i] =
 				{
 					{"Hits", Result.HitBox[i].Hits},
 					{"Damage", Result.HitBox[i].Damage},
@@ -1420,25 +1403,28 @@ void CPugStats::DumpData()
 					{"Frags", Result.HitBox[i].Frags},
 					{"Deaths", Result.HitBox[i].Deaths}
 				};
-			}/*
-			//
-			// Weapon Stats
-			for (auto & Weapon : Result.Weapon)
-			{
-				Data["Player"][Player.first]["Weapon"][std::to_string(Weapon.first)] =
-				{
-					{"Frags", Weapon.second.Frags},
-					{"Deaths", Weapon.second.Deaths},
-					{"Headshots", Weapon.second.Headshots},
-					{"Shots", Weapon.second.Shots},
-					{"Hits", Weapon.second.Hits},
-					{"HitsReceived", Weapon.second.HitsReceived},
-					{"Damage", Weapon.second.Damage},
-					{"DamageReceived", Weapon.second.DamageReceived}
-				};
 			}
 			//
-			// Domination / Revenge
+			// Weapon Stats (Crash is here, Weapon.first can be null)
+			for (auto & Weapon : Result.Weapon)
+			{
+				if (Weapon.first != WEAPON_NONE)
+				{
+					Data["Player"][Player.first]["Weapon"][Weapon.first] =
+					{
+						{"Frags", Weapon.second.Frags},
+						{"Deaths", Weapon.second.Deaths},
+						{"Headshots", Weapon.second.Headshots},
+						{"Shots", Weapon.second.Shots},
+						{"Hits", Weapon.second.Hits},
+						{"HitsReceived", Weapon.second.HitsReceived},
+						{"Damage", Weapon.second.Damage},
+						{"DamageReceived", Weapon.second.DamageReceived}
+					};
+				}
+			}
+			//
+			// Domination / Revenge (OK)
 			for (auto & Domination : Result.Domination)
 			{
 				Data["Player"][Player.first]["Domination"][Domination.first] =
@@ -1449,7 +1435,7 @@ void CPugStats::DumpData()
 				};
 			}
 			//
-			// Chat Log
+			// Chat Log (OK)
 			for (auto & Chat : Player.second.ChatLog)
 			{
 				Data["Chat"] +=
@@ -1462,9 +1448,9 @@ void CPugStats::DumpData()
 					{"Alive", Chat.Alive},
 					{"Message", Chat.Message}
 				};
-			}*/
+			}
 		}
-		
+		//
 		// Round events (OK)
 		for (auto & Event : this->m_RoundEvent)
 		{
@@ -1477,9 +1463,9 @@ void CPugStats::DumpData()
 				{"State", Event.State},
 				{"Winner",Event.Winner},
 				{"Loser",Event.Loser},
-				{"Killer",Event.Killer.c_str()},
+				{"Killer",Event.Killer},
 				{"KillerOrigin",{Event.KillerOrigin.x,Event.KillerOrigin.y,Event.KillerOrigin.z}},
-				{"Victim",Event.Victim.c_str()},
+				{"Victim",Event.Victim},
 				{"VictimOrigin",{Event.VictimOrigin.x,Event.VictimOrigin.y,Event.VictimOrigin.z}},
 				{"IsHeadShot",Event.IsHeadShot},
 				{"ItemIndex",Event.ItemIndex}
@@ -1504,7 +1490,7 @@ void CPugStats::DumpData()
 	}
 }
 
-void CPugStats::SaveData(nlohmann::ordered_json Data)
+void CPugStats::SaveData(nlohmann::json Data)
 {
 	if (!Data.empty())
 	{
@@ -1530,7 +1516,7 @@ void CPugStats::SaveData(nlohmann::ordered_json Data)
 	}
 }
 
-void CPugStats::UploadData(nlohmann::ordered_json Data)
+void CPugStats::UploadData(nlohmann::json Data)
 {
 	if (!Data.empty())
 	{
