@@ -1412,7 +1412,7 @@ void CPugStats::DumpData()
 				};
 			}
 			//
-			// Weapon Stats (Crash is here, Weapon.first can be null)
+			// Weapon Stats (OK)
 			for (auto & Weapon : Result.Weapon)
 			{
 				if (Weapon.first)
