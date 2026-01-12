@@ -373,11 +373,17 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 				{
 					this->m_Player[KillerAuth].Stats[State].Frags++;
 
-					this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Frags++;
+					if (ItemIndex != WEAPON_NONE)
+					{
+						this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Frags++;
+					}
 
 					this->m_Player[VictimAuth].Stats[State].Deaths++;
 
-					this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].Deaths++;
+					if (ItemIndex != WEAPON_NONE)
+					{
+						this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].Deaths++;
+					}
 
 					this->m_Player[KillerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Frags++;
 
@@ -1374,13 +1380,7 @@ void CPugStats::DumpData()
 				{"BombDefused", Result.BombDefused},
 				{"BombDefusedKit", Result.BombDefusedKit},
 				//
-				// Kill Streak
-				{"KillStreak", Result.KillStreak},
-				//
-				// Versus
-				{"Versus", Result.Versus},
-				//
-				// Formulas
+				// Formulas (OK)
 				{"DIF", (Result.Frags - Result.Deaths)},
 				{"KDR", Result.Deaths > 0 ? (Result.Frags / static_cast<float>(Result.Deaths)) : 0.0f},
 				{"KDA", Result.Deaths > 0 ? ((Result.Frags + Result.Assists) / static_cast<float>(Result.Deaths)) : 0.0f},
@@ -1391,27 +1391,35 @@ void CPugStats::DumpData()
 				{"RWS", Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / static_cast<float>(Result.RoundWin)) : 0.0f},
 			};
 			//
+			// Kill Streak (OK)
+			Data["Player"][Player.first]["KillStreak"] = Result.KillStreak;
+			//
+			// Versus (OK)
+			Data["Player"][Player.first]["Versus"] = Result.Versus;
+			//
 			// Hitbox Stats (OK)
-			for (size_t i = 0; i < Result.HitBox.size(); i++)
+			for (size_t Place = 0; Place < Result.HitBox.size(); Place++)
 			{
-				Data["Player"][Player.first]["Hitbox"][i] =
+				Data["Player"][Player.first]["Hitbox"] +=
 				{
-					{"Hits", Result.HitBox[i].Hits},
-					{"Damage", Result.HitBox[i].Damage},
-					{"HitsReceived", Result.HitBox[i].HitsReceived},
-					{"DamageReceived", Result.HitBox[i].DamageReceived},
-					{"Frags", Result.HitBox[i].Frags},
-					{"Deaths", Result.HitBox[i].Deaths}
+					{"Place", Place},
+					{"Hits", Result.HitBox[Place].Hits},
+					{"Damage", Result.HitBox[Place].Damage},
+					{"HitsReceived", Result.HitBox[Place].HitsReceived},
+					{"DamageReceived", Result.HitBox[Place].DamageReceived},
+					{"Frags", Result.HitBox[Place].Frags},
+					{"Deaths", Result.HitBox[Place].Deaths}
 				};
 			}
 			//
 			// Weapon Stats (Crash is here, Weapon.first can be null)
 			for (auto & Weapon : Result.Weapon)
 			{
-				if (Weapon.first != WEAPON_NONE)
+				if (Weapon.first)
 				{
-					Data["Player"][Player.first]["Weapon"][Weapon.first] =
+					Data["Player"][Player.first]["Weapon"] +=
 					{
+						{"Weapon", Weapon.first},
 						{"Frags", Weapon.second.Frags},
 						{"Deaths", Weapon.second.Deaths},
 						{"Headshots", Weapon.second.Headshots},
@@ -1427,8 +1435,9 @@ void CPugStats::DumpData()
 			// Domination / Revenge (OK)
 			for (auto & Domination : Result.Domination)
 			{
-				Data["Player"][Player.first]["Domination"][Domination.first] =
+				Data["Player"][Player.first]["Domination"] +=
 				{
+					{"Auth", Domination.first},
 					{"DominationBegin", Domination.second.DominationBegin},
 					{"Domination", Domination.second.Domination},
 					{"Revenge", Domination.second.Revenge}
