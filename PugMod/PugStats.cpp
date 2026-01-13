@@ -634,13 +634,13 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 				this->m_Match.Winner = (this->m_Match.Score[TERRORIST] != this->m_Match.Score[CT]) ? (this->m_Match.Score[TERRORIST] > this->m_Match.Score[CT] ? 1 : 2) : 0;
 
 				// Loop player list
-				for (auto& Player : this->m_Player)
+				for (auto & Player : this->m_Player)
 				{
 					// If is in winner team
 					Player.second.Winner = (Player.second.Team == this->m_Match.Winner) ? 1 : 0;
 				}
 
-				// Team Round DAmage
+				// Team Round Damage
 				std::array<float, SPECTATOR + 1U> TeamRoundDamage = { };
 
 				for (int i = 1; i <= gpGlobals->maxClients; ++i)
@@ -677,6 +677,11 @@ void CPugStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, flo
 							if (Auth)
 							{
 								this->m_Player[Auth].Stats[State].RoundPlay++;
+
+								if (Player->IsAlive())
+								{
+									this->m_Player[Auth].Stats[State].Survives++;
+								}
 
 								if (Player->m_iTeam == Winner)
 								{
@@ -1244,9 +1249,14 @@ void CPugStats::DumpData()
 					Result.DamageReceived += Stats.second.DamageReceived;
 					Result.Money += Stats.second.Money;
 					Result.Suicides += Stats.second.Suicides;
+					Result.Survives = Stats.second.Survives;
 					//
 					// Round Win Share
 					Result.RoundWinShare += Stats.second.RoundWinShare;
+					//
+					// Rating
+					Result.RatingTR += Stats.second.RatingTR,
+					Result.RatingCT += Stats.second.RatingCT,
 					//
 					// Misc Frags
 					Result.BlindFrags += Stats.second.BlindFrags;
@@ -1344,6 +1354,14 @@ void CPugStats::DumpData()
 				{"DamageReceived", Result.DamageReceived},
 				{"Money", Result.Money},
 				{"Suicides", Result.Suicides},
+				{"Survives", Result.Survives},
+				//
+				// Round Win Share
+				{"RoundWinShare", Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / static_cast<float>(Result.RoundWin)) : 0.0f},
+				//
+				// Rating
+				{"RatingTR", Result.RatingTR},
+				{"RatingCT", Result.RatingCT},
 				//
 				// Misc Frags
 				{"BlindFrags", Result.BlindFrags},
@@ -1388,7 +1406,8 @@ void CPugStats::DumpData()
 				{"ADR", Result.RoundPlay > 0 ? (Result.Damage / static_cast<float>(Result.RoundPlay)) : 0.0f},
 				{"ACC", Result.Shots > 0 ? (100.0f * Result.Hits / static_cast<float>(Result.Shots)) : 0.0f},
 				{"EFF", (Result.Frags + Result.Deaths) > 0 ? (100.0f * Result.Frags / static_cast<float>(Result.Frags + Result.Deaths)) : 0.0f},
-				{"RWS", Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / static_cast<float>(Result.RoundWin)) : 0.0f},
+				{"KPR", Result.RoundPlay > 0 ? (Result.Frags / static_cast<float>(Result.RoundPlay)) : 0.0f},
+				{"DPR", Result.RoundPlay > 0 ? (Result.Deaths / static_cast<float>(Result.RoundPlay)) : 0.0f},
 			};
 			//
 			// Kill Streak (OK)

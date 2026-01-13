@@ -156,9 +156,14 @@ typedef struct S_PLAYER_STATS
 	int DamageReceived;			// BETA: Damage received by player
 	long Money;					// BETA: Money Balance from player
 	int Suicides;				// BETA: Suicide Count
+	int Survives; 				// BETA: Round Survive Count
 
 	// BETA: Round Win Share stats
 	float RoundWinShare;
+
+	// TODO: Rating
+	float RatingTR;				// TODO: Rating as TR Player
+	float RatingCT;				// TODO: Rating as CT Player
 
 	// Sick Stats
 	int BlindFrags;				// BETA: Player frags when blinded by flashbang
@@ -171,7 +176,7 @@ typedef struct S_PLAYER_STATS
 	int SmokeFrags;				// BETA: Smoke grenade penetration kill (bullets went through smoke)
 	int AssistedFlash;			// BETA: Assister helped with a flash
 
-	// TODO: Count of Knife Duels in match (0 Wins, 1 Loses)
+	// TODO: Count of Knife Duels in match
 	int KnifeDuelWin;
 	int KnifeDuelLose;
 
@@ -225,9 +230,14 @@ typedef struct S_PLAYER_STATS
 		this->DamageReceived = 0;
 		this->Money = 0;
 		this->Suicides = 0;
+		this->Survives = 0;
 
 		// Round Win Share stats
 		this->RoundWinShare = 0.0f;
+
+		// Rating
+		this->RatingTR = 0.0f;
+		this->RatingCT = 0.0f;
 
 		// Sick Frags
 		this->BlindFrags = 0;
