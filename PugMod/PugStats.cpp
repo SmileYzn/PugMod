@@ -393,12 +393,26 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
 					this->m_Player[VictimAuth].Round.Deaths++;
 
-					if ((gpGlobals->time - this->m_Player[KillerAuth].Round.KillTime) < 0.25f)
+					if (this->m_Player[KillerAuth].Round.KillTime > 0.0f)
 					{
-						this->m_Player[KillerAuth].Stats[State].DoubleKill++;
+						if ((gpGlobals->time - this->m_Player[KillerAuth].Round.KillTime) < 0.25f)
+						{
+							this->m_Player[KillerAuth].Stats[State].DoubleKill++;
+						}
+
+						if (Killer->m_iTeam != Victim->m_iTeam)
+						{
+							if ((gpGlobals->time - this->m_Player[VictimAuth].Round.KillTime) <= 2.0f)
+							{
+								this->m_Player[KillerAuth].Stats[State].TradeKills++;
+								this->m_Player[VictimAuth].Stats[State].TradeDeaths++;
+							}
+						}
 					}
 
 					this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
+
+					this->m_Player[VictimAuth].Round.DeathTime = gpGlobals->time;
 
 					if (iRarityOfKill & 0x001 /*KILLRARITY_HEADSHOT*/)
 					{
@@ -1250,6 +1264,8 @@ void CPugStats::DumpData()
 					Result.Money += Stats.second.Money;
 					Result.Suicides += Stats.second.Suicides;
 					Result.Survives = Stats.second.Survives;
+					Result.TradeKills += Stats.second.TradeKills;
+					Result.TradeDeaths += Stats.second.TradeDeaths;
 					//
 					// Round Win Share
 					Result.RoundWinShare += Stats.second.RoundWinShare;
@@ -1355,6 +1371,8 @@ void CPugStats::DumpData()
 				{"Money", Result.Money},
 				{"Suicides", Result.Suicides},
 				{"Survives", Result.Survives},
+				{"TradeKills", Result.TradeKills},
+				{"TradeDeaths", Result.TradeDeaths},
 				//
 				// Round Win Share
 				{"RoundWinShare", Result.RoundWinShare > 0.0f ? (Result.RoundWinShare / static_cast<float>(Result.RoundWin)) : 0.0f},

@@ -119,6 +119,7 @@ typedef struct S_ROUND_STATS
 	bool BombExploded;		// BETA: Bomb Exploded
 	int Versus;				// BETA: Player is versus X players
 	float KillTime;			// BETA: Last Kill Time
+	float DeathTime;		// BETA: Last Death Time
 
 	// Damage dealt to other players
 	std::map<std::string, int> PlayerDamage;
@@ -137,6 +138,8 @@ typedef struct S_ROUND_STATS
 		this->BombDefused = 0;
 		this->BombExploded = 0;
 		this->Versus = 0;
+		this->KillTime = 0;
+		this->DeathTime = 0;
 		this->PlayerDamage.clear();
 	}
 } P_ROUND_STATS, *LP_ROUND_STATS;
@@ -157,6 +160,8 @@ typedef struct S_PLAYER_STATS
 	long Money;					// BETA: Money Balance from player
 	int Suicides;				// BETA: Suicide Count
 	int Survives; 				// BETA: Round Survive Count
+	int TradeKills;				// BETA: Trade Kills
+	int TradeDeaths; 			// BETA: Trade Deaths
 
 	// BETA: Round Win Share stats
 	float RoundWinShare;
@@ -231,6 +236,8 @@ typedef struct S_PLAYER_STATS
 		this->Money = 0;
 		this->Suicides = 0;
 		this->Survives = 0;
+		this->TradeKills = 0;
+		this->TradeDeaths = 0;
 
 		// Round Win Share stats
 		this->RoundWinShare = 0.0f;
