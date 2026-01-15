@@ -363,7 +363,9 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
 				auto KillerIndex = Killer->entindex();
 
-				auto ItemIndex = (Victim->m_bKilledByGrenade) ? WEAPON_HEGRENADE : ((Killer->m_pActiveItem) ? Killer->m_pActiveItem->m_iId : WEAPON_NONE);
+				auto KillerItemIndex = (Victim->m_bKilledByGrenade) ? WEAPON_HEGRENADE : ((Killer->m_pActiveItem) ? Killer->m_pActiveItem->m_iId : WEAPON_NONE);
+
+				auto VitctimItemIndex = Victim->m_pActiveItem ? Victim->m_pActiveItem->m_iId : WEAPON_NONE;
 
 				auto VictimAuth = this->GetAuthId(Victim);
 
@@ -373,17 +375,11 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 				{
 					this->m_Player[KillerAuth].Stats[State].Frags++;
 
-					if (ItemIndex != WEAPON_NONE)
-					{
-						this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Frags++;
-					}
+					this->m_Player[KillerAuth].Stats[State].Weapon[KillerItemIndex].Frags++;
 
 					this->m_Player[VictimAuth].Stats[State].Deaths++;
 
-					if (ItemIndex != WEAPON_NONE)
-					{
-						this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].Deaths++;
-					}
+					this->m_Player[VictimAuth].Stats[State].Weapon[KillerItemIndex].Deaths++;
 
 					this->m_Player[KillerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Frags++;
 
@@ -402,7 +398,7 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
 						if (Killer->m_iTeam != Victim->m_iTeam)
 						{
-							if ((gpGlobals->time - this->m_Player[VictimAuth].Round.KillTime) <= 2.0f)
+							if ((gpGlobals->time - this->m_Player[VictimAuth].Round.KillTime) <= 3.0f)
 							{
 								this->m_Player[KillerAuth].Stats[State].TradeKills++;
 								this->m_Player[VictimAuth].Stats[State].TradeDeaths++;
@@ -418,7 +414,7 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 					{
 						this->m_Player[KillerAuth].Stats[State].Headshots++;
 
-						this->m_Player[KillerAuth].Stats[State].Weapon[ItemIndex].Headshots++;
+						this->m_Player[KillerAuth].Stats[State].Weapon[KillerItemIndex].Headshots++;
 
 						this->m_Player[KillerAuth].Round.Headshots++;
 					}
@@ -467,7 +463,7 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 						}
 					}
 
-					if (ItemIndex != WEAPON_AWP)
+					if (KillerItemIndex != WEAPON_AWP)
 					{
 						if (Victim->m_iLastClientHealth >= 100)
 						{
@@ -478,7 +474,7 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 						}
 					}
 
-					if (ItemIndex == WEAPON_AWP || ItemIndex == WEAPON_SCOUT || ItemIndex == WEAPON_G3SG1 || ItemIndex == WEAPON_SG550)
+					if (KillerItemIndex == WEAPON_AWP || KillerItemIndex == WEAPON_SCOUT || KillerItemIndex == WEAPON_G3SG1 || KillerItemIndex == WEAPON_SG550)
 					{
 						if (iRarityOfKill & 0x004 /* KILLRARITY_NOSCOPE */)
 						{
@@ -509,6 +505,13 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 					if (iRarityOfKill & 0x100 /* KILLRARITY_REVENGE */)
 					{
 						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].Revenge++;
+					}
+
+					if (KillerItemIndex == WEAPON_KNIFE && VitctimItemIndex == WEAPON_KNIFE)
+					{
+						this->m_Player[KillerAuth].Stats[State].KnifeDuelWin++;
+
+						this->m_Player[VictimAuth].Stats[State].KnifeDuelLose++;
 					}
 
 					if (g_pGameRules)

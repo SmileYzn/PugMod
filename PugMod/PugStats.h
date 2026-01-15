@@ -181,7 +181,7 @@ typedef struct S_PLAYER_STATS
 	int SmokeFrags;				// BETA: Smoke grenade penetration kill (bullets went through smoke)
 	int AssistedFlash;			// BETA: Assister helped with a flash
 
-	// TODO: Count of Knife Duels in match
+	// BETA: Count of Knife Duels in match
 	int KnifeDuelWin;
 	int KnifeDuelLose;
 
