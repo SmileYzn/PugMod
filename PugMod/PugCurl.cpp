@@ -28,6 +28,8 @@ void CPugCurl::StartFrame()
 
 		int MsgQueue = 0;
 
+		long PrivateDataIndex = 0;
+
 		do
 		{
 			MsgCode = curl_multi_perform(this->m_MultiHandle, &HandleCount);
@@ -36,20 +38,18 @@ void CPugCurl::StartFrame()
 			{
 				if (MsgInfo && (MsgInfo->msg == CURLMSG_DONE))
 				{
-					long Index = 0;
+					curl_easy_getinfo(MsgInfo->easy_handle, CURLINFO_PRIVATE, &PrivateDataIndex);
 
-					curl_easy_getinfo(MsgInfo->easy_handle, CURLINFO_PRIVATE, &Index);
-
-					if (this->m_Data.find(Index) != this->m_Data.end())
+					if (this->m_Data.find(PrivateDataIndex) != this->m_Data.end())
 					{
-                        this->CallbackResult(MsgInfo->easy_handle, this->m_Data[Index].Size, this->m_Data[Index].Memory);
+                        this->CallbackResult(MsgInfo->easy_handle, this->m_Data[PrivateDataIndex].Size, this->m_Data[PrivateDataIndex].Memory);
 
-						if (this->m_Data[Index].Memory)
+						if (this->m_Data[PrivateDataIndex].Memory)
 						{
-							free(this->m_Data[Index].Memory);
+							free(this->m_Data[PrivateDataIndex].Memory);
 						}
 						
-						this->m_Data.erase(Index);
+						this->m_Data.erase(PrivateDataIndex);
 					}
 
 					curl_multi_remove_handle(this->m_MultiHandle, MsgInfo->easy_handle);
