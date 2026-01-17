@@ -20,17 +20,21 @@ void CPugCurl::StartFrame()
 {
 	if (this->m_MultiHandle)
 	{
+		CURLMcode MsgCode = {};
+
 		int HandleCount = 0;
 
 		CURLMsg* MsgInfo = NULL;
 
+		int MsgQueue = 0;
+
 		do
 		{
-			curl_multi_perform(this->m_MultiHandle, &HandleCount);
+			MsgCode = curl_multi_perform(this->m_MultiHandle, &HandleCount);
 
-			while ((MsgInfo = curl_multi_info_read(this->m_MultiHandle, &HandleCount)))
+			while ((MsgInfo = curl_multi_info_read(this->m_MultiHandle, &MsgQueue)))
 			{
-				if (MsgInfo->msg == CURLMSG_DONE)
+				if (MsgInfo && (MsgInfo->msg == CURLMSG_DONE))
 				{
 					long Index = 0;
 
@@ -40,6 +44,11 @@ void CPugCurl::StartFrame()
 					{
                         this->CallbackResult(MsgInfo->easy_handle, this->m_Data[Index].Size, this->m_Data[Index].Memory);
 
+						if (this->m_Data[Index].Memory)
+						{
+							free(this->m_Data[Index].Memory);
+						}
+						
 						this->m_Data.erase(Index);
 					}
 
@@ -49,7 +58,7 @@ void CPugCurl::StartFrame()
 				}
 			}
 		}
-		while (HandleCount);
+		while (MsgCode == CURLM_OK && HandleCount > 0);
 	}
 }
 
@@ -67,8 +76,8 @@ void CPugCurl::PostJSON(const char* url, long Timeout, std::string BearerToken, 
 
 				curl_easy_setopt(ch, CURLOPT_URL, url);
 
-				curl_easy_setopt(ch, CURLOPT_TIMEOUT, (Timeout) > 0 ? Timeout : 10);
-
+				curl_easy_setopt(ch, CURLOPT_TIMEOUT, (Timeout) > 0 ? Timeout : 10L);
+				
 				curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1L);
 
 				curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, this->WriteMemoryCallback);
@@ -115,14 +124,14 @@ size_t CPugCurl::WriteMemoryCallback(void* contents, size_t size, size_t nmemb, 
 			if (realsize > 0)
 			{
 				P_CURL_MEMORY* mem = (P_CURL_MEMORY*)(userp);
-			
+				
 				char* ptr = (char*)realloc(mem->Memory, mem->Size + realsize + 1);
 			
 				if (ptr)
-				{
+				{	
 					mem->Memory = ptr;
 			
-					memcpy(&(mem->Memory[mem->Size]), contents, realsize);
+					Q_memcpy(&(mem->Memory[mem->Size]), contents, realsize);
 			
 					mem->Size += realsize;
 			
