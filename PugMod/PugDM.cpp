@@ -167,6 +167,11 @@ bool CPugDM::CheckDistance(CBasePlayer *Player, vec3_t Origin, float Distance)
 {
     edict_t *pEntity = nullptr;
 
+    if (Distance < 250.0f)
+    {
+        Distance = 250.0f;
+    }
+    
     while (!FNullEnt(pEntity = FIND_ENTITY_IN_SPHERE(pEntity, Origin, Distance)))
     {
         auto Target = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
