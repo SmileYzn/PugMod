@@ -100,6 +100,8 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
         {
             if (this->m_Spawn.size() > 0)
             {
+                auto Limit = (this->m_Spawn.size() * 2);
+                
                 do
                 {
                     auto Spawn = this->m_Spawn.begin();
@@ -148,7 +150,10 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
                             return true;
                         }
                     }
-                } while (true);
+
+                    Limit--;
+                }
+                while (Limit > 0);
             }
             else
             {
