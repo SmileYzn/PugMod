@@ -534,27 +534,23 @@ cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)
         {
             if (pszName[0u] != '\0')
             {
-                static cvar_t Data;
+                // Each cvar needs its own persistent cvar_t struct
+                // The engine stores a pointer to it, so it must stay alive
+                auto Data = new cvar_t;
 
-                Data.name = pszName;
+                memset(Data, 0, sizeof(cvar_t));
 
-                if (pszValue)
-                {
-                    if (pszValue[0u] != '\0')
-                    {
-                        auto Temp = strdup(pszValue);
+                Data->name = pszName;
 
-                        Data.string = Temp;
+                // The engine reads Data->string at registration time,
+                // so the string must remain allocated
+                Data->string = (pszValue && pszValue[0u] != '\0') ? strdup(pszValue) : strdup("");
 
-                        free(Temp);
-                    }
-                }
-                
-                Data.flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
+                Data->flags = (FCVAR_SERVER | FCVAR_PROTECTED | FCVAR_SPONLY | FCVAR_UNLOGGED);
 
-                CVAR_REGISTER(&Data);
+                CVAR_REGISTER(Data);
 
-                pPointer = CVAR_GET_POINTER(Data.name);
+                pPointer = CVAR_GET_POINTER(Data->name);
 
                 if (pPointer)
                 {
