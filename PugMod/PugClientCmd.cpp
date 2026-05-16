@@ -113,6 +113,11 @@ bool CPugClientCmd::Command(edict_t *pEntity) {
                 gPugUtil.ClientCommand(pEntity, "%s\n", CMD_ARGS());
                 return true;
               }
+
+              // Log all-chat messages to stats (say only, not say_team)
+              if (_stricmp(pszCommand, "say") == 0) {
+                gPugStats.LogChat(Player, pszArgv);
+              }
             }
           } else {
             auto pCmd = this->Get(pszCommand);

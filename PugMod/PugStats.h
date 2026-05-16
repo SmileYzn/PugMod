@@ -372,7 +372,7 @@ public:
 	void DefuseBombStart(CBasePlayer* Player);
 	void DefuseBombEnd(CBasePlayer* Player, bool Defused);
 	void ExplodeBomb(CGrenade* pThis, TraceResult* ptr, int bitsDamageType);
-	static bool SayText(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
+	void LogChat(CBasePlayer* Player, const char* Text);
 	void OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEntity, CBaseEntity* pEntityOther);
 	void DumpData();
 	void SaveData(nlohmann::json Data);

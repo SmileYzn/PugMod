@@ -13,8 +13,6 @@ void CPugStats::ServerActivate()
 	// Round events
 	this->m_RoundEvent.clear();
 
-	// Register Say Text messages
-	gPugEngine.RegisterHook("SayText", this->SayText);
 }
 
 void CPugStats::SetState()
@@ -912,86 +910,37 @@ void CPugStats::ExplodeBomb(CGrenade* pThis, TraceResult* ptr, int bitsDamageTyp
 	}
 }
 
-bool CPugStats::SayText(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity)
+void CPugStats::LogChat(CBasePlayer* Player, const char* Text)
 {
-	// If has entity target
-	if (!FNullEnt(pEntity))
-	{
-		// Get CBasePlayer data
-		auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
+	if (!Player || !Text || Text[0] == '\0')
+		return;
 
-		// If is not null
-		if (Player)
-		{
-			// If is in game
-			if ((Player->m_iTeam == TERRORIST) || (Player->m_iTeam == CT))
-			{
-				// Get argument 1
-				auto Format = gPugEngine.GetString(1);
+	// Only log while a match is active
+	auto State = gPugMod.GetState();
 
-				// If is not empty
-				if (Format)
-				{
-					// Get argument 3
-					auto TextMsg = gPugEngine.GetString(3);
+	if (State == STATE_DEAD)
+		return;
 
-					// If is not empty
-					if (TextMsg)
-					{
-						// If is chat for all or for all dead
-						if (!Q_stricmp("#Cstrike_Chat_All", Format) || !Q_stricmp("#Cstrike_Chat_AllDead", Format))
-						{
-							// Get State
-							auto State = gPugMod.GetState();
+	// Only log players in a team
+	if ((Player->m_iTeam != TERRORIST) && (Player->m_iTeam != CT))
+		return;
 
-                            // If match is running
-                            if (State != STATE_DEAD)
-                            {
-                                // If player is not null
-                                if (Player)
-                                {
-                                    // If text is not null
-                                    if (TextMsg)
-                                    {
-                                        // Get player auth
-                                        auto Auth = gPugStats.GetAuthId(Player);
+	// Get player auth
+	auto Auth = gPugStats.GetAuthId(Player);
 
-                                        // If is not null
-                                        if (Auth)
-                                        {
-                                            // Chat struct
-                                            P_PLAYER_CHAT Chat = { };
+	if (!Auth)
+		return;
 
-                                            // Set time
-                                            Chat.Time = time(NULL);
+	// Build chat entry
+	P_PLAYER_CHAT Chat = { };
 
-                                            // Set match state
-                                            Chat.State = State;
+	Chat.Time = time(NULL);
+	Chat.State = State;
+	Chat.Team = static_cast<int>(Player->m_iTeam);
+	Chat.Alive = Player->IsAlive() ? 1 : 0;
+	Chat.Message = Text;
 
-                                            // Set team
-                                            Chat.Team = static_cast<int>(Player->m_iTeam);
-
-                                            // Player is alive
-                                            Chat.Alive = Player->IsAlive() ? 1 : 0;
-
-                                            // Set message
-                                            Chat.Message = TextMsg;
-
-                                            // Push to vector
-                                            gPugStats.m_Player[Auth].ChatLog.push_back(Chat);
-                                        }
-                                    }
-                                }
-                            }
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Do not block original message call
-	return false;
+	gPugStats.m_Player[Auth].ChatLog.push_back(Chat);
 }
 
 void CPugStats::OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEntity, class CBaseEntity* pEntityOther)
