@@ -39,7 +39,10 @@ void CPugRoundStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario
                 {
                     for (auto const & Player : Players)
                     {
-                        this->StartDeathCam(Player);
+						if (Player->IsAlive())
+						{
+							this->StartDeathCam(Player);
+						}
                     }
                 }
             }
