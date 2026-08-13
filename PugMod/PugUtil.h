@@ -3,9 +3,9 @@
 enum E_PRINT_TEAM
 {
     DEFAULT = 0,
-    GREY    = -1,
-    RED     = -2,
-    BLUE    = -3
+    GREY = -1,
+    RED = -2,
+    BLUE = -3
 };
 
 enum E_PRINT
@@ -46,6 +46,7 @@ public:
     std::array<std::vector<CBasePlayer *>, SPECTATOR + 1U> GetPlayers();
     void ShowMotd(edict_t* pEntity, char* Motd, unsigned int MotdLength);
     bool IsPlayerVisible(CBasePlayer* Player, CBasePlayer* Target);
+
 private:
     std::string m_Path;
     std::string m_FullPath;
