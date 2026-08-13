@@ -30,7 +30,7 @@ void CPugLeader::Init()
 
     this->m_PlayersMin = static_cast<unsigned int>(gPugCvar.m_PlayersMin->value);
 
-	if (Players.size() > this->m_PlayersMin)
+	if (Players.size() > this->m_PlayersMin) // this->m_PlayersMin = 5
 	{
 		this->m_Run = true;
 
@@ -48,7 +48,7 @@ void CPugLeader::Init()
 
 		for (auto & Player : Players)
 		{
-			if (Player->m_iTeam)
+			if (Player->m_iTeam != UNASSIGNED)
 			{
 				this->m_Team[Player->entindex()] = Player->m_iTeam;
 
@@ -62,15 +62,28 @@ void CPugLeader::Init()
 			}
 		}
 
-		auto User = RANDOM_LONG(0, 1);
+		int PlayerTR = RANDOM_LONG(0, Players.size() - 1);
 
-		auto Team = RANDOM_LONG(1, 2);
+		int PlayerCT = -1;
 
-		this->SetLeader(Players.at(User), Team);
+		do
+		{
+			PlayerCT = RANDOM_LONG(0, Players.size() - 1);
+		}
+		while (PlayerTR == PlayerCT);
 
-		this->SetLeader(Players.at(User == 0 ? 1 : 0), (Team == 1) ? 2 : 1);
+		this->SetLeader(Players.at(PlayerTR), TERRORIST);
 
-		this->Menu(Players.at(User));
+		this->SetLeader(Players.at(PlayerCT), CT);
+
+		if (RANDOM_LONG(0,1))
+		{
+			this->Menu(Players.at(PlayerTR));
+		}
+		else
+		{
+			this->Menu(Players.at(PlayerCT));
+		}
 	}
 	else
 	{
