@@ -76,14 +76,7 @@ void CPugLeader::Init()
 
 		this->SetLeader(Players.at(PlayerCT), CT);
 
-		if (RANDOM_LONG(0,1))
-		{
-			this->Menu(Players.at(PlayerTR));
-		}
-		else
-		{
-			this->Menu(Players.at(PlayerCT));
-		}
+		this->Menu(Players.at(RANDOM_LONG(0, 1) == 0 ? PlayerTR : PlayerCT));
 	}
 	else
 	{
