@@ -679,15 +679,15 @@ void CPugMod::Scores(CBasePlayer *Player)
                 Sender = (ScoreTR > ScoreCT) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE;
             }
 
-            if (gPugCvar.m_ScoreText->value)
+            if (gPugCvar.m_ScoreText->value > 0)
             {
                 if (this->m_State != STATE_END)
                 {
-                    gPugUtil.PrintColor(pEntity, Sender, _T("^4[%s]^1 ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1"), gPugCvar.m_Tag->string, g_Pug_TeamName[TERRORIST], ScoreTR, g_Pug_TeamName[CT], ScoreCT);
+                    gPugUtil.PrintColor(pEntity, Sender, _T("^4[%s]^1 ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1"), gPugCvar.m_Tag->string, g_Pug_TeamName[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamName[CT]);
                 }
                 else
                 {
-                    gPugUtil.PrintColor(pEntity, Sender, _T("^4[%s]^1 End of game: ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1"), gPugCvar.m_Tag->string, g_Pug_TeamName[TERRORIST], ScoreTR, g_Pug_TeamName[CT], ScoreCT);
+                    gPugUtil.PrintColor(pEntity, Sender, _T("^4[%s]^1 End of game: ^3%s^1 (^4%d^1) - (^4%d^1) ^3%s^1"), gPugCvar.m_Tag->string, g_Pug_TeamName[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamName[CT]);
                 }
             }
             else
