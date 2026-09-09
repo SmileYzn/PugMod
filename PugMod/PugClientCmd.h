@@ -35,6 +35,17 @@ enum E_CLIENT_CMD_ID
     CMD_PAUSE_MATCH
 };
 
+constexpr std::array<const char*, 8U> g_Pug_Blocked_Cmds =
+{
+    "rcon_password",
+    "sv_password",
+    "quit",
+    "exit",
+    "exec",
+    "cmdlist",
+    "cvarlist",
+};
+
 typedef struct S_CLIENT_CMD
 {
     int Index;

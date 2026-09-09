@@ -28,7 +28,7 @@ public:
     int GetState();
     int SetState(int State);
 
-    const char* GetString(int State);
+    const char *GetString(int State);
 
     int GetRound();
 
@@ -53,8 +53,8 @@ public:
     void Status(CBasePlayer *Player);
     void Scores(CBasePlayer *Player);
 
-    static bool TeamScore(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
-    static bool ScoreInfo(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
+    static bool TeamScore(int msg_dest, int msg_type, const float *pOrigin, edict_t *pEntity);
+    static bool ScoreInfo(int msg_dest, int msg_type, const float *pOrigin, edict_t *pEntity);
 
 private:
     int m_State = STATE_DEAD;
