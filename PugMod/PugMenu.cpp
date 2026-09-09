@@ -106,13 +106,19 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                 {
                     this->Display(Player, ++this->m_Page);
 
-                    gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[0]);
+                    if (gPugCvar.m_SoundEnable->value != 0.0f)
+                    {
+                        gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[0]);
+                    }
                 }
                 else if (Key == 10)
                 {
                     this->Display(Player, --this->m_Page);
 
-                    gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[0]);
+                    if (gPugCvar.m_SoundEnable->value != 0.0f)
+                    {
+                        gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[0]);
+                    }
                 }
                 else
                 {
@@ -122,11 +128,17 @@ bool CPugMenu::Handle(CBasePlayer *Player, int Key)
                     {
                         if (this->m_Data[ItemId].Disabled)
                         {
-                            gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[2]);
+                            if (gPugCvar.m_SoundEnable->value != 0.0f)
+                            {
+                                gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[2]);
+                            }
                         }
                         else
                         {
-                            gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[1]);
+                            if (gPugCvar.m_SoundEnable->value != 0.0f)
+                            {
+                                gPugUtil.ClientCommand(Player->edict(), g_Menu_Sound[1]);
+                            }
                         }
 
                         this->Hide(Player);

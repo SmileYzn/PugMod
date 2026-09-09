@@ -618,13 +618,19 @@ void CPugMod::RoundMessage()
 
                     if ((ScoreTR + ScoreCT) == (MaxRound - 1) || (this->m_ScoreOT[TERRORIST] + this->m_ScoreOT[CT]) == (MaxRoundOT - 1))
                     {
-                        gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
+                        if (gPugCvar.m_SoundEnable->value != 0.0f)
+                        {
+                            gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
+                        }
 
                         gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("%s^n%s %d : %d %s^nLast Round"), gPugMod.GetString(this->m_State), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
                     }
                     else if ((ScoreTR == MaxRound) || (ScoreCT == MaxRound) || (this->m_ScoreOT[TERRORIST] == MaxRoundOT) || (this->m_ScoreOT[CT] == MaxRoundOT))
                     {
-                        gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
+                        if (gPugCvar.m_SoundEnable->value != 0.0f)
+                        {
+                            gPugUtil.ClientCommand(nullptr, "spk \"fvox/blip, warning\"");
+                        }
 
                         gPugUtil.SendHud(nullptr, g_Pug_HudParam, _T("%s^n%s %d : %d %s^nMatch End Danger"), gPugMod.GetString(this->m_State), g_Pug_TeamNameShort[TERRORIST], ScoreTR, ScoreCT, g_Pug_TeamNameShort[CT]);
                     }
@@ -635,7 +641,10 @@ void CPugMod::RoundMessage()
                 }
                 else if (this->m_State == STATE_END)
                 {
-                    gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+                    if (gPugCvar.m_SoundEnable->value != 0.0f)
+                    {
+                        gPugUtil.ClientCommand(nullptr, "spk \"misc/sheep\"");
+                    }
 
                     if (ScoreTR == ScoreCT)
                     {

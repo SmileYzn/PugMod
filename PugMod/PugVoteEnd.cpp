@@ -69,7 +69,10 @@ void CPugVoteEnd::Init()
 
                 gPugMenu[Player->entindex()].Show(Player);
 
-                gPugUtil.ClientCommand(Player->edict(), g_VoteEnd_Sound[RANDOM_LONG(0, 1)]);
+                if (gPugCvar.m_SoundEnable->value != 0.0f)
+                {
+                    gPugUtil.ClientCommand(Player->edict(), g_VoteEnd_Sound[RANDOM_LONG(0, 1)]);
+                }
 
                 gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 A player left the match, what do you want to do?"), gPugCvar.m_Tag->string);
             }
@@ -95,13 +98,19 @@ void CPugVoteEnd::Stop()
         {
             if (Winner.Index == 2)
             {
-                gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
+                if (gPugCvar.m_SoundEnable->value != 0.0f)
+                {
+                    gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
+                }
 
                 gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_DEATHMATCH);
             }
             else if (Winner.Index == 3)
             {
-                gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
+                if (gPugCvar.m_SoundEnable->value != 0.0f)
+                {
+                    gPugUtil.ClientCommand(nullptr, g_VoteEnd_Sound[2]);
+                }
 
                 gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_FIRST_HALF);
             }

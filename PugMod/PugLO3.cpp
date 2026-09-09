@@ -16,7 +16,10 @@ void CPugLO3::Init(int Restart)
 
                 gPugUtil.ScreenFade(Player->edict(), 2.0f, 2.0f, 0x0002, RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), RANDOM_LONG(0, 255), 100);
 
-                gPugUtil.ClientCommand(Player->edict(), g_LO3_Sound[Restart]);
+                if (gPugCvar.m_SoundEnable->value != 0.0f)
+                {
+                    gPugUtil.ClientCommand(Player->edict(), g_LO3_Sound[Restart]);
+                }
 
                 gPugUtil.SendHud(Player->edict(), g_LO3_HudParam, _T(g_LO3_HudText[Restart]));
 

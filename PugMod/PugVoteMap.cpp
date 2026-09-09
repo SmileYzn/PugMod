@@ -73,7 +73,10 @@ void CPugVoteMap::Init()
                 }
             }
 
-            gPugUtil.ClientCommand(Player->edict(), g_VoteMap_Sound[RANDOM_LONG(0, 1)]);
+            if (gPugCvar.m_SoundEnable->value != 0.0f)
+            {
+                gPugUtil.ClientCommand(Player->edict(), g_VoteMap_Sound[RANDOM_LONG(0, 1)]);
+            }
 
             gPugMenu[Player->entindex()].Show(Player);
         }
@@ -92,7 +95,10 @@ void CPugVoteMap::Stop()
 
         auto Winner = this->GetWinner();
 
-        gPugUtil.ClientCommand(nullptr, g_VoteMap_Sound[2]);
+        if (gPugCvar.m_SoundEnable->value != 0.0f)
+        {
+            gPugUtil.ClientCommand(nullptr, g_VoteMap_Sound[2]);
+        }
 
         if (Winner.Votes)
         {

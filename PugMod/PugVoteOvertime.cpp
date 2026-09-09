@@ -73,7 +73,10 @@ void CPugVoteOvertime::Init()
 
                 gPugMenu[Player->entindex()].Show(Player);
 
-                gPugUtil.ClientCommand(Player->edict(), g_VoteOverimte_Sound[RANDOM_LONG(0, 1)]);
+                if (gPugCvar.m_SoundEnable->value != 0.0f)
+                {
+                    gPugUtil.ClientCommand(Player->edict(), g_VoteOverimte_Sound[RANDOM_LONG(0, 1)]);
+                }
             }
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 The match is tied, choose what to do:"), gPugCvar.m_Tag->string);
@@ -102,7 +105,10 @@ void CPugVoteOvertime::Stop()
 
         auto Winner = this->GetWinner();
 
-        gPugUtil.ClientCommand(nullptr, g_VoteSwapTeam_Sound[2]);
+        if (gPugCvar.m_SoundEnable->value != 0.0f)
+        {
+            gPugUtil.ClientCommand(nullptr, g_VoteOverimte_Sound[2]);
+        }
 
         if (Winner.Votes)
         {

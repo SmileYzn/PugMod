@@ -176,11 +176,19 @@ void CPugCvar::ServerActivate()
     // Restrict weapons at the indicated slot
     // Each slot is one item (See enum ItemID for slots)
     //
-    // 0 Disabled
-    // 1 Enabled
+    // 0 Disable restriction on slot
+    // 1 Enable restriction on slot 
     //
     // Default "000000000000000000000000000000000000000"
     this->m_RestrictItem = this->Register("pug_restrict_item", "000000000000000000000000000000000000000");
+
+    // Enable Sounds
+    //
+    // 0 Disabled
+    // 1 Enabled
+    //
+    // Default "1"
+    this->m_SoundEnable = this->Register("pug_sound_enable", "1");
 
     // The pug vote time limit
     //

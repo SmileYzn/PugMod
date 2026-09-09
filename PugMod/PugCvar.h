@@ -41,6 +41,7 @@ public:
 	cvar_t* m_TeamType;
 	cvar_t* m_TeamOption;
 	cvar_t* m_RestrictItem;
+	cvar_t* m_SoundEnable;
 	cvar_t* m_VoteDelay;
 	cvar_t* m_VotePercent;
 	cvar_t* m_VoteMap;

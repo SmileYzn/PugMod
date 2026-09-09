@@ -145,7 +145,10 @@ void CPugPause::Timer(int PauseTime)
 
                 gPugUtil.ScreenFade(pEntity, 2.0f, 2.0f, 0x0002, 0, 0, 200, 100);
 
-                gPugUtil.ClientCommand(pEntity, "spk \"barney/letsgo\"");
+                if (gPugCvar.m_SoundEnable->value != 0.0f)
+                {
+                    gPugUtil.ClientCommand(pEntity, "spk \"barney/letsgo\"");
+                }
 
                 gPugUtil.SendHud(pEntity, g_Pause_HudParam2, _T("MATCH WILL CONTINUE AFTER FREEZETIME"));
 
