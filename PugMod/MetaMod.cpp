@@ -161,6 +161,10 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugVoteSwapTeam.ServerActivate();
 
+	gPugVoteOvertime.ServerActivate();
+
+	gPugVoteEnd.ServerActivate();
+
 	gPugDemoRecord.ServerActivate();
 
 	gPugCvarControl.ServerActivate();
@@ -200,6 +204,10 @@ void DLL_POST_ServerDeactivate()
 
 	gPugVoteSwapTeam.ServerDeactivate();
 
+	gPugVoteOvertime.ServerDeactivate();
+
+	gPugVoteEnd.ServerDeactivate();
+
 	gPugDemoRecord.ServerDeactivate();
 
 	RETURN_META(MRES_IGNORED);
@@ -223,6 +231,10 @@ void DLL_POST_StartFrame()
 
 	gPugVoteSwapTeam.StartFrame();
 
+	gPugVoteOvertime.StartFrame();
+
+	gPugVoteEnd.StartFrame();
+
 	gPugStatus.StartFrame();
 
 	RETURN_META(MRES_IGNORED);
@@ -230,6 +242,8 @@ void DLL_POST_StartFrame()
 
 void DLL_POST_ClientPutInServer(edict_t *pEntity)
 {
+	gPugMenu[ENTINDEX(pEntity)].Clear();
+	
 	gPugAdmin.PutInServer(pEntity);
 
 	gPugReady.PutInServer(pEntity);

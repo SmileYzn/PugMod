@@ -12,29 +12,32 @@ void CPugRageBan::DropClient(edict_t *pEntity)
         {
             auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
 
-            if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+            if (Player)
             {
-                if (!Player->IsBot())
+                if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
                 {
-                    auto AuthId = GETPLAYERAUTHID(pEntity);
-
-                    if (AuthId)
+                    if (!Player->IsBot())
                     {
-                        if (AuthId[0u] != '\0')
+                        auto AuthId = GETPLAYERAUTHID(pEntity);
+
+                        if (AuthId)
                         {
-                            if (this->m_Data.find(AuthId) == this->m_Data.end())
+                            if (AuthId[0u] != '\0')
                             {
-                                P_RAGE_BAN_INFO Info = {};
+                                if (this->m_Data.find(AuthId) == this->m_Data.end())
+                                {
+                                    P_RAGE_BAN_INFO Info = {};
 
-                                Info.Name = STRING(pEntity->v.netname);
+                                    Info.Name = STRING(pEntity->v.netname);
 
-                                Info.CheckTime = (gpGlobals->time + gPugCvar.m_RageQuitLimit->value);
+                                    Info.CheckTime = (gpGlobals->time + gPugCvar.m_RageQuitLimit->value);
 
-                                this->m_Data.insert(std::make_pair(AuthId, Info));
+                                    this->m_Data.insert(std::make_pair(AuthId, Info));
 
-                                gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Player ^3%s^1 has been added to the rage quit. Hee need to back in ^3%d^1 seconds before ban.",  gPugCvar.m_Tag->string, STRING(pEntity->v.netname), static_cast<int>(gPugCvar.m_RageQuitLimit->value));
+                                    gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, "^4[%s]^1 Player ^3%s^1 has been added to the rage quit. He need to back in ^3%d^1 seconds before ban.",  gPugCvar.m_Tag->string, STRING(pEntity->v.netname), static_cast<int>(gPugCvar.m_RageQuitLimit->value));
 
-                                gPugTask.Create(E_TASK::RAGE_BAN_CHECK, 1.0f, true, State);
+                                    gPugTask.Create(E_TASK::RAGE_BAN_CHECK, 1.0f, true, State);
+                                }
                             }
                         }
                     }

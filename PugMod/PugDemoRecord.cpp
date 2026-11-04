@@ -69,7 +69,7 @@ void CPugDemoRecord::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
         if (Item.Info)
         {
             char File[64] = {0};
-            Q_snprintf(File, sizeof(File), "pug-%s-%u.dem", STRING(gpGlobals->mapname), (unsigned int)time(NULL));
+            snprintf(File, sizeof(File), "pug-%s-%u.dem", STRING(gpGlobals->mapname), (unsigned int)time(NULL));
 
             gPugUtil.ClientCommand(Player->edict(), "stop; record \"%s\"", File);
 

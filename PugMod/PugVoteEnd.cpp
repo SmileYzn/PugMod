@@ -126,7 +126,7 @@ P_VOTE_END_INFO CPugVoteEnd::GetWinner()
     {
         for (auto const& Item : this->m_VoteList)
         {
-            if (Item.Votes >= Winner.Votes)
+            if (Item.Votes > Winner.Votes)
             {
                 Winner = Item;
             }

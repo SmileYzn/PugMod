@@ -102,6 +102,22 @@ void CPugLeader::Stop()
 
 		auto Players = gPugUtil.GetPlayers();
 
+		for (auto const &Team : Players)
+		{
+			for (auto const &Player : Team)
+			{
+				if (Player->HasConditions(BIT_LEADER_MENU))
+				{
+					gPugMenu[Player->entindex()].Hide(Player);
+				}
+
+				Player->ClearConditions(BIT_LEADER_TYPE);
+				Player->ClearConditions(BIT_LEADER_MENU);
+			}
+		}
+
+		gPugTask.Remove(E_TASK::LEADER_MENU);
+
 		if ((Players[TERRORIST].size() >= this->m_PlayersMin) && (Players[CT].size() >= this->m_PlayersMin))
 		{
 			if (gPugCvar.m_KnifeRound->value)
@@ -166,22 +182,25 @@ void CPugLeader::DropClient(edict_t *pEntity)
 	{
 		auto Leader = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
 
-		if (Leader->HasConditions(BIT_LEADER_TYPE))
+		if (Leader)
 		{
-			auto Players = gPugUtil.GetPlayers();
-
-			if (Players[SPECTATOR].size() > 0)
+			if (Leader->HasConditions(BIT_LEADER_TYPE))
 			{
-				this->SetLeader(Players[SPECTATOR].at(0), Leader->m_iTeam);
+				auto Players = gPugUtil.GetPlayers();
 
-				if (Leader->HasConditions(BIT_LEADER_MENU))
+				if (Players[SPECTATOR].size() > 0)
 				{
-					this->Menu(Players[SPECTATOR].at(0));
+					this->SetLeader(Players[SPECTATOR].at(0), Leader->m_iTeam);
+
+					if (Leader->HasConditions(BIT_LEADER_MENU))
+					{
+						this->Menu(Players[SPECTATOR].at(0));
+					}
 				}
-			}
-			else
-			{
-				this->Stop();
+				else
+				{
+					this->Stop();
+				}
 			}
 		}
 	}
@@ -300,7 +319,7 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 
 				for (auto const& Player : Players[SPECTATOR])
 				{
-					gPugMenu[Leader->entindex()].AddItem(Player->entindex(), false, Player->m_iTeam, STRING(Player->edict()->v.netname));
+					gPugMenu[Leader->entindex()].AddItem(Player->entindex(), false, Player->m_iTeam, "%s", STRING(Player->edict()->v.netname));
 				}
 
 				gPugMenu[Leader->entindex()].Show(Leader);
@@ -319,13 +338,19 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 
 void CPugLeader::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
-	if (Player)
+	if (this->m_Run)
 	{
-		auto Spectactor = UTIL_PlayerByIndexSafe(Item.Info);
-
-		if (Spectactor)
+		if (Player)
 		{
-			this->GetPlayer(Player, Spectactor);
+			if (Player->HasConditions(BIT_LEADER_TYPE) && Player->HasConditions(BIT_LEADER_MENU))
+			{
+				auto Spectactor = UTIL_PlayerByIndexSafe(Item.Info);
+
+				if (Spectactor)
+				{
+					this->GetPlayer(Player, Spectactor);
+				}
+			}
 		}
 	}
 }
@@ -377,26 +402,33 @@ void CPugLeader::StartFrame()
                 }
             }
 
-			PlayerList[CT] += std::string((5 - Count[CT]), '\n');
+            int Rows = std::max(static_cast<int>(this->m_PlayersMin), Count[CT]);
 
+            if (Count[CT] < Rows)
+            {
+                PlayerList[CT] += std::string(static_cast<size_t>(Rows - Count[CT]), '\n');
+            }
+			
             gPugUtil.SendHud(nullptr, g_Leader_HudParam[0], "%s (%d / %d):", g_Pug_TeamName[TERRORIST], Count[TERRORIST], this->m_PlayersMin);
 
-            gPugUtil.SendHud(nullptr, g_Leader_HudParam[1], "\n%s", PlayerList[TERRORIST].c_str());
+			gPugUtil.SendHud(nullptr, g_Leader_HudParam[1], "\n%s", PlayerList[TERRORIST].c_str());
 
-            if (Count[SPECTATOR] < 1)
-            {
-                gPugUtil.SendHud(nullptr, g_Leader_HudParam[2], "%s (%d / %d):", g_Pug_TeamName[CT], Count[CT], this->m_PlayersMin);
+			if (Count[SPECTATOR] < 1)
+			{
+				gPugUtil.SendHud(nullptr, g_Leader_HudParam[2], "%s (%d / %d):", g_Pug_TeamName[CT], Count[CT], this->m_PlayersMin);
 
-                gPugUtil.SendHud(nullptr, g_Leader_HudParam[3], "\n%s", PlayerList[CT].c_str());
-            }
-            else
-            {
-                gPugUtil.SendHud(nullptr, g_Leader_HudParam[4], "%s (%d / %d):\n\n\n\n\n\n%s (%d):", g_Pug_TeamName[CT], Count[CT], this->m_PlayersMin, g_Pug_TeamName[SPECTATOR], Count[SPECTATOR]);
+				gPugUtil.SendHud(nullptr, g_Leader_HudParam[3], "\n%s", PlayerList[CT].c_str());
+			}
+			else
+			{
+				std::string Gap(static_cast<size_t>(Rows + 1), '\n');
 
-                gPugUtil.SendHud(nullptr, g_Leader_HudParam[5], "\n%s\n%s", PlayerList[CT].c_str(), PlayerList[SPECTATOR].c_str());
-            }
+				gPugUtil.SendHud(nullptr, g_Leader_HudParam[4], "%s (%d / %d):%s%s (%d):", g_Pug_TeamName[CT], Count[CT], this->m_PlayersMin, Gap.c_str(), g_Pug_TeamName[SPECTATOR], Count[SPECTATOR]);
 
-            this->m_NextFrame = (gpGlobals->time + 0.9f);
-        }
-    }
+				gPugUtil.SendHud(nullptr, g_Leader_HudParam[5], "\n%s\n%s", PlayerList[CT].c_str(), PlayerList[SPECTATOR].c_str());
+			}
+
+			this->m_NextFrame = (gpGlobals->time + 0.9f);
+		}
+	}
 }

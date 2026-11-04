@@ -396,18 +396,19 @@ bool CPugVoteMenu::VotePause(CBasePlayer *Player)
 
             if (Players[Player->m_iTeam].size() < 2)
             {
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote pause need more than ^3%d^1 players to be used."), gPugCvar.m_Tag->string, static_cast<int>(gPugCvar.m_PlayersMin->value));
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Vote pause needs at least ^3%d^1 players in your team."), gPugCvar.m_Tag->string, 2);
                 return false;
             }
 
             this->m_VotePause[Player->entindex()][Player->m_iTeam] = true;
 
             auto Count = 0.0f;
-            auto Needs = (static_cast<float>(Players.size()) * gPugCvar.m_VotePercent->value);
 
-            for (int i = 1; i <= gpGlobals->maxClients; ++i)
+            auto Needs = (static_cast<float>(Players[Player->m_iTeam].size()) * gPugCvar.m_VotePercent->value);
+
+            for (auto const &Temp : Players[Player->m_iTeam])
             {
-                if (this->m_VotePause[i][Player->m_iTeam])
+                if (this->m_VotePause[Temp->entindex()][Player->m_iTeam])
                 {
                     Count += 1.0f;
                 }
@@ -608,11 +609,11 @@ bool CPugVoteMenu::VoteSurrender(CBasePlayer *Player)
             this->m_VoteSurrender[Player->entindex()][Player->m_iTeam] = true;
 
             auto Count = 0.0f;
-            auto Needs = (static_cast<float>(Players.size()) * gPugCvar.m_VotePercent->value);
+            auto Needs = (static_cast<float>(Players[Player->m_iTeam].size()) * gPugCvar.m_VotePercent->value);
 
-            for (int i = 1; i <= gpGlobals->maxClients; ++i)
+            for (auto const &Temp : Players[Player->m_iTeam])
             {
-                if (this->m_VoteSurrender[i][Player->m_iTeam])
+                if (this->m_VoteSurrender[Temp->entindex()][Player->m_iTeam])
                 {
                     Count += 1.0f;
                 }

@@ -106,7 +106,7 @@ void CPugAdminMenu::Kick(CBasePlayer *Player)
             {
                 if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
                 {
-                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, STRING(Target->edict()->v.netname));
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, "%s", STRING(Target->edict()->v.netname));
                 }
             }
 
@@ -125,14 +125,17 @@ void CPugAdminMenu::KickHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        auto Target = UTIL_PlayerByIndexSafe(Item.Info);
-
-        if (Target)
+        if (gPugAdmin.CheckAccess(Player, ADMIN_KICK))
         {
-            gPugUtil.ClientDrop(Target->entindex(), _T("Kicked by %s"), STRING(Player->edict()->v.netname));
-        }
+            auto Target = UTIL_PlayerByIndexSafe(Item.Info);
 
-        this->Kick(Player);
+            if (Target)
+            {
+                gPugUtil.ClientDrop(Target->entindex(), _T("Kicked by %s"), STRING(Player->edict()->v.netname));
+            }
+
+            this->Kick(Player);
+        }
     }
 }
 
@@ -150,7 +153,7 @@ void CPugAdminMenu::Ban(CBasePlayer *Player)
             {
                 if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
                 {
-                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, STRING(Target->edict()->v.netname));
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, "%s", STRING(Target->edict()->v.netname));
                 }
             }
 
@@ -169,42 +172,45 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        auto Target = UTIL_PlayerByIndexSafe(Item.Info);
-
-        if (Target)
+        if (gPugAdmin.CheckAccess(Player, ADMIN_BAN|ADMIN_BAN_TEMP))
         {
-            if (Item.Extra < 0)
+            auto Target = UTIL_PlayerByIndexSafe(Item.Info);
+
+            if (Target)
             {
-                gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_BAN, _T("Ban duration: ^w%s^y"), STRING(Target->edict()->v.netname));
-
-                std::vector<time_t> BanTimes = { 5, 10, 15, 30, 60, 120, 240, 480, 960, 1440, 10080, 43200 };
-
-                if (gPugAdmin.Access(Target->entindex(), ADMIN_BAN))
+                if (Item.Extra < 0)
                 {
-                    BanTimes.insert(BanTimes.begin(), 0);
-                }
+                    gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_BAN, _T("Ban duration: ^w%s^y"), STRING(Target->edict()->v.netname));
 
-				for (auto const& Time : BanTimes)
-				{
-                    auto TimeUnit = CTimeFormat::GetTimeLength(Time, CTimeFormat::TIMEUNIT_MINUTES);
+                    std::vector<time_t> BanTimes = {5, 10, 15, 30, 60, 120, 240, 480, 960, 1440, 10080, 43200};
 
-                    if (TimeUnit.length() > 0)
+                    if (gPugAdmin.Access(Player->entindex(), ADMIN_BAN))
                     {
-                        gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, Time, TimeUnit.c_str());
+                        BanTimes.insert(BanTimes.begin(), 0);
                     }
-				}
 
-                gPugMenu[Player->entindex()].Show(Player);
-            }
-            else
-            {
-				gPugUtil.ServerCommand(_T("banid %d %s"), Item.Extra, GETPLAYERAUTHID(Target->edict()));
+                    for (auto const &Time : BanTimes)
+                    {
+                        auto TimeUnit = CTimeFormat::GetTimeLength(Time, CTimeFormat::TIMEUNIT_MINUTES);
 
-				gPugUtil.ServerCommand(_T("wait;wait;writeid;writeip"));
+                        if (TimeUnit.length() > 0)
+                        {
+                            gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, Time, TimeUnit.c_str());
+                        }
+                    }
 
-                gPugUtil.ClientDrop(Target->entindex(), _T("You have been banned from the server"));
+                    gPugMenu[Player->entindex()].Show(Player);
+                }
+                else
+                {
+                    gPugUtil.ServerCommand(_T("banid %d %s"), Item.Extra, GETPLAYERAUTHID(Target->edict()));
 
-                this->Ban(Player);
+                    gPugUtil.ServerCommand(_T("wait;wait;writeid;writeip"));
+
+                    gPugUtil.ClientDrop(Target->entindex(), _T("You have been banned from the server"));
+
+                    this->Ban(Player);
+                }
             }
         }
     }
@@ -232,7 +238,7 @@ void CPugAdminMenu::Slap(CBasePlayer *Player)
             {
                 if (Target->IsAlive())
                 {
-                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, STRING(Target->edict()->v.netname));
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, "%s", STRING(Target->edict()->v.netname));
                 }
             }
         }
@@ -245,47 +251,50 @@ void CPugAdminMenu::SlapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        auto Target = UTIL_PlayerByIndexSafe(Item.Info);
-
-        if (Target)
+        if (gPugAdmin.CheckAccess(Player, ADMIN_SLAY))
         {
-            if (Item.Extra < 0)
+            auto Target = UTIL_PlayerByIndexSafe(Item.Info);
+
+            if (Target)
             {
-                gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_SLAP, _T("Slap: ^w%s^y"), STRING(Target->edict()->v.netname));
-
-				gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, _T("No Damage"));
-
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 1, _T("Slap 1 HP"));
-
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 5, _T("Slap 5 HP"));
-
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 10, _T("Slap 10 HP"));
-
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 25, _T("Slap 25 HP"));
-
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 50, _T("Slap 50 HP"));
-
-                gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 100, _T("Kill Player"));
-
-                gPugMenu[Player->entindex()].Show(Player);
-            }
-            else
-            {
-                auto Damage = static_cast<float>(Item.Extra);
-
-                if (Target->edict()->v.health > Damage)
+                if (Item.Extra < 0)
                 {
-                    gPugUtil.ClientSlap(Target->edict(), Damage, false);
+                    gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_SLAP, _T("Slap: ^w%s^y"), STRING(Target->edict()->v.netname));
 
-                    Item.Extra = -1;
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, _T("No Damage"));
 
-                    this->SlapHandle(Player, Item);
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 1, _T("Slap 1 HP"));
+
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 5, _T("Slap 5 HP"));
+
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 10, _T("Slap 10 HP"));
+
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 25, _T("Slap 25 HP"));
+
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 50, _T("Slap 50 HP"));
+
+                    gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 100, _T("Kill Player"));
+
+                    gPugMenu[Player->entindex()].Show(Player);
                 }
                 else
                 {
-                    gPugUtil.ClientSlap(Target->edict(), Damage, false);
+                    auto Damage = static_cast<float>(Item.Extra);
 
-                    this->Slap(Player);
+                    if (Target->edict()->v.health > Damage)
+                    {
+                        gPugUtil.ClientSlap(Target->edict(), Damage, false);
+
+                        Item.Extra = -1;
+
+                        this->SlapHandle(Player, Item);
+                    }
+                    else
+                    {
+                        gPugUtil.ClientSlap(Target->edict(), Damage, false);
+
+                        this->Slap(Player);
+                    }
                 }
             }
         }
@@ -327,37 +336,40 @@ void CPugAdminMenu::TeamHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        auto Target = UTIL_PlayerByIndexSafe(Item.Extra);
-
-        if (Target)
+        if (gPugAdmin.CheckAccess(Player, ADMIN_LEVEL_A))
         {
-            if (Item.Info == 0)
+            auto Target = UTIL_PlayerByIndexSafe(Item.Extra);
+
+            if (Target)
             {
-                gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_TEAM, _T("Transfer Team: ^w%s^y"), STRING(Target->edict()->v.netname));
+                if (Item.Info == 0)
+                {
+                    gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_TEAM, _T("Transfer Team: ^w%s^y"), STRING(Target->edict()->v.netname));
 
-				gPugMenu[Player->entindex()].AddItem(TERRORIST, Target->m_iTeam == TERRORIST, Target->entindex(), g_Pug_TeamName[TERRORIST]);
+                    gPugMenu[Player->entindex()].AddItem(TERRORIST, Target->m_iTeam == TERRORIST, Target->entindex(), g_Pug_TeamName[TERRORIST]);
 
-                gPugMenu[Player->entindex()].AddItem(CT, Target->m_iTeam == CT, Target->entindex(), g_Pug_TeamName[CT]);
+                    gPugMenu[Player->entindex()].AddItem(CT, Target->m_iTeam == CT, Target->entindex(), g_Pug_TeamName[CT]);
 
-                gPugMenu[Player->entindex()].AddItem(SPECTATOR, Target->m_iTeam == SPECTATOR, Target->entindex(), g_Pug_TeamName[SPECTATOR]);
+                    gPugMenu[Player->entindex()].AddItem(SPECTATOR, Target->m_iTeam == SPECTATOR, Target->entindex(), g_Pug_TeamName[SPECTATOR]);
 
-                gPugMenu[Player->entindex()].Show(Player);
-            }
-            else
-            {
-				if (Item.Info == SPECTATOR)
-				{
-					if (Target->IsAlive())
-					{
-						Target->edict()->v.deadflag = DEAD_DEAD;
+                    gPugMenu[Player->entindex()].Show(Player);
+                }
+                else
+                {
+                    if (Item.Info == SPECTATOR)
+                    {
+                        if (Target->IsAlive())
+                        {
+                            Target->edict()->v.deadflag = DEAD_DEAD;
 
-                        Target->edict()->v.health = 0.0f;
-					}
-				}
+                            Target->edict()->v.health = 0.0f;
+                        }
+                    }
 
-                Target->CSPlayer()->JoinTeam((TeamName)Item.Info);
+                    Target->CSPlayer()->JoinTeam((TeamName)Item.Info);
 
-                this->Team(Player);
+                    this->Team(Player);
+                }
             }
         }
     }
@@ -390,9 +402,12 @@ void CPugAdminMenu::MapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        gPugTask.Create(E_TASK::MAP_CHANGE, 5.0f, false, Item.Info);
+        if (gPugAdmin.CheckAccess(Player, ADMIN_MAP))
+        {
+            gPugTask.Create(E_TASK::MAP_CHANGE, 5.0f, false, Item.Info);
 
-        gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Changing map to: ^3%s^1."), gPugCvar.m_Tag->string, Item.Text.c_str());
+            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Changing map to: ^3%s^1."), gPugCvar.m_Tag->string, Item.Text.c_str());
+        }
     }
 }
 
@@ -429,11 +444,14 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        if (Item.Info >= STATE_DEAD && Item.Info <= STATE_END)
+        if (gPugAdmin.CheckAccess(Player, ADMIN_VOTE|ADMIN_LEVEL_B))
         {
-            gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, Item.Info);
+            if (Item.Info >= STATE_DEAD && Item.Info <= STATE_END)
+            {
+                gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, Item.Info);
 
-            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 State changed: ^3%s^1."), gPugCvar.m_Tag->string, gPugMod.GetString(Item.Info));
+                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 State changed: ^3%s^1."), gPugCvar.m_Tag->string, gPugMod.GetString(Item.Info));
+            }
         }
     }
 }

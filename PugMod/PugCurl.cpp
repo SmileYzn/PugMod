@@ -2,193 +2,213 @@
 
 CPugCurl gPugCurl;
 
-void CPugCurl::ServerActivate() {
-  if (!this->m_MultiHandle) {
-    this->m_RequestIndex = 0;
+void CPugCurl::ServerActivate()
+{
+    if (!this->m_MultiHandle)
+    {
+        this->m_RequestIndex = 0;
 
-    this->m_Data.clear();
+        this->m_Data.clear();
 
-    curl_global_init(CURL_GLOBAL_ALL);
+        curl_global_init(CURL_GLOBAL_ALL);
 
-    this->m_MultiHandle = curl_multi_init();
-  }
-}
-
-void CPugCurl::StartFrame() {
-  if (this->m_MultiHandle) {
-    CURLMcode MsgCode = {};
-
-    int HandleCount = 0;
-
-    CURLMsg *MsgInfo = NULL;
-
-    int MsgQueue = 0;
-
-    long PrivateDataIndex = 0;
-
-    do {
-      MsgCode = curl_multi_perform(this->m_MultiHandle, &HandleCount);
-
-      while ((MsgInfo = curl_multi_info_read(this->m_MultiHandle, &MsgQueue))) {
-        if (MsgInfo && (MsgInfo->msg == CURLMSG_DONE)) {
-          curl_easy_getinfo(MsgInfo->easy_handle, CURLINFO_PRIVATE,
-                            &PrivateDataIndex);
-
-          if (this->m_Data.find(PrivateDataIndex) != this->m_Data.end()) {
-            this->CallbackResult(MsgInfo->easy_handle,
-                                 this->m_Data[PrivateDataIndex].Size,
-                                 this->m_Data[PrivateDataIndex].Memory);
-
-            if (this->m_Data[PrivateDataIndex].Memory) {
-              free(this->m_Data[PrivateDataIndex].Memory);
-            }
-
-            this->m_Data.erase(PrivateDataIndex);
-          }
-
-          curl_multi_remove_handle(this->m_MultiHandle, MsgInfo->easy_handle);
-
-          curl_easy_cleanup(MsgInfo->easy_handle);
-        }
-      }
-    } while (MsgCode == CURLM_OK && HandleCount > 0);
-  }
-}
-
-void CPugCurl::PostJSON(const char *url, long Timeout, std::string BearerToken,
-                        std::string PostData) {
-  if (this->m_MultiHandle) {
-    if (url) {
-      CURL *ch = curl_easy_init();
-
-      if (ch) {
-        this->m_Data[this->m_RequestIndex] = {0};
-
-        curl_easy_setopt(ch, CURLOPT_URL, url);
-
-        curl_easy_setopt(ch, CURLOPT_TIMEOUT, (Timeout) > 0 ? Timeout : 10L);
-
-        curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1L);
-
-        // Enforce SSL certificate verification to prevent MITM attacks
-        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, 1L);
-        curl_easy_setopt(ch, CURLOPT_SSL_VERIFYHOST, 2L);
-
-        curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, this->WriteMemoryCallback);
-
-        curl_easy_setopt(ch, CURLOPT_NOPROGRESS, 1L);
-
-        curl_easy_setopt(ch, CURLOPT_POST, 1L);
-
-        curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, (long)PostData.size());
-
-        curl_easy_setopt(ch, CURLOPT_COPYPOSTFIELDS, PostData.c_str());
-
-        struct curl_slist *chHeaders =
-            curl_slist_append(NULL, "Content-Type: application/json");
-
-        if (BearerToken.length() > 0) {
-          std::string AuthorizationHeader =
-              "Authorization: Bearer " + BearerToken;
-
-          chHeaders = curl_slist_append(chHeaders, AuthorizationHeader.c_str());
-        }
-
-        curl_easy_setopt(ch, CURLOPT_HTTPHEADER, chHeaders);
-
-        curl_easy_setopt(ch, CURLOPT_WRITEDATA,
-                         (void *)&this->m_Data[this->m_RequestIndex]);
-
-        curl_easy_setopt(ch, CURLOPT_PRIVATE, this->m_RequestIndex);
-
-        curl_multi_add_handle(this->m_MultiHandle, ch);
-
-        this->m_RequestIndex++;
-      }
+        this->m_MultiHandle = curl_multi_init();
     }
-  }
 }
 
-size_t CPugCurl::WriteMemoryCallback(void *contents, size_t size, size_t nmemb,
-                                     void *userp) {
-  if (contents) {
-    if (userp) {
-      size_t realsize = size * nmemb;
+void CPugCurl::StartFrame()
+{
+    if (this->m_MultiHandle)
+    {
+        CURLMcode MsgCode = {};
 
-      if (realsize > 0) {
-        P_CURL_MEMORY *mem = (P_CURL_MEMORY *)(userp);
+        int HandleCount = 0;
 
-        char *ptr = (char *)realloc(mem->Memory, mem->Size + realsize + 1);
+        CURLMsg *MsgInfo = NULL;
 
-        if (ptr) {
-          mem->Memory = ptr;
+        int MsgQueue = 0;
 
-          Q_memcpy(&(mem->Memory[mem->Size]), contents, realsize);
+        long PrivateDataIndex = 0;
 
-          mem->Size += realsize;
+        MsgCode = curl_multi_perform(this->m_MultiHandle, &HandleCount);
 
-          mem->Memory[mem->Size] = 0;
+        if (MsgCode == CURLM_OK)
+        {
+            while ((MsgInfo = curl_multi_info_read(this->m_MultiHandle, &MsgQueue)))
+            {
+                if (MsgInfo && (MsgInfo->msg == CURLMSG_DONE))
+                {
+                    curl_easy_getinfo(MsgInfo->easy_handle, CURLINFO_PRIVATE, &PrivateDataIndex);
 
-          return realsize;
-        } else {
-          if (mem->Memory) {
-            free(mem->Memory);
-          }
-          mem->Memory = nullptr;
-          mem->Size = 0;
-          return 0;
-        }
-      }
-    }
-  }
+                    if (this->m_Data.find(PrivateDataIndex) != this->m_Data.end())
+                    {
+                        this->CallbackResult(MsgInfo->easy_handle, this->m_Data[PrivateDataIndex].Size, this->m_Data[PrivateDataIndex].Memory);
 
-  return 0;
-}
+                        if (this->m_Data[PrivateDataIndex].Memory)
+                        {
+                            free(this->m_Data[PrivateDataIndex].Memory);
+                        }
 
-void CPugCurl::CallbackResult(CURL *ch, size_t Size, const char *Memory) {
-  if (ch) {
-    long HttpResponseCode = 0;
-
-    if (curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &HttpResponseCode) ==
-        CURLE_OK) {
-      if (HttpResponseCode == 200) {
-        if (Memory) {
-          if (Memory[0u] != '\0') {
-            try {
-              auto Data =
-                  nlohmann::ordered_json::parse(Memory, nullptr, true, true);
-
-              if (!Data.empty()) {
-                if (Data.contains("ServerExecute")) {
-                  if (Data["ServerExecute"].is_string()) {
-                    auto String = Data["ServerExecute"].get<std::string>();
-
-                    if (!String.empty()) {
-                      LOG_CONSOLE(PLID, "[%s] API ServerExecute: %s",
-                                  Plugin_info.logtag, String.c_str());
-
-                      gPugUtil.ServerCommand("%s", String.c_str());
+                        this->m_Data.erase(PrivateDataIndex);
                     }
-                  }
-                }
-              }
-            } catch (nlohmann::ordered_json::parse_error &e) {
-              auto Error = e.what();
 
-              if (Error) {
-                if (Error[0U] != '\0') {
-                  LOG_CONSOLE(PLID, "[%s] %s", __func__, Error);
+                    curl_multi_remove_handle(this->m_MultiHandle, MsgInfo->easy_handle);
+
+                    curl_easy_cleanup(MsgInfo->easy_handle);
                 }
-              }
             }
-          }
         }
-      } else {
-        LOG_CONSOLE(PLID,
-                    "[%s] Response: HTTP Code %ld, check pug_api_address and "
-                    "pug_api_timeout.",
-                    Plugin_info.logtag, HttpResponseCode);
-      }
     }
-  }
+}
+
+void CPugCurl::PostJSON(const char *url, long Timeout, std::string BearerToken, std::string PostData)
+{
+    if (this->m_MultiHandle)
+    {
+        if (url)
+        {
+            CURL *ch = curl_easy_init();
+
+            if (ch)
+            {
+                this->m_Data[this->m_RequestIndex] = {0};
+
+                curl_easy_setopt(ch, CURLOPT_URL, url);
+
+                curl_easy_setopt(ch, CURLOPT_TIMEOUT, (Timeout) > 0 ? Timeout : 10L);
+
+                curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1L);
+
+                curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, 1L);
+
+                curl_easy_setopt(ch, CURLOPT_SSL_VERIFYHOST, 2L);
+
+                curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, this->WriteMemoryCallback);
+
+                curl_easy_setopt(ch, CURLOPT_NOPROGRESS, 1L);
+
+                curl_easy_setopt(ch, CURLOPT_POST, 1L);
+
+                curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, (long)PostData.size());
+
+                curl_easy_setopt(ch, CURLOPT_COPYPOSTFIELDS, PostData.c_str());
+
+                struct curl_slist *chHeaders = curl_slist_append(NULL, "Content-Type: application/json");
+
+                if (BearerToken.length() > 0)
+                {
+                    std::string AuthorizationHeader = "Authorization: Bearer " + BearerToken;
+
+                    chHeaders = curl_slist_append(chHeaders, AuthorizationHeader.c_str());
+                }
+
+                curl_easy_setopt(ch, CURLOPT_HTTPHEADER, chHeaders);
+
+                curl_easy_setopt(ch, CURLOPT_WRITEDATA, (void *)&this->m_Data[this->m_RequestIndex]);
+
+                curl_easy_setopt(ch, CURLOPT_PRIVATE, this->m_RequestIndex);
+
+                curl_multi_add_handle(this->m_MultiHandle, ch);
+
+                this->m_RequestIndex++;
+            }
+        }
+    }
+}
+
+size_t CPugCurl::WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    if (contents)
+    {
+        if (userp)
+        {
+            size_t realsize = size * nmemb;
+
+            if (realsize > 0)
+            {
+                P_CURL_MEMORY *mem = (P_CURL_MEMORY *)(userp);
+
+                char *ptr = (char *)realloc(mem->Memory, mem->Size + realsize + 1);
+
+                if (ptr)
+                {
+                    mem->Memory = ptr;
+
+                    Q_memcpy(&(mem->Memory[mem->Size]), contents, realsize);
+
+                    mem->Size += realsize;
+
+                    mem->Memory[mem->Size] = 0;
+
+                    return realsize;
+                }
+                else
+                {
+                    if (mem->Memory)
+                    {
+                        free(mem->Memory);
+                    }
+
+                    mem->Memory = nullptr;
+
+                    mem->Size = 0;
+
+                    return 0;
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+void CPugCurl::CallbackResult(CURL *ch, size_t Size, const char *Memory)
+{
+    if (ch)
+    {
+        long HttpResponseCode = 0;
+
+        if (curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &HttpResponseCode) == CURLE_OK)
+        {
+            if (HttpResponseCode == 200)
+            {
+                if (Memory)
+                {
+                    if (Memory[0u] != '\0')
+                    {
+                        try
+                        {
+                            auto Data = nlohmann::ordered_json::parse(Memory, nullptr, true, true);
+
+                            if (!Data.empty())
+                            {
+                                if (Data.contains("ServerExecute"))
+                                {
+                                    if (Data["ServerExecute"].is_string())
+                                    {
+                                        auto String = Data["ServerExecute"].get<std::string>();
+
+                                        if (!String.empty())
+                                        {
+                                            LOG_CONSOLE(PLID, "[%s] API ServerExecute: %s", Plugin_info.logtag, String.c_str());
+
+                                            gPugUtil.ServerCommand("%s", String.c_str());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        catch (nlohmann::json::exception &e)
+                        {
+                            LOG_CONSOLE(PLID, "[%s] %s", __func__, e.what());
+                        }
+                    }
+                }
+            }
+            else
+            {
+                LOG_CONSOLE(PLID, "[%s] Response: HTTP Code %ld, check pug_api_address and pug_api_timeout.", Plugin_info.logtag, HttpResponseCode);
+            }
+        }
+    }
 }

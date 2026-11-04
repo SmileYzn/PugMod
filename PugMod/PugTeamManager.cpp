@@ -100,7 +100,7 @@ void CPugTeamManager::DropClient(edict_t *pEntity)
 
     if (Player)
     {
-        if (Player->m_iTeam == TERRORIST || Player->m_iTeam == SPECTATOR)
+        if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
         {
             auto Auth = GETPLAYERAUTHID(Player->edict());
 

@@ -1539,7 +1539,7 @@ void CPugStats::DumpData()
 	}
 }
 
-void CPugStats::SaveData(nlohmann::json Data)
+void CPugStats::SaveData(const nlohmann::json &Data)
 {
 	if (!Data.empty())
 	{
@@ -1547,25 +1547,31 @@ void CPugStats::SaveData(nlohmann::json Data)
 		strftime(Date, sizeof(Date), "%y%m%d%H%M", localtime(&this->m_Match.EndTime));
 
 		char File[128] = {};
-		Q_snprintf(File, sizeof(File), "pug-%s-%s.json", Date, this->m_Match.Map.c_str());
+		snprintf(File, sizeof(File), "pug-%s-%s.json", Date, this->m_Match.Map.c_str());
 
 		char Path[MAX_PATH] = {};
-		Q_snprintf(Path, sizeof(Path), "%s/stats", gPugUtil.GetFullPath());
+		snprintf(Path, sizeof(Path), "%s/stats", gPugUtil.GetFullPath());
 
 		gPugUtil.MakeDirectory(Path);
 
 		char FilePath[MAX_PATH * 2] = {};
-		Q_snprintf(FilePath, sizeof(FilePath), "%s/%s", Path, File);
+		snprintf(FilePath, sizeof(FilePath), "%s/%s", Path, File);
 
 		std::ofstream DataFile(FilePath);
 
-		DataFile << Data;
+		if (!DataFile.is_open())
+		{
+			LOG_CONSOLE(PLID, "[%s] Failed to save stats file: %s", Plugin_info.logtag, FilePath);
+			return;
+		}
+
+		DataFile << Data.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace);
 
 		DataFile.close();
 	}
 }
 
-void CPugStats::UploadData(nlohmann::json Data)
+void CPugStats::UploadData(const nlohmann::json &Data)
 {
 	if (!Data.empty())
 	{
@@ -1575,7 +1581,7 @@ void CPugStats::UploadData(nlohmann::json Data)
 			{
                 if (gPugCvar.m_API_Address->string[0u] != '\0')
                 {
-                    gPugCurl.PostJSON(gPugCvar.m_API_Address->string, (long)(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump());
+                    gPugCurl.PostJSON(gPugCvar.m_API_Address->string, (long)(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace));
                 }
 			}
 		}

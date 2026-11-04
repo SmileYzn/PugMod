@@ -128,10 +128,10 @@ void CPugRoundStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, en
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
-        auto Attacker = UTIL_PlayerByIndexSafe(ENTINDEX(pevAttacker));
-
 		if (!Player->m_bKilledByBomb)
 		{
+            auto Attacker = UTIL_PlayerByIndexSafe(ENTINDEX(pevAttacker));
+
 			if (Attacker)
 			{
 				if (Player->entindex() != Attacker->entindex())
@@ -381,43 +381,47 @@ bool CPugRoundStats::ShowStats(CBasePlayer *Player)
                         if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
                         {
                             auto Players = gPugUtil.GetPlayers(true, true);
-    
+
                             if (Players.size() > 0)
                             {
-                                char HudList[3][511] = {};
-    
-                                Q_memset(HudList, 0, sizeof(HudList));
-    
+                                std::string Victims, Attackers;
+
+                                char Line[128] = {};
+
                                 auto EntityIndex = Player->entindex();
-    
-                                for (auto const& Target : Players)
+
+                                for (auto const &Target : Players)
                                 {
-                                    auto TargetId = Target->entindex();
-    
-                                    if (this->m_RoundHit[EntityIndex][TargetId])
+                                    auto TargetIndex = Target->entindex();
+
+                                    if (this->m_RoundHit[EntityIndex][TargetIndex] > 0)
                                     {
-                                        Q_snprintf(HudList[0] + strlen(HudList[0]), sizeof(HudList[0]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[EntityIndex][TargetId], this->m_RoundDmg[EntityIndex][TargetId]);
+                                        snprintf(Line, sizeof(Line), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[EntityIndex][TargetIndex], this->m_RoundDmg[EntityIndex][TargetIndex]);
+                                        Victims += Line;
                                     }
-    
-                                    if (this->m_RoundHit[TargetId][EntityIndex])
+
+                                    if (this->m_RoundHit[TargetIndex][EntityIndex] > 0)
                                     {
-                                        Q_snprintf(HudList[1] + strlen(HudList[1]), sizeof(HudList[1]), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[TargetId][EntityIndex], this->m_RoundDmg[TargetId][EntityIndex]);
+                                        snprintf(Line, sizeof(Line), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[TargetIndex][EntityIndex], this->m_RoundDmg[TargetIndex][EntityIndex]);
+                                        Attackers += Line;
                                     }
                                 }
 
-                                if (HudList[0][0u] != '\0')
+                                std::string Hud;
+
+                                if (!Victims.empty())
                                 {
-                                    Q_snprintf(HudList[2], sizeof(HudList[2]), _T("Victims:^n%s"), HudList[0]);
+                                    Hud = _T("Victims:^n") + Victims;
                                 }
-    
-                                if (HudList[1][0u] != '\0')
+
+                                if (!Attackers.empty())
                                 {
-                                    Q_snprintf(HudList[2] + strlen(HudList[2]), sizeof(HudList[2]), _T("^n^n^n^nAttackers:\n%s"), HudList[1]);
+                                    Hud += _T("^n^n^n^nAttackers:\n") + Attackers;
                                 }
-    
-                                if (HudList[2][0u] != '\0')
+
+                                if (!Hud.empty())
                                 {
-                                    gPugUtil.SendHud(Player->edict(), g_RoundStats_HudParam, HudList[2]);
+                                    gPugUtil.SendHud(Player->edict(), g_RoundStats_HudParam, "%s", Hud.c_str());
                                 }
                             }
     

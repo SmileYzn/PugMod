@@ -35,15 +35,18 @@ enum E_CLIENT_CMD_ID
     CMD_PAUSE_MATCH
 };
 
-constexpr std::array<const char*, 8U> g_Pug_Blocked_Cmds =
+constexpr const char* g_Pug_Blocked_Commands[] =
 {
     "rcon_password",
     "sv_password",
+    "alias",
     "quit",
     "exit",
     "exec",
     "cmdlist",
     "cvarlist",
+    "motdfile",
+    "motd_write"
 };
 
 typedef struct S_CLIENT_CMD

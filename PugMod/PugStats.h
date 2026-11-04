@@ -375,8 +375,8 @@ public:
 	static bool SayText(int msg_dest, int msg_type, const float* pOrigin, edict_t* pEntity);
 	void OnEvent(GameEventType event, int ScenarioEvent, CBaseEntity* pEntity, CBaseEntity* pEntityOther);
 	void DumpData();
-	void SaveData(nlohmann::json Data);
-	void UploadData(nlohmann::json Data);
+	void SaveData(const nlohmann::json &Data);
+	void UploadData(const nlohmann::json &Data);
 private:
 	P_MATCH_STATS m_Match;
 	std::map<std::string, P_PLAYER_DATA> m_Player;

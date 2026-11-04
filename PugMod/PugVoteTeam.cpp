@@ -186,7 +186,7 @@ P_VOTE_TEAM_INFO CPugVoteTeam::GetWinner()
     {
         for (auto const& Item : this->m_VoteList)
         {
-            if (Item.Votes >= Winner.Votes)
+            if (Item.Votes > Winner.Votes)
             {
                 Winner = Item;
             }

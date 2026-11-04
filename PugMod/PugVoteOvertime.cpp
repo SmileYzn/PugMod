@@ -62,7 +62,7 @@ void CPugVoteOvertime::Init()
 
             for (auto const &Player : Players)
             {
-                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_SWAP_TEAM, _T("Match tied, what do you want to do?"));
+                gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_OVERTIME, _T("Match tied, what do you want to do?"));
 
                 for (size_t i = 0; i < this->m_VoteList.size(); ++i)
                 {
@@ -154,7 +154,7 @@ P_VOTE_OT_INFO CPugVoteOvertime::GetWinner()
     {
         for (auto const& Item : this->m_VoteList)
         {
-            if (Item.Votes >= Winner.Votes)
+            if (Item.Votes > Winner.Votes)
             {
                 Winner = Item;
             }

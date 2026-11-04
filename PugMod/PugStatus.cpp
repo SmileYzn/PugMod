@@ -81,6 +81,8 @@ void CPugStatus::SendStatus()
         {"3", Teams[SPECTATOR].size()}
     };
 
+    this->m_Data["Players"] = nlohmann::ordered_json::object();
+
     for (auto const & Team : Teams)
     {
         if (Team.size() > 0)
@@ -120,6 +122,6 @@ void CPugStatus::SendStatus()
 
     if (!this->m_Data.empty())
     {
-        gPugCurl.PostJSON(gPugCvar.m_API_Address->string, (long)(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, this->m_Data.dump());
+        gPugCurl.PostJSON(gPugCvar.m_API_Address->string, (long)(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, this->m_Data.dump(-1, ' ', false, nlohmann::ordered_json::error_handler_t::replace));
     }
 }

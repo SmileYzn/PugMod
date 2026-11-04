@@ -517,7 +517,7 @@ void CPugUtil::SendHud(edict_t *pEntity, const hudtextparms_t &TextParams,  cons
 
     va_start(ArgPtr, Format);
 
-    Q_vsnprintf(szString, sizeof(szString), Format, ArgPtr);
+    vsnprintf(szString, sizeof(szString), Format, ArgPtr);
 
     va_end(ArgPtr);
 
@@ -573,7 +573,7 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
 
     va_start(ArgPtr, Format);
 
-    Q_vsnprintf(Text, sizeof(Text), Format, ArgPtr);
+    vsnprintf(Text, sizeof(Text), Format, ArgPtr);
 
     va_end(ArgPtr);
 

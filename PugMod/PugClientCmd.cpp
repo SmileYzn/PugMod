@@ -19,11 +19,18 @@ void CPugClientCmd::Set(std::string Index, std::string Name, std::string Flags)
     {
         if (this->m_Data.find(Name) == this->m_Data.end())
         {
-            this->m_Data[Name].Index = std::stoi(Index);
+            try
+            {
+                this->m_Data[Name].Index = std::stoi(Index);
 
-            this->m_Data[Name].Name = Name;
+                this->m_Data[Name].Name = Name;
 
-            this->m_Data[Name].Flags = gPugAdmin.ReadFlags(Flags.c_str());
+                this->m_Data[Name].Flags = gPugAdmin.ReadFlags(Flags.c_str());
+            }
+            catch (...)
+            {
+                LOG_CONSOLE(PLID, "[%s] Uso: %s <index> <nome> <flags>", Plugin_info.logtag, CMD_ARGV(0));
+            }
         }
     }
 }
@@ -371,7 +378,7 @@ bool CPugClientCmd::Rcon(CBasePlayer *Player)
                     return static_cast<char>(std::tolower(c));
                 });
 
-                for (const char* pszCommand : g_Pug_Blocked_Cmds)
+                for (const char* pszCommand : g_Pug_Blocked_Commands)
                 {
                     if (Args.find(pszCommand) != std::string::npos)
                     {

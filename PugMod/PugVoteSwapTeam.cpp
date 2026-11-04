@@ -133,7 +133,7 @@ P_VOTE_SWAP_INFO CPugVoteSwapTeam::GetWinner()
     {
         for (auto const& Item : this->m_VoteList)
         {
-            if (Item.Votes >= Winner.Votes)
+            if (Item.Votes > Winner.Votes)
             {
                 Winner = Item;
             }

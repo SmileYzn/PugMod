@@ -416,7 +416,7 @@ void CPugMenu::ShowMenu(CBasePlayer *Player, int Slots, int Time, std::string Te
 
                     char BufferMenu[MAX_BUFFER_MENU * 6] = {0};
 
-                    Text.copy(BufferMenu, Text.length() + 1);
+                    snprintf(BufferMenu, sizeof(BufferMenu), "%s", Text.c_str());
 
                     char *pMenuList = BufferMenu;
                     char *aMenuList = BufferMenu;

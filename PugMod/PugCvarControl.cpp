@@ -57,45 +57,48 @@ void CPugCvarControl::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
     if (Player)
     {
-        if (Item.Info)
+        if (gPugAdmin.CheckAccess(Player, ADMIN_CVAR))
         {
-            auto Pointer = (cvar_t*)(Item.Info);
-
-            if (Pointer)
+            if (Item.Info)
             {
-                if (this->m_Data.find(Pointer) != this->m_Data.end())
+                auto Pointer = (cvar_t*)(Item.Info);
+
+                if (Pointer)
                 {
-                    auto begin = this->m_Data[Pointer].begin();
-
-                    auto end = this->m_Data[Pointer].end();
-
-                    for (auto it = begin; ; ++it)
+                    if (this->m_Data.find(Pointer) != this->m_Data.end())
                     {
-                        if (it < end)
-                        {
-                            if (it->compare(Pointer->string) == 0)
-                            {
-                                if (++it >= end)
-                                {
-                                    it = begin;
-                                }
+                        auto begin = this->m_Data[Pointer].begin();
 
-                                g_engfuncs.pfnCvar_DirectSet(Pointer, it->c_str());
+                        auto end = this->m_Data[Pointer].end();
+
+                        for (auto it = begin; ; ++it)
+                        {
+                            if (it < end)
+                            {
+                                if (it->compare(Pointer->string) == 0)
+                                {
+                                    if (++it >= end)
+                                    {
+                                        it = begin;
+                                    }
+
+                                    g_engfuncs.pfnCvar_DirectSet(Pointer, it->c_str());
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                g_engfuncs.pfnCvar_DirectSet(Pointer, begin->c_str());
                                 break;
                             }
                         }
-                        else
-                        {
-                            g_engfuncs.pfnCvar_DirectSet(Pointer, begin->c_str());
-                            break;
-                        }
                     }
+
+                    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 %s set to: ^3%s^1"), Plugin_info.logtag, Pointer->name, Pointer->string);
                 }
-
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 %s set to: ^3%s^1"), Plugin_info.logtag, Pointer->name, Pointer->string);
             }
-        }
 
-        this->Menu(Player);
+            this->Menu(Player);   
+        }
     }
 }

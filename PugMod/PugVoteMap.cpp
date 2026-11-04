@@ -163,7 +163,7 @@ P_VOTE_MAP_INFO CPugVoteMap::GetWinner()
     {
         for (auto const& Item : this->m_MapList)
         {
-            if (Item.Votes >= Winner.Votes)
+            if (Item.Votes > Winner.Votes)
             {
                 Winner = Item;
             }
@@ -182,19 +182,42 @@ P_VOTE_MAP_INFO CPugVoteMap::GetWinner()
 
 P_VOTE_MAP_INFO CPugVoteMap::GetRandom()
 {
-    P_VOTE_MAP_INFO Map = {0, 0, STRING(gpGlobals->mapname), true};
+    std::vector<P_VOTE_MAP_INFO> Candidates;
+
+    for (auto const &Map : this->m_MapList)
+    {
+        if (!Map.This && !Map.Last)
+        {
+            Candidates.push_back(Map);
+        }
+    }
+
+    if (Candidates.empty())
+    {
+        for (auto const &Map : this->m_MapList)
+        {
+            if (!Map.This)
+            {
+                Candidates.push_back(Map);
+            }
+        }
+    }
+
+    if (!Candidates.empty())
+    {
+        return Candidates[RANDOM_LONG(0, static_cast<long>(Candidates.size()) - 1)];
+    }
 
     if (!this->m_MapList.empty())
     {
-        do
-        {
-            Map = this->m_MapList.at(RANDOM_LONG(0, this->m_MapList.size() - 1));
-        }
-        while (Map.This || Map.Last);
+        return this->m_MapList.front();
     }
+
+    P_VOTE_MAP_INFO Map = {0, 0, STRING(gpGlobals->mapname), true, false};
 
     return Map;
 }
+
 
 void CPugVoteMap::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {

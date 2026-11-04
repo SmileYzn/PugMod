@@ -7,7 +7,7 @@ void CPugLang::ServerActivate()
     this->m_Data.clear();
 
     char File[MAX_PATH] = { 0 };
-    Q_snprintf(File, sizeof(File), "%s/cfg/language.cfg", gPugUtil.GetFullPath());
+    snprintf(File, sizeof(File), "%s/cfg/language.cfg", gPugUtil.GetFullPath());
 
     std::ifstream TempFile(File);
 

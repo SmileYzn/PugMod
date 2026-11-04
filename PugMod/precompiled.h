@@ -38,6 +38,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
 
 // cURL sources
 #ifndef CURL_STATICLIB

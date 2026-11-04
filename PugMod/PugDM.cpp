@@ -106,7 +106,7 @@ bool CPugDM::GetPlayerSpawnSpot(CBasePlayer *Player)
                 {
                     auto Spawn = this->m_Spawn.begin();
 
-                    std::advance(Spawn, RANDOM_LONG(0, this->m_Spawn.size()));
+                    std::advance(Spawn, RANDOM_LONG(0, this->m_Spawn.size() - 1));
 
                     if (!Spawn->second.Vecs.IsZero())
                     {
@@ -722,27 +722,23 @@ bool CPugDM::EquipRandomItem(CBasePlayer *Player, int Slot)
     {
         if (Player)
         {
-            if (this->m_Weapon.size() > 0)
+            std::vector<WeaponIdType> Candidates;
+
+            for (auto const &Weapon : this->m_Weapon)
             {
-                auto Weapon = std::next(std::begin(this->m_Weapon), RANDOM_LONG(0, this->m_Weapon.size() - 1));
-
-                if (Weapon->SlotInfo)
+                if (Weapon.SlotInfo && Weapon.SlotInfo->slot == Slot)
                 {
-                    if (Player->IsBot() && !Weapon->Bot)
+                    if (!Player->IsBot() || Weapon.Bot)
                     {
-                        this->EquipRandomItem(Player, Slot);
-                        return false;
+                        Candidates.push_back(Weapon.SlotInfo->id);
                     }
-
-                    if (Weapon->SlotInfo->slot != Slot)
-                    {
-                        this->EquipRandomItem(Player, Slot);
-                        return false;
-                    }
-
-                    this->EquipItem(Player, Weapon->SlotInfo->id);
-                    return true;
                 }
+            }
+
+            if (!Candidates.empty())
+            {
+                this->EquipItem(Player, Candidates[RANDOM_LONG(0, static_cast<long>(Candidates.size()) - 1)]);
+                return true;
             }
         }
     }
