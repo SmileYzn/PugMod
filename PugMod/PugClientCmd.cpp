@@ -139,14 +139,14 @@ bool CPugClientCmd::Command(edict_t *pEntity)
                         {
                             if (pszArgv[0u] == gPugCvar.m_CmdPrefixPlayer->string[0u] || pszArgv[0u] == gPugCvar.m_CmdPrefixAdmin->string[0u])
                             {
-                                gPugUtil.ClientCommand(pEntity, "%s\n", CMD_ARGS());
+                                gPugUtil.ClientCommand(pEntity, "%s", CMD_ARGS());
                                 return true;
                             }
                         }
                     }
                     else
                     {
-                        auto pCmd = this->Get(pszCommand);
+                        LP_CLIENT_CMD pCmd = this->Get(pszCommand);
 
                         if (pCmd)
                         {

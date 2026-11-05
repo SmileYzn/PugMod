@@ -28,8 +28,6 @@ void CPugCurl::StartFrame()
 
         int MsgQueue = 0;
 
-        long PrivateDataIndex = 0;
-
         MsgCode = curl_multi_perform(this->m_MultiHandle, &HandleCount);
 
         if (MsgCode == CURLM_OK)
@@ -38,7 +36,13 @@ void CPugCurl::StartFrame()
             {
                 if (MsgInfo && (MsgInfo->msg == CURLMSG_DONE))
                 {
-                    curl_easy_getinfo(MsgInfo->easy_handle, CURLINFO_PRIVATE, &PrivateDataIndex);
+                    char *PrivateData = nullptr;
+
+                    curl_easy_getinfo(MsgInfo->easy_handle, CURLINFO_PRIVATE, &PrivateData);
+
+                    long PrivateDataIndex = (long)(intptr_t)PrivateData;
+
+                    struct curl_slist *Headers = nullptr;
 
                     if (this->m_Data.find(PrivateDataIndex) != this->m_Data.end())
                     {
@@ -49,12 +53,19 @@ void CPugCurl::StartFrame()
                             free(this->m_Data[PrivateDataIndex].Memory);
                         }
 
+                        Headers = this->m_Data[PrivateDataIndex].Headers;
+
                         this->m_Data.erase(PrivateDataIndex);
                     }
 
                     curl_multi_remove_handle(this->m_MultiHandle, MsgInfo->easy_handle);
 
                     curl_easy_cleanup(MsgInfo->easy_handle);
+
+                    if (Headers)
+                    {
+                        curl_slist_free_all(Headers);
+                    }
                 }
             }
         }
@@ -71,13 +82,15 @@ void CPugCurl::PostJSON(const char *url, long Timeout, std::string BearerToken, 
 
             if (ch)
             {
-                this->m_Data[this->m_RequestIndex] = {0};
+                this->m_Data[this->m_RequestIndex] = {};
 
                 curl_easy_setopt(ch, CURLOPT_URL, url);
 
                 curl_easy_setopt(ch, CURLOPT_TIMEOUT, (Timeout) > 0 ? Timeout : 10L);
 
                 curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1L);
+
+                curl_easy_setopt(ch, CURLOPT_MAXREDIRS, 3L);
 
                 curl_easy_setopt(ch, CURLOPT_SSL_VERIFYPEER, 1L);
 
@@ -104,9 +117,11 @@ void CPugCurl::PostJSON(const char *url, long Timeout, std::string BearerToken, 
 
                 curl_easy_setopt(ch, CURLOPT_HTTPHEADER, chHeaders);
 
+                this->m_Data[this->m_RequestIndex].Headers = chHeaders;
+
                 curl_easy_setopt(ch, CURLOPT_WRITEDATA, (void *)&this->m_Data[this->m_RequestIndex]);
 
-                curl_easy_setopt(ch, CURLOPT_PRIVATE, this->m_RequestIndex);
+                curl_easy_setopt(ch, CURLOPT_PRIVATE, (void *)(intptr_t)this->m_RequestIndex);
 
                 curl_multi_add_handle(this->m_MultiHandle, ch);
 
@@ -172,35 +187,49 @@ void CPugCurl::CallbackResult(CURL *ch, size_t Size, const char *Memory)
         {
             if (HttpResponseCode == 200)
             {
-                if (Memory)
+                if (gPugCvar.m_API_Execute->value > 0.0f)
                 {
-                    if (Memory[0u] != '\0')
+                    if (Memory)
                     {
-                        try
+                        if (Memory[0u] != '\0')
                         {
-                            auto Data = nlohmann::ordered_json::parse(Memory, nullptr, true, true);
+                            char *pszEffectiveUrl = nullptr;
 
-                            if (!Data.empty())
+                            curl_easy_getinfo(ch, CURLINFO_EFFECTIVE_URL, &pszEffectiveUrl);
+
+                            if (pszEffectiveUrl && _strnicmp(pszEffectiveUrl, "https://", 8) == 0)
                             {
-                                if (Data.contains("ServerExecute"))
+                                try
                                 {
-                                    if (Data["ServerExecute"].is_string())
+                                    auto Data = nlohmann::ordered_json::parse(Memory, nullptr, true, true);
+
+                                    if (!Data.empty())
                                     {
-                                        auto String = Data["ServerExecute"].get<std::string>();
-
-                                        if (!String.empty())
+                                        if (Data.contains("ServerExecute"))
                                         {
-                                            LOG_CONSOLE(PLID, "[%s] API ServerExecute: %s", Plugin_info.logtag, String.c_str());
+                                            if (Data["ServerExecute"].is_string())
+                                            {
+                                                auto String = Data["ServerExecute"].get<std::string>();
 
-                                            gPugUtil.ServerCommand("%s", String.c_str());
+                                                if (!String.empty())
+                                                {
+                                                    LOG_CONSOLE(PLID, "[%s] API ServerExecute: %s", Plugin_info.logtag, String.c_str());
+
+                                                    gPugUtil.ServerCommand("%s", String.c_str());
+                                                }
+                                            }
                                         }
                                     }
                                 }
+                                catch (nlohmann::json::exception &e)
+                                {
+                                    LOG_CONSOLE(PLID, "[%s] %s", __func__, e.what());
+                                }
                             }
-                        }
-                        catch (nlohmann::json::exception &e)
-                        {
-                            LOG_CONSOLE(PLID, "[%s] %s", __func__, e.what());
+                            else
+                            {
+                                LOG_CONSOLE(PLID, "[%s] API ServerExecute ignored: HTTPS is required.", Plugin_info.logtag);
+                            }
                         }
                     }
                 }

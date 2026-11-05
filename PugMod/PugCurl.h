@@ -4,6 +4,7 @@ struct P_CURL_MEMORY
 {
 	char* Memory;
 	size_t Size;
+	struct curl_slist* Headers;
 };
 
 class CPugCurl

@@ -85,7 +85,7 @@ void CPugUtil::ServerCommand(const char *Format, ...)
 
     va_start(ArgList, Format);
 
-    vsnprintf(Command, sizeof(Command), Format, ArgList);
+    vsnprintf(Command, sizeof(Command) - 1, Format, ArgList);
 
     va_end(ArgList);
 
@@ -281,6 +281,11 @@ void CPugUtil::ClientPrint(edict_t *pEntity, int iMsgDest, const char *Format, .
 
     if (iMsgDest == E_PRINT::CONSOLE)
     {
+        if (Length < 0)
+        {
+            Length = 0;
+        }
+
         if (Length > 125)
         {
             Length = 125;
@@ -319,7 +324,7 @@ void CPugUtil::ClientCommand(edict_t *pEntity, const char *Format, ...)
 
     va_start(ArgList, Format);
 
-    vsnprintf(Command, sizeof(Command), Format, ArgList);
+    vsnprintf(Command, sizeof(Command) - 1, Format, ArgList);
 
     va_end(ArgList);
 

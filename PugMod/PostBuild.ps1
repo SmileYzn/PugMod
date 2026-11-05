@@ -1,5 +1,5 @@
 # HLDS Path
-$hldsPath = "C:\27020";
+$hldsPath = "D:\Files\Desktop\27020";
 
 # Test HLDS Path
 if (!(Test-Path($hldsPath)))
@@ -9,7 +9,7 @@ if (!(Test-Path($hldsPath)))
 }
 
 # Executable path
-$hldsExecutable = "C:\27020\hlds.exe";
+$hldsExecutable = "D:\Files\Desktop\27020\hlds.exe";
 
 # Plugin Name
 $pluginName = ((Get-Item .).Name).ToLower();
@@ -25,7 +25,7 @@ if (!(Test-Path($releaseDLL)))
 }
 
 # Get Ethernet address as IPV4
-$hldsIP = (Get-NetIPAddress -AddressFamily IPV4 -InterfaceAlias Ethernet).IPAddress;
+$hldsIP = (Get-NetIPAddress -AddressFamily IPv4 | Where-Object {$_.InterfaceAlias -match '(Ethernet|Wi-Fi|Wifi)' -and $_.AddressState -eq 'Preferred'}).IPAddress;
 
 # Port
 $hldsPort = 27020

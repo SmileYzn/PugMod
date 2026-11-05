@@ -91,6 +91,7 @@ public:
 	cvar_t* m_API_Timeout;
 	cvar_t* m_API_Bearer;
 	cvar_t* m_API_Status;
+	cvar_t* m_API_Execute;
 };
 
 extern CPugCvar gPugCvar;

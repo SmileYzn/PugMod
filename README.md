@@ -63,6 +63,7 @@
 | pug_cmd_flood_time | 0.75 | Time between commands to detect flood |
 | pug_cmd_flood_repeat | 3.0 | Max flood attempts before blocking |
 | pug_cmd_flood_next_time | 4.0 | Block duration after flood detection |
+| pug_mod_name | PUG | Game mode name used in server status |
 | pug_players_min | 5 | Minimum players per team |
 | pug_players_max | 5 | Maximum players per team |
 | pug_rounds | 30 | Total rounds per map |
@@ -98,6 +99,7 @@
 | pug_pause_timeout | 60 | Allowed pause duration |
 | pug_smoke_bug_fix | 1 | Fix smoke grenade multiple-cloud bug |
 | pug_dm_enable | 1 | Enable Deathmatch mode |
+| pug_dm_spawn_distance | 250.0 | Minimum distance between players to respawn (minimum recommended 250.0) |
 | pug_dm_hide_kill_feed | 0 | Hide kill feed from players |
 | pug_dm_hit_indicator | 1 | Hit indicator type (0 Off / 1 Normal / 2 Through walls) |
 | pug_dm_hs_mode | 0 | Headshot-only mode |
@@ -109,4 +111,13 @@
 | pug_dm_kill_hp_msg | 1 | Show HP recovered on kill |
 | pug_dm_kill_sound | 1 | Play sound on kill (HS) |
 | pug_dm_money_frag | 1 | Show frags instead of money |
+| pug_stats_total_points | 100 | Round Win Share: total points divided among the winning team of the round |
+| pug_stats_rws_c4_explode | 30 | Round Win Share: extra points to the winning player who planted the bomb when it explodes |
+| pug_stats_rws_c4_defused | 30 | Round Win Share: extra points to the winning player who defused the bomb |
+| pug_api_enable | 0 | Enable the remote stats API |
+| pug_api_address | | Remote API address (HTTP/HTTPS URL) |
+| pug_api_timeout | 10 | Timeout in seconds to wait for the remote API response |
+| pug_api_bearer_token | | Bearer token sent in the HTTP header (empty to disable) |
+| pug_api_status_update | 0 | Interval in seconds to send server status to the API (minimum 20, lower disables it) |
+| pug_api_execute | 0 | Allow the API response to execute server commands (ServerExecute). Requires HTTPS on the final URL |
 </details>

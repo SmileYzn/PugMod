@@ -13,14 +13,21 @@ void CPugMapList::Add(const char *Map)
     {
         if (Map[0u] != '\0')
         {
-            char *File = strdup(Map);
-
-            if (IS_MAP_VALID(File))
+            if (this->m_Data.size() < MAX_VOTE_MAPS)
             {
-                this->m_Data.insert(std::make_pair(this->m_Data.size(), Map));
-            }
+                char *File = strdup(Map);
 
-            free(File);
+                if (IS_MAP_VALID(File))
+                {
+                    this->m_Data.insert(std::make_pair(this->m_Data.size(), Map));
+                }
+
+                free(File);
+            }
+            else
+            {
+                LOG_CONSOLE(PLID, "[%s] Map list is full (%d maps), ignoring: %s", Plugin_info.logtag, MAX_VOTE_MAPS, Map);
+            }
         }
     }
 }

@@ -530,6 +530,12 @@ void CPugCvar::ServerActivate()
     //
     // Default "0"
     this->m_API_Status = gPugCvar.Register("pug_api_status_update", "0");
+
+    // Allow the API response to execute server commands (ServerExecute)
+    // Requires HTTPS on the final URL
+    //
+    // Default "0"
+    this->m_API_Execute = gPugCvar.Register("pug_api_execute", "0");
 }
 
 cvar_t *CPugCvar::Register(const char *pszName, const char *pszValue)
