@@ -11,7 +11,7 @@ Legenda:
 **Build de validação:**
 - Container `ubuntu:18.04` (GCC 7.5, mesmo ambiente do CI), `make prebuild linux32`: OK. O `.so` exige no máximo GLIBC_2.4 e depende só de `libcurl.so.4`, `libdl`, `libm`, `libc` e `ld-linux`.
 - Arch (g++ 16): OK, só para teste local.
-- Avisos restantes do projeto: 6 de `-Wstrict-aliasing` em `PugUtil.cpp:614-619` (L11) e 1 de `-Wstringop-truncation` em `PugMenu.cpp:430` (L12). Os demais são do CSSDK.
+- Avisos: nenhum (depois de B9, L11 e L12).
 
 ---
 
@@ -19,10 +19,10 @@ Legenda:
 
 | Grupo | Concluídos | Pendentes |
 |---|---|---|
-| Build (B) | B1, B2, B3, B6, B8 (B4, B7 ignorados) | B5 |
+| Build (B) | B1, B2, B3, B6, B8, B9 (B4, B7 ignorados) | B5, B10, B11 🆕 |
 | Alta (A) | A1–A15 | — |
 | Média (M) | M1–M12, M14, M15, M21–M23, M28, M29, M31 | M13, M16–M20, M24–M27, M30, M32–M36 🆕 |
-| Baixa (L) | L2, L4, L5, L8 | L1, L3, L6, L7, L9, L10–L12 🆕 |
+| Baixa (L) | L2, L4, L5, L8, L11, L12 | L1, L3, L6, L7, L9, L10 🆕 |
 
 M7, M8, M9 e M10 foram concluídos nos commits `c55a316` e `2cea70d`; os demais itens marcados, nas correções de 2026-11-05.
 
@@ -39,6 +39,13 @@ M7, M8, M9 e M10 foram concluídos nos commits `c55a316` e `2cea70d`; os demais 
 - [x] **B6 🆕 ✔** Compatibilidade de glibc e de CPU. Compilado no container `ubuntu:18.04` (mesmo ambiente do CI, GCC 7.5), o `.so` exige no máximo **GLIBC_2.4**, não depende de `libstdc++` e não tem instruções SSE4 (`-march=i686 -msse2 -msse3` no lugar de `-msse4.1 -msse4.2`). O build local do Arch (GLIBC 2.43) serve só para testes; para distribuir, use o artefato do CI ou o container (validado 2026-11-05).
 - [-] **B7** ~~Sem rastreio de dependência de headers~~ — **ignorado** (decisão do usuário): sempre será feito build limpo.
 - [x] **B8 🆕 ✔** `Makefile`: com `-static-libstdc++`, o `.so` exportava 4.221 símbolos (3.486 da libstdc++, como `std::string` e `__cxa_*`), que podiam colidir com outros módulos no mesmo processo. Também levava código da libstdc++ não usado. Corrigido com `-Wl,--exclude-libs,ALL -Wl,--gc-sections`. No container do CI: de 1,89 MB para **1,08 MB** e 57 símbolos exportados (entradas do Metamod, `CreateInterface` e alguns templates da biblioteca padrão), com as mesmas dependências e GLIBC_2.4 (validado 2026-11-05).
+- [x] **B9 🆕 ✔** Build lento (60 s em série) e com 828 avisos, quase todos dos headers do SDK. Cada `.cpp` relia o `precompiled.h` (json.hpp mais o SDK, cerca de 1 s por arquivo). Corrigido no `Makefile` (validado 2026-11-05):
+  - Compilação paralela (`-j$(shell nproc)`), com a ordem garantida: os objetos dependem do `prebuild` (order-only) e o `posbuild` depende do link.
+  - Precompiled header real (`precompiled.h.gch`, gerado uma vez; `*.gch` no `.gitignore`, removido pelo `make clean`). O `#pragma once` do `precompiled.h` virou include guard, porque o GCC 7 avisa "#pragma once in main file".
+  - `-isystem` no Metamod e no CSSDK: avisos de dentro do SDK não aparecem mais.
+  - Resultado: 60 s → 19 s no Arch (4 núcleos) e 16 s no container do CI, **0 avisos**. O `.so` é o mesmo (1,08 MB, 57 símbolos exportados, GLIBC_2.4).
+- [ ] **B10 🆕** `PugMod.vcxproj:61, 83`: `PrecompiledHeader` está como `Create` no nível do projeto, então cada `.cpp` recria o PCH. Deveria ser `Use` no projeto e `Create` só no `precompiled.cpp` (que já tem o `Create` nas linhas 103-104). Fazer junto com o B5, no Windows.
+- [ ] **B11 🆕 ✔** `PostBuild.sh:16, 47`: com várias interfaces de rede (ex.: as bridges do Docker, 172.17.x/172.18.x/172.19.x), `ipAddress` recebe vários IPs, um por linha, e o `eval` quebra ("192.168.100.182: comando não encontrado"). O script já matou o hlds e copiou o `.so` antes de falhar, então o servidor não sobe. Correção: pegar só o primeiro IP (`... | head -n1`) ou o IP da rota padrão (`ip -4 route get 1.1.1.1 | grep -oP '(?<=src )[\d.]+'`).
 
 ---
 
@@ -151,8 +158,8 @@ M7, M8, M9 e M10 foram concluídos nos commits `c55a316` e `2cea70d`; os demais 
 - [ ] **L10 🆕** `localtime()` usado para formatar duração.
   - Locais: `PugVoteMap.cpp:253`, `PugVoteEnd.cpp:423`, `PugVoteOvertime.cpp:206`, `PugVoteSwapTeam.cpp:185`, `PugVoteTeam.cpp:462`, `PugTimer.cpp:112`, `PugPause.cpp:115-121`.
   - Em fusos com meia hora os minutos saem errados. Usar `gmtime()` ou `%02d:%02d` com `/60` e `%60`.
-- [ ] **L11 🆕 ✔** `PugUtil.cpp:614-619` — `*((int32_t *)&TextParams.x)` gera warning de strict-aliasing com `-O2`. Trocar por `memcpy` para um `int32_t` local.
-- [ ] **L12 🆕 ✔** `PugMenu.cpp:430` — o `strncpy` gera o warning `-Wstringop-truncation`, mas é seguro, porque o terminador é escrito na linha 432. Opcional: trocar por `memcpy` para silenciar.
+- [x] **L11 🆕 ✔** `PugUtil.cpp` — `*((int32_t *)&float)` trocado por `FloatBits()`, que usa `memcpy` (sem strict-aliasing) (validado 2026-11-05).
+- [x] **L12 🆕 ✔** `PugMenu.cpp:430` — `strncpy` trocado por `strnlen` + `memcpy` + terminador (sem aviso e sem ler além da string) (validado 2026-11-05).
 
 ---
 
@@ -170,5 +177,5 @@ M7, M8, M9 e M10 foram concluídos nos commits `c55a316` e `2cea70d`; os demais 
 1. ~~A11~~ ✔, ~~A12~~ ✔, ~~A13~~ ✔, ~~A14~~ ✔ (travam ou corrompem o servidor, e as correções são pequenas).
 2. ~~M31~~ ✔, ~~M23~~ ✔, ~~M29~~ ✔, ~~M15~~ ✔ (uma linha cada).
 3. ~~A15~~ ✔, ~~M21~~ ✔, ~~M22~~ ✔, ~~M28~~ ✔.
-4. Build: ~~B1~~ ✔, ~~B3~~ ✔, ~~B6~~ ✔, ~~B8~~ ✔, B4/B7 ignorados; **B5** (Windows, `/MT`) depois.
+4. Build: ~~B1~~ ✔, ~~B3~~ ✔, ~~B6~~ ✔, ~~B8~~ ✔, ~~B9~~ ✔, B4/B7 ignorados; **B11** (PostBuild); **B5** e **B10** (Windows) depois.
 5. Restante de M e L.

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef PUGMOD_PRECOMPILED_H
+#define PUGMOD_PRECOMPILED_H
 
 #ifndef _WIN32
 #define _GLIBCXX_USE_CXX11_ABI 0
@@ -112,3 +113,5 @@
 #include "PugVoteOvertime.h"
 #include "PugVoteTeam.h"
 #include "PugVoteSwapTeam.h"
+
+#endif // PUGMOD_PRECOMPILED_H

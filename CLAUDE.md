@@ -34,6 +34,8 @@ Debian/Ubuntu: `sudo apt-get install build-essential gcc-multilib g++-multilib l
 - Saída: `PugMod/Release/pugmod_mm.so`.
 - `make` sem alvo também executa o `PostBuild.sh`, que mata o hlds, copia o `.so` e reinicia o servidor de teste. Se a pasta do HLDS não existir, o script só sai. Para só compilar, use `make prebuild linux32`.
 - Sempre faça build limpo (`make clean` antes): o Makefile não rastreia dependências de `.h`.
+- O Makefile compila em paralelo (`-j$(shell nproc)`) e gera o precompiled header `PugMod/precompiled.h.gch` (cerca de 120 MB, ignorado pelo git, apagado pelo `make clean`). O SDK e o Metamod entram com `-isystem`: o build esperado tem **0 avisos**. Um aviso novo indica problema no código do projeto.
+- `precompiled.h` usa include guard (`PUGMOD_PRECOMPILED_H`), não `#pragma once` (o GCC 7 avisa ao gerar o PCH).
 - cURL é ligado dinamicamente (`-Wl,--as-needed -lcurl -ldl -lm`). O `.so` depende só de `libcurl.so.4`, `libdl`, `libm`, `libc` e `ld-linux`; `libstdc++` e `libgcc` são estáticas.
 - `-Wl,--exclude-libs,ALL` evita exportar os símbolos da libstdc++ estática (colisão com outros módulos), e `-Wl,--gc-sections` descarta o código não usado. Confira com `nm -D --defined-only Release/pugmod_mm.so | wc -l` (cerca de 57).
 - O binário exige a glibc da máquina onde foi compilado. Um build numa distro recente serve só para teste local. Para distribuir, use o artefato do CI ou o container (resultado: GLIBC 2.4 no máximo):

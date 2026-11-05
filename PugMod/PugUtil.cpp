@@ -2,6 +2,16 @@
 
 CPugUtil gPugUtil;
 
+// Bit pattern of a float as a 32-bit integer (WRITE_LONG of HUD parameters)
+static int32_t FloatBits(float Value)
+{
+    int32_t Bits = 0;
+
+    memcpy(&Bits, &Value, sizeof(Bits));
+
+    return Bits;
+}
+
 const char *CPugUtil::GetPath()
 {
     if (this->m_Path.empty())
@@ -611,12 +621,12 @@ void CPugUtil::SendDHud(edict_t *pEntity, const hudtextparms_t &TextParams, cons
     WRITE_BYTE(DRC_CMD_MESSAGE);
     WRITE_BYTE(TextParams.effect);
     WRITE_LONG(TextParams.b1 + (TextParams.g1 << 8) + (TextParams.r1 << 16));
-    WRITE_LONG((*((int32_t *)&TextParams.x)));
-    WRITE_LONG((*((int32_t *)&TextParams.y)));
-    WRITE_LONG((*((int32_t *)&TextParams.fadeinTime)));
-    WRITE_LONG((*((int32_t *)&TextParams.fadeoutTime)));
-    WRITE_LONG((*((int32_t *)&TextParams.holdTime)));
-    WRITE_LONG((*((int32_t *)&TextParams.fxTime)));
+    WRITE_LONG(FloatBits(TextParams.x));
+    WRITE_LONG(FloatBits(TextParams.y));
+    WRITE_LONG(FloatBits(TextParams.fadeinTime));
+    WRITE_LONG(FloatBits(TextParams.fadeoutTime));
+    WRITE_LONG(FloatBits(TextParams.holdTime));
+    WRITE_LONG(FloatBits(TextParams.fxTime));
     WRITE_STRING(Text);
     MESSAGE_END();
 }

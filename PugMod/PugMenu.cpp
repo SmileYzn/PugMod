@@ -427,9 +427,11 @@ void CPugMenu::ShowMenu(CBasePlayer *Player, int Slots, int Time, std::string Te
                     {
                         char szChunk[MAX_BUFFER_MENU + 1] = {0};
 
-                        strncpy(szChunk, pMenuList, MAX_BUFFER_MENU);
+                        size_t ChunkLength = strnlen(pMenuList, MAX_BUFFER_MENU);
 
-                        szChunk[MAX_BUFFER_MENU] = 0;
+                        memcpy(szChunk, pMenuList, ChunkLength);
+
+                        szChunk[ChunkLength] = 0;
 
                         iCharCount += strlen(szChunk);
 
