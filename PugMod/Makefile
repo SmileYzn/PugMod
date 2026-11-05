@@ -17,7 +17,7 @@ BUILD_TARGET=linux32
 BUILD_EXTENSION=so
 BUILD_OBJECTS=$(BUILD_SOURCES:%.cpp=$(BUILD_DIR)/%.o)
 BUILD_COMPILER=c++
-BUILD_LINKER=-static-libgcc -static-libstdc++ -Wl,--as-needed -lcurl -ldl -lm
+BUILD_LINKER=-static-libgcc -static-libstdc++ -Wl,--as-needed -Wl,--exclude-libs,ALL -Wl,--gc-sections -lcurl -ldl -lm
 BUILD_CCFLAGS=$(BUILD_CFLAGS) -Dlinux -D__BUILD__ -DHTTP_ONLY
 #
 # Include directory

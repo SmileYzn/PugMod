@@ -19,7 +19,7 @@ Legenda:
 
 | Grupo | Concluídos | Pendentes |
 |---|---|---|
-| Build (B) | B1, B2, B3, B6 (B4, B7 ignorados) | B5 |
+| Build (B) | B1, B2, B3, B6, B8 (B4, B7 ignorados) | B5 |
 | Alta (A) | A1–A15 | — |
 | Média (M) | M1–M12, M14, M15, M21–M23, M28, M29, M31 | M13, M16–M20, M24–M27, M30, M32–M36 🆕 |
 | Baixa (L) | L2, L4, L5, L8 | L1, L3, L6, L7, L9, L10–L12 🆕 |
@@ -38,6 +38,7 @@ M7, M8, M9 e M10 foram concluídos nos commits `c55a316` e `2cea70d`; os demais 
 - [ ] **B5** MSBuild: `LNK4098 LIBCMT`. O Release usa `MultiThreadedDLL` (/MD) com `libcurl_a.lib` (provavelmente compilada com /MT). Trocar para `MultiThreaded` (/MT) ou usar uma libcurl /MD. Não dá para testar no Linux.
 - [x] **B6 🆕 ✔** Compatibilidade de glibc e de CPU. Compilado no container `ubuntu:18.04` (mesmo ambiente do CI, GCC 7.5), o `.so` exige no máximo **GLIBC_2.4**, não depende de `libstdc++` e não tem instruções SSE4 (`-march=i686 -msse2 -msse3` no lugar de `-msse4.1 -msse4.2`). O build local do Arch (GLIBC 2.43) serve só para testes; para distribuir, use o artefato do CI ou o container (validado 2026-11-05).
 - [-] **B7** ~~Sem rastreio de dependência de headers~~ — **ignorado** (decisão do usuário): sempre será feito build limpo.
+- [x] **B8 🆕 ✔** `Makefile`: com `-static-libstdc++`, o `.so` exportava 4.221 símbolos (3.486 da libstdc++, como `std::string` e `__cxa_*`), que podiam colidir com outros módulos no mesmo processo. Também levava código da libstdc++ não usado. Corrigido com `-Wl,--exclude-libs,ALL -Wl,--gc-sections`. No container do CI: de 1,89 MB para **1,08 MB** e 57 símbolos exportados (entradas do Metamod, `CreateInterface` e alguns templates da biblioteca padrão), com as mesmas dependências e GLIBC_2.4 (validado 2026-11-05).
 
 ---
 
@@ -169,5 +170,5 @@ M7, M8, M9 e M10 foram concluídos nos commits `c55a316` e `2cea70d`; os demais 
 1. ~~A11~~ ✔, ~~A12~~ ✔, ~~A13~~ ✔, ~~A14~~ ✔ (travam ou corrompem o servidor, e as correções são pequenas).
 2. ~~M31~~ ✔, ~~M23~~ ✔, ~~M29~~ ✔, ~~M15~~ ✔ (uma linha cada).
 3. ~~A15~~ ✔, ~~M21~~ ✔, ~~M22~~ ✔, ~~M28~~ ✔.
-4. Build: ~~B1~~ ✔, ~~B3~~ ✔, ~~B6~~ ✔, B4/B7 ignorados; **B5** (Windows, `/MT`) depois.
+4. Build: ~~B1~~ ✔, ~~B3~~ ✔, ~~B6~~ ✔, ~~B8~~ ✔, B4/B7 ignorados; **B5** (Windows, `/MT`) depois.
 5. Restante de M e L.
