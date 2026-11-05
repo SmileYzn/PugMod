@@ -52,6 +52,7 @@ private:
     time_t m_Time = 0;
     int m_VotesLeft = 0;
     std::vector<P_VOTE_TEAM_INFO> m_VoteList = {};
+    std::array<bool, MAX_CLIENTS + 1U> m_Voter = {};
 };
 
 extern CPugVoteTeam gPugVoteTeam;

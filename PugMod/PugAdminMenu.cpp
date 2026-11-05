@@ -182,11 +182,11 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
                 {
                     gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_BAN, _T("Ban duration: ^w%s^y"), STRING(Target->edict()->v.netname));
 
-                    std::vector<time_t> BanTimes = {5, 10, 15, 30, 60, 120, 240, 480, 960, 1440, 10080, 43200};
+                    std::vector<time_t> BanTimes = {5, 10, 15, 30, 60, 120};
 
                     if (gPugAdmin.Access(Player->entindex(), ADMIN_BAN))
                     {
-                        BanTimes.insert(BanTimes.begin(), 0);
+                        BanTimes = {0, 5, 10, 15, 30, 60, 120, 240, 480, 960, 1440, 10080, 43200};
                     }
 
                     for (auto const &Time : BanTimes)

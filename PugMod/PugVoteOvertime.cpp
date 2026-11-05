@@ -13,6 +13,8 @@ void CPugVoteOvertime::ServerActivate()
     this->m_VotesLeft = 0;
 
     this->m_VoteList.clear();
+
+    this->m_Voter.fill(false);
 }
 
 void CPugVoteOvertime::CPugVoteOvertime::ServerDeactivate()
@@ -26,6 +28,8 @@ void CPugVoteOvertime::CPugVoteOvertime::ServerDeactivate()
     this->m_VotesLeft = 0;
 
     this->m_VoteList.clear();
+
+    this->m_Voter.fill(false);
 }
 
 void CPugVoteOvertime::Init()
@@ -60,8 +64,12 @@ void CPugVoteOvertime::Init()
             
             this->m_VotesLeft = Players.size();
 
+            this->m_Voter.fill(false);
+
             for (auto const &Player : Players)
             {
+                this->m_Voter[Player->entindex()] = true;
+
                 gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_OVERTIME, _T("Match tied, what do you want to do?"));
 
                 for (size_t i = 0; i < this->m_VoteList.size(); ++i)
@@ -177,9 +185,19 @@ void CPugVoteOvertime::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Player)
         {
-            this->m_VotesLeft -= 1;
+            if (!this->m_Voter[Player->entindex()])
+            {
+                return;
+            }
 
+            if (Item.Info < 0 || static_cast<size_t>(Item.Info) >= this->m_VoteList.size())
+            {
+                return;
+            }
+            
+            this->m_VotesLeft -= 1;
             this->m_VoteList[Item.Info].Votes += 1;
+            this->m_Voter[Player->entindex()] = false;
 
             gPugUtil.PrintColor(nullptr, (Item.Info == TERRORIST) ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE, _T("^4[%s]^1 ^3%s^1 chose ^3%s^1."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
 

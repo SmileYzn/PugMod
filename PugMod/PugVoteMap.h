@@ -18,8 +18,6 @@ typedef struct S_VOTE_MAP_INFO
     int Index;
     int Votes;
     std::string Name;
-    bool This;
-    bool Last;
 } P_VOTE_MAP_INFO, *LP_VOTE_MAP_INFO;
 
 class CPugVoteMap
@@ -40,6 +38,7 @@ private:
     time_t m_Time = 0;
     int m_VotesLeft = 0;
     std::vector<P_VOTE_MAP_INFO> m_MapList = {};
+    std::array<bool, MAX_CLIENTS + 1U> m_Voter = {};
 };
 
 extern CPugVoteMap gPugVoteMap;

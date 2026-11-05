@@ -459,7 +459,7 @@ void CPugCvar::ServerActivate()
     // 2 Only on HS
     //
     // Default "1"
-    this->m_DM_KillRepairArmor = this->Register("pug_dm_kill_repair_armor ", "1");
+    this->m_DM_KillRepairArmor = this->Register("pug_dm_kill_repair_armor", "1");
 
     // Show HP recovered after a frag
     //
@@ -467,7 +467,7 @@ void CPugCvar::ServerActivate()
     // 1 Enabled
     //
     // Default "1"
-    this->m_DM_KillHealedMsg = this->Register("pug_dm_kill_hp_msg ", "1");
+    this->m_DM_KillHealedMsg = this->Register("pug_dm_kill_hp_msg", "1");
 
     // Enable sound on frag (HS)
     //

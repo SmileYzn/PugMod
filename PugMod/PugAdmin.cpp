@@ -69,11 +69,7 @@ int CPugAdmin::GetFlags(int EntityIndex)
 
 int CPugAdmin::Access(int EntityIndex, int Level)
 {
-    if (Level == ADMIN_ADMIN)
-    {
-        return (this->m_Flag[EntityIndex] > ADMIN_ALL && !(this->m_Flag[EntityIndex] & ADMIN_USER));
-    }
-    else if (Level == ADMIN_ALL)
+    if (Level == ADMIN_ALL)
     {
         return 1;
     }
@@ -87,18 +83,12 @@ int CPugAdmin::Access(std::string Auth, int Level)
 
     if (Admin != this->m_Data.end())
     {
-        auto Flags = this->ReadFlags(Admin->second.Flag.c_str());
-
-        if (Level == ADMIN_ADMIN)
-        {
-            return (Flags > ADMIN_ALL && !(Flags & ADMIN_USER));
-        }
-        else if (Level == ADMIN_ALL)
+        if (Level == ADMIN_ALL)
         {
             return 1;
         }
 
-        return (Flags & Level);
+        return (this->ReadFlags(Admin->second.Flag.c_str()) & Level);
     }
 
     return 0;

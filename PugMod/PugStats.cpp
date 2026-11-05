@@ -118,6 +118,9 @@ void CPugStats::SetState()
                 // Clear player stats
                 Player.second.Stats[State].Reset();
 
+                // Clear overtime stats of the previous match
+                Player.second.Stats[STATE_OVERTIME].Reset();
+
                 // Clear Chat Log
                 Player.second.ChatLog.clear();
             
@@ -160,9 +163,6 @@ void CPugStats::SetState()
             // Loop each player
             for (auto& Player : this->m_Player)
             {
-                // Clear player stats
-                Player.second.Stats[State].Reset();
-
                 // Clear player round stats
                 Player.second.Round.Reset();
             }
@@ -263,23 +263,26 @@ void CPugStats::SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim)
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
-		if ((playerAnim == PLAYER_ATTACK1) || (playerAnim == PLAYER_ATTACK2))
+		if (g_pGameRules && CSGameRules()->m_bGameStarted)
 		{
-			if (Player->m_pActiveItem)
+			if ((playerAnim == PLAYER_ATTACK1) || (playerAnim == PLAYER_ATTACK2))
 			{
-				if (Player->m_pActiveItem->m_iId != WEAPON_NONE)
+				if (Player->m_pActiveItem)
 				{
-					if (Player->m_pActiveItem->m_iId != WEAPON_HEGRENADE && Player->m_pActiveItem->m_iId != WEAPON_C4 && Player->m_pActiveItem->m_iId != WEAPON_SMOKEGRENADE && Player->m_pActiveItem->m_iId != WEAPON_FLASHBANG && Player->m_pActiveItem->m_iId != WEAPON_SHIELDGUN)
+					if (Player->m_pActiveItem->m_iId != WEAPON_NONE)
 					{
-						auto Auth = this->GetAuthId(Player);
-
-						if (Auth)
+						if (Player->m_pActiveItem->m_iId != WEAPON_HEGRENADE && Player->m_pActiveItem->m_iId != WEAPON_C4 && Player->m_pActiveItem->m_iId != WEAPON_SMOKEGRENADE && Player->m_pActiveItem->m_iId != WEAPON_FLASHBANG && Player->m_pActiveItem->m_iId != WEAPON_SHIELDGUN)
 						{
-							this->m_Player[Auth].Stats[State].Shots++;
+							auto Auth = this->GetAuthId(Player);
 
-							this->m_Player[Auth].Stats[State].Weapon[Player->m_pActiveItem->m_iId].Shots++;
+							if (Auth)
+							{
+								this->m_Player[Auth].Stats[State].Shots++;
 
-							this->m_Player[Auth].Round.Shots++;
+								this->m_Player[Auth].Stats[State].Weapon[Player->m_pActiveItem->m_iId].Shots++;
+
+								this->m_Player[Auth].Round.Shots++;
+							}
 						}
 					}
 				}
@@ -294,51 +297,54 @@ void CPugStats::TakeDamage(CBasePlayer* Victim, entvars_t* pevInflictor, entvars
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
-		if (!Victim->m_bKilledByBomb)
+		if (g_pGameRules && CSGameRules()->m_bGameStarted)
 		{
-			auto Attacker = UTIL_PlayerByIndexSafe(ENTINDEX(pevAttacker));
-
-			if (Attacker)
+			if (!Victim->m_bKilledByBomb)
 			{
-				if (Victim->entindex() != Attacker->entindex())
+				auto Attacker = UTIL_PlayerByIndexSafe(ENTINDEX(pevAttacker));
+	
+				if (Attacker)
 				{
-					if (Victim->IsPlayer() && Attacker->IsPlayer())
+					if (Victim->entindex() != Attacker->entindex())
 					{
-						if (CSGameRules()->FPlayerCanTakeDamage(Victim, Attacker))
+						if (Victim->IsPlayer() && Attacker->IsPlayer())
 						{
-							auto VictimAuth = this->GetAuthId(Victim);
-
-							auto AttackerAuth = this->GetAuthId(Attacker);
-
-							auto DamageTaken = (int)(Victim->m_iLastClientHealth - clamp(Victim->edict()->v.health, 0.0f, Victim->edict()->v.health));
-
-							auto ItemIndex = (bitsDamageType & DMG_EXPLOSION) ? WEAPON_HEGRENADE : ((Attacker->m_pActiveItem) ? Attacker->m_pActiveItem->m_iId : WEAPON_NONE);
-
-							this->m_Player[AttackerAuth].Stats[State].Hits++;
-							this->m_Player[AttackerAuth].Stats[State].Damage += DamageTaken;
-
-							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Hits++;
-							this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Damage += DamageTaken;
-
-							this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Hits++;
-							this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Damage += DamageTaken;
-
-							this->m_Player[VictimAuth].Stats[State].HitsReceived++;
-							this->m_Player[VictimAuth].Stats[State].DamageReceived += DamageTaken;
-
-							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].HitsReceived++;
-							this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].DamageReceived += DamageTaken;
-
-							this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].HitsReceived++;
-							this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].DamageReceived += DamageTaken;
-
-							this->m_Player[AttackerAuth].Round.Hits++;
-							this->m_Player[AttackerAuth].Round.Damage += DamageTaken;
-
-							this->m_Player[VictimAuth].Round.HitsReceived++;
-							this->m_Player[VictimAuth].Round.DamageReceived += DamageTaken;
-
-							this->m_Player[AttackerAuth].Round.PlayerDamage[VictimAuth] += DamageTaken;
+							if (CSGameRules()->FPlayerCanTakeDamage(Victim, Attacker))
+							{
+								auto VictimAuth = this->GetAuthId(Victim);
+	
+								auto AttackerAuth = this->GetAuthId(Attacker);
+	
+								auto DamageTaken = (int)(Victim->m_iLastClientHealth - clamp(Victim->edict()->v.health, 0.0f, Victim->edict()->v.health));
+	
+								auto ItemIndex = (bitsDamageType & DMG_EXPLOSION) ? WEAPON_HEGRENADE : ((Attacker->m_pActiveItem) ? Attacker->m_pActiveItem->m_iId : WEAPON_NONE);
+	
+								this->m_Player[AttackerAuth].Stats[State].Hits++;
+								this->m_Player[AttackerAuth].Stats[State].Damage += DamageTaken;
+	
+								this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Hits++;
+								this->m_Player[AttackerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Damage += DamageTaken;
+	
+								this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Hits++;
+								this->m_Player[AttackerAuth].Stats[State].Weapon[ItemIndex].Damage += DamageTaken;
+	
+								this->m_Player[VictimAuth].Stats[State].HitsReceived++;
+								this->m_Player[VictimAuth].Stats[State].DamageReceived += DamageTaken;
+	
+								this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].HitsReceived++;
+								this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].DamageReceived += DamageTaken;
+	
+								this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].HitsReceived++;
+								this->m_Player[VictimAuth].Stats[State].Weapon[ItemIndex].DamageReceived += DamageTaken;
+	
+								this->m_Player[AttackerAuth].Round.Hits++;
+								this->m_Player[AttackerAuth].Round.Damage += DamageTaken;
+	
+								this->m_Player[VictimAuth].Round.HitsReceived++;
+								this->m_Player[VictimAuth].Round.DamageReceived += DamageTaken;
+	
+								this->m_Player[AttackerAuth].Round.PlayerDamage[VictimAuth] += DamageTaken;
+							}
 						}
 					}
 				}
@@ -353,201 +359,201 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
-        if (KillerBaseEntity && Victim)
-        {
-            auto Killer = static_cast<CBasePlayer*>(KillerBaseEntity);
-
-            if (Killer->IsPlayer() && Victim->IsPlayer())
+		if (g_pGameRules && CSGameRules()->m_bGameStarted)
+		{
+			if (KillerBaseEntity && Victim)
 			{
-				auto VictimIndex = Victim->entindex();
-
-				auto KillerIndex = Killer->entindex();
-
-				auto KillerItemIndex = (Victim->m_bKilledByGrenade) ? WEAPON_HEGRENADE : ((Killer->m_pActiveItem) ? Killer->m_pActiveItem->m_iId : WEAPON_NONE);
-
-				auto VitctimItemIndex = Victim->m_pActiveItem ? Victim->m_pActiveItem->m_iId : WEAPON_NONE;
-
-				auto VictimAuth = this->GetAuthId(Victim);
-
-				auto KillerAuth = this->GetAuthId(Killer);
-
-				if (VictimIndex != KillerIndex)
+				auto Killer = static_cast<CBasePlayer*>(KillerBaseEntity);
+	
+				if (Killer->IsPlayer() && Victim->IsPlayer())
 				{
-					this->m_Player[KillerAuth].Stats[State].Frags++;
-
-					this->m_Player[KillerAuth].Stats[State].Weapon[KillerItemIndex].Frags++;
-
-					this->m_Player[VictimAuth].Stats[State].Deaths++;
-
-					this->m_Player[VictimAuth].Stats[State].Weapon[KillerItemIndex].Deaths++;
-
-					this->m_Player[KillerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Frags++;
-
-					this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Deaths++;
-
-					this->m_Player[KillerAuth].Round.Frags++;
-
-					this->m_Player[VictimAuth].Round.Deaths++;
-
-					if (this->m_Player[KillerAuth].Round.KillTime > 0.0f)
+					auto VictimIndex = Victim->entindex();
+	
+					auto KillerIndex = Killer->entindex();
+	
+					auto KillerItemIndex = (Victim->m_bKilledByGrenade) ? WEAPON_HEGRENADE : ((Killer->m_pActiveItem) ? Killer->m_pActiveItem->m_iId : WEAPON_NONE);
+	
+					auto VitctimItemIndex = Victim->m_pActiveItem ? Victim->m_pActiveItem->m_iId : WEAPON_NONE;
+	
+					auto VictimAuth = this->GetAuthId(Victim);
+	
+					auto KillerAuth = this->GetAuthId(Killer);
+	
+					if (VictimIndex != KillerIndex)
 					{
-						if ((gpGlobals->time - this->m_Player[KillerAuth].Round.KillTime) < 0.25f)
+						this->m_Player[KillerAuth].Stats[State].Frags++;
+	
+						this->m_Player[KillerAuth].Stats[State].Weapon[KillerItemIndex].Frags++;
+	
+						this->m_Player[VictimAuth].Stats[State].Deaths++;
+	
+						this->m_Player[VictimAuth].Stats[State].Weapon[KillerItemIndex].Deaths++;
+	
+						this->m_Player[KillerAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Frags++;
+	
+						this->m_Player[VictimAuth].Stats[State].HitBox[Victim->m_LastHitGroup].Deaths++;
+	
+						this->m_Player[KillerAuth].Round.Frags++;
+	
+						this->m_Player[VictimAuth].Round.Deaths++;
+	
+						if (this->m_Player[KillerAuth].Round.KillTime > 0.0f)
 						{
-							this->m_Player[KillerAuth].Stats[State].DoubleKill++;
-						}
-
-						if (Killer->m_iTeam != Victim->m_iTeam)
-						{
-							if ((gpGlobals->time - this->m_Player[VictimAuth].Round.KillTime) <= 3.0f)
+							if ((gpGlobals->time - this->m_Player[KillerAuth].Round.KillTime) < 0.25f)
 							{
-								this->m_Player[KillerAuth].Stats[State].TradeKills++;
-								this->m_Player[VictimAuth].Stats[State].TradeDeaths++;
+								this->m_Player[KillerAuth].Stats[State].DoubleKill++;
+							}
+	
+							if (Killer->m_iTeam != Victim->m_iTeam)
+							{
+								if ((gpGlobals->time - this->m_Player[VictimAuth].Round.KillTime) <= 3.0f)
+								{
+									this->m_Player[KillerAuth].Stats[State].TradeKills++;
+									this->m_Player[VictimAuth].Stats[State].TradeDeaths++;
+								}
 							}
 						}
-					}
-
-					this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
-
-					this->m_Player[VictimAuth].Round.DeathTime = gpGlobals->time;
-
-					if (iRarityOfKill & 0x001 /*KILLRARITY_HEADSHOT*/)
-					{
-						this->m_Player[KillerAuth].Stats[State].Headshots++;
-
-						this->m_Player[KillerAuth].Stats[State].Weapon[KillerItemIndex].Headshots++;
-
-						this->m_Player[KillerAuth].Round.Headshots++;
-					}
-
-					if (iRarityOfKill & 0x010 /*KILLRARITY_THRUSMOKE*/)
-					{
-						this->m_Player[KillerAuth].Stats[State].SmokeFrags++;
-					}
-
-					if (iRarityOfKill & 0x020 /*KILLRARITY_ASSISTEDFLASH*/)
-					{
-						if (Assister)
+	
+						this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
+	
+						this->m_Player[VictimAuth].Round.DeathTime = gpGlobals->time;
+	
+						if (iRarityOfKill & 0x001 /*KILLRARITY_HEADSHOT*/)
 						{
-							auto AssisterAuth = this->GetAuthId(Assister);
-
-							if (AssisterAuth)
+							this->m_Player[KillerAuth].Stats[State].Headshots++;
+	
+							this->m_Player[KillerAuth].Stats[State].Weapon[KillerItemIndex].Headshots++;
+	
+							this->m_Player[KillerAuth].Round.Headshots++;
+						}
+	
+						if (iRarityOfKill & 0x010 /*KILLRARITY_THRUSMOKE*/)
+						{
+							this->m_Player[KillerAuth].Stats[State].SmokeFrags++;
+						}
+	
+						if (iRarityOfKill & 0x020 /*KILLRARITY_ASSISTEDFLASH*/)
+						{
+							if (Assister)
 							{
-								this->m_Player[AssisterAuth].Stats[State].AssistedFlash++;
+								auto AssisterAuth = this->GetAuthId(Assister);
+	
+								if (AssisterAuth)
+								{
+									this->m_Player[AssisterAuth].Stats[State].AssistedFlash++;
+								}
 							}
 						}
-					}
-
-					if (iDeathMessageFlags & 0x002 /*PLAYERDEATH_ASSISTANT*/)
-					{
-						if (Assister)
+	
+						if (iDeathMessageFlags & 0x002 /*PLAYERDEATH_ASSISTANT*/)
 						{
-							auto AssisterAuth = this->GetAuthId(Assister);
-
-							if (AssisterAuth)
+							if (Assister)
 							{
-								this->m_Player[AssisterAuth].Stats[State].Assists++;
+								auto AssisterAuth = this->GetAuthId(Assister);
+	
+								if (AssisterAuth)
+								{
+									this->m_Player[AssisterAuth].Stats[State].Assists++;
+								}
 							}
 						}
-					}
-
-					if (!Victim->m_bKilledByGrenade)
-					{
-						if (Killer->IsBlind())
+	
+						if (!Victim->m_bKilledByGrenade)
 						{
-							this->m_Player[KillerAuth].Stats[State].BlindFrags++;
+							if (Killer->IsBlind())
+							{
+								this->m_Player[KillerAuth].Stats[State].BlindFrags++;
+							}
+	
+							if (Victim->IsBlind())
+							{
+								this->m_Player[VictimAuth].Stats[State].BlindDeaths++;
+							}
 						}
-
-						if (Victim->IsBlind())
+	
+						if (KillerItemIndex != WEAPON_AWP)
 						{
-							this->m_Player[VictimAuth].Stats[State].BlindDeaths++;
-						}
-					}
-
-					if (KillerItemIndex != WEAPON_AWP)
-					{
-						if (Victim->m_iLastClientHealth >= 100)
-						{
-							if (Killer->m_lastDamageAmount >= 100)
+							if (Victim->m_iLastClientHealth >= 100 && Victim->m_lastDamageAmount >= 100)
 							{
 								this->m_Player[KillerAuth].Stats[State].OneShot++;
 							}
 						}
-					}
-
-					if (KillerItemIndex == WEAPON_AWP || KillerItemIndex == WEAPON_SCOUT || KillerItemIndex == WEAPON_G3SG1 || KillerItemIndex == WEAPON_SG550)
-					{
-						if (iRarityOfKill & 0x004 /* KILLRARITY_NOSCOPE */)
+	
+						if (KillerItemIndex == WEAPON_AWP || KillerItemIndex == WEAPON_SCOUT || KillerItemIndex == WEAPON_G3SG1 || KillerItemIndex == WEAPON_SG550)
 						{
-							this->m_Player[KillerAuth].Stats[State].NoScope++;
-						}
-					}
-
-					if (iRarityOfKill & 0x200 /* KILLRARITY_INAIR */)
-					{
-						this->m_Player[KillerAuth].Stats[State].FlyFrags++;
-					}
-
-					if (iRarityOfKill & 0x008 /* KILLRARITY_PENETRATED */)
-					{
-						this->m_Player[KillerAuth].Stats[State].WallFrags++;
-					}
-
-					if (iRarityOfKill & 0x040 /* KILLRARITY_DOMINATION_BEGAN */)
-					{
-						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].DominationBegin++;
-					}
-					
-					if (iRarityOfKill & 0x080 /* KILLRARITY_DOMINATION */)
-					{
-						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].Domination++;
-					}
-
-					if (iRarityOfKill & 0x100 /* KILLRARITY_REVENGE */)
-					{
-						this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].Revenge++;
-					}
-
-					if (KillerItemIndex == WEAPON_KNIFE && VitctimItemIndex == WEAPON_KNIFE)
-					{
-						this->m_Player[KillerAuth].Stats[State].KnifeDuelWin++;
-
-						this->m_Player[VictimAuth].Stats[State].KnifeDuelLose++;
-					}
-
-					if (g_pGameRules)
-					{
-						auto NumAliveTR = 0, NumAliveCT = 0, NumDeadTR = 0, NumDeadCT = 0;
-
-						CSGameRules()->InitializePlayerCounts(NumAliveTR, NumAliveCT, NumDeadTR, NumDeadCT);
-
-						if (!NumDeadTR && !NumDeadCT)
-						{
-							this->m_Player[KillerAuth].Stats[State].EntryFrags++;
-
-							this->m_Player[VictimAuth].Stats[State].EntryDeaths++;
-						}
-
-						if (NumAliveTR == 1 || NumAliveCT == 1)
-						{
-							for (int i = 1; i <= gpGlobals->maxClients; ++i)
+							if (iRarityOfKill & 0x004 /* KILLRARITY_NOSCOPE */)
 							{
-								auto Player = UTIL_PlayerByIndexSafe(i);
-
-								if (Player)
+								this->m_Player[KillerAuth].Stats[State].NoScope++;
+							}
+						}
+	
+						if (iRarityOfKill & 0x200 /* KILLRARITY_INAIR */)
+						{
+							this->m_Player[KillerAuth].Stats[State].FlyFrags++;
+						}
+	
+						if (iRarityOfKill & 0x008 /* KILLRARITY_PENETRATED */)
+						{
+							this->m_Player[KillerAuth].Stats[State].WallFrags++;
+						}
+	
+						if (iRarityOfKill & 0x040 /* KILLRARITY_DOMINATION_BEGAN */)
+						{
+							this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].DominationBegin++;
+						}
+						
+						if (iRarityOfKill & 0x080 /* KILLRARITY_DOMINATION */)
+						{
+							this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].Domination++;
+						}
+	
+						if (iRarityOfKill & 0x100 /* KILLRARITY_REVENGE */)
+						{
+							this->m_Player[KillerAuth].Stats[State].Domination[VictimAuth].Revenge++;
+						}
+	
+						if (KillerItemIndex == WEAPON_KNIFE && VitctimItemIndex == WEAPON_KNIFE)
+						{
+							this->m_Player[KillerAuth].Stats[State].KnifeDuelWin++;
+	
+							this->m_Player[VictimAuth].Stats[State].KnifeDuelLose++;
+						}
+	
+						if (g_pGameRules)
+						{
+							auto NumAliveTR = 0, NumAliveCT = 0, NumDeadTR = 0, NumDeadCT = 0;
+	
+							CSGameRules()->InitializePlayerCounts(NumAliveTR, NumAliveCT, NumDeadTR, NumDeadCT);
+	
+							if (!NumDeadTR && !NumDeadCT)
+							{
+								this->m_Player[KillerAuth].Stats[State].EntryFrags++;
+	
+								this->m_Player[VictimAuth].Stats[State].EntryDeaths++;
+							}
+	
+							if (NumAliveTR == 1 || NumAliveCT == 1)
+							{
+								for (int i = 1; i <= gpGlobals->maxClients; ++i)
 								{
-									if (Player->IsAlive())
+									auto Player = UTIL_PlayerByIndexSafe(i);
+	
+									if (Player)
 									{
-										auto Auth = this->GetAuthId(Player);
-
-										if (Auth)
+										if (Player->IsAlive())
 										{
-											if ((Player->m_iTeam == TERRORIST) && (NumAliveTR == 1))
+											auto Auth = this->GetAuthId(Player);
+	
+											if (Auth)
 											{
-												this->m_Player[Auth].Round.Versus = NumAliveCT;
-											}
-											else if ((Player->m_iTeam == CT) && (NumAliveCT == 1))
-											{
-												this->m_Player[Auth].Round.Versus = NumAliveTR;
+												if ((Player->m_iTeam == TERRORIST) && (NumAliveTR == 1))
+												{
+													this->m_Player[Auth].Round.Versus = NumAliveCT;
+												}
+												else if ((Player->m_iTeam == CT) && (NumAliveCT == 1))
+												{
+													this->m_Player[Auth].Round.Versus = NumAliveTR;
+												}
 											}
 										}
 									}
@@ -555,13 +561,13 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 							}
 						}
 					}
+					else
+					{
+						this->m_Player[VictimAuth].Stats[State].Suicides++;
+					}
+	
+					this->OnEvent(EVENT_PLAYER_DIED, ROUND_NONE, Victim, Killer);
 				}
-				else
-				{
-					this->m_Player[VictimAuth].Stats[State].Suicides++;
-				}
-
-				this->OnEvent(EVENT_PLAYER_DIED, ROUND_NONE, Victim, Killer);
 			}
 		}
 	}
@@ -589,7 +595,7 @@ void CPugStats::RestartRound()
 {
 	auto State = gPugMod.GetState();
 
-	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF)
 	{
 		if (g_pGameRules)
 		{
@@ -917,8 +923,17 @@ bool CPugStats::SayText(int msg_dest, int msg_type, const float* pOrigin, edict_
 	// If has entity target
 	if (!FNullEnt(pEntity))
 	{
+		// Get Entity Index
+		auto EntityIndex = ENTINDEX(pEntity);
+
+		// If is not same player, skip
+		if (EntityIndex != gPugEngine.GetByte(0))
+		{
+			return false;
+		}
+		
 		// Get CBasePlayer data
-		auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
+		auto Player = UTIL_PlayerByIndexSafe(EntityIndex);
 
 		// If is not null
 		if (Player)
@@ -947,41 +962,33 @@ bool CPugStats::SayText(int msg_dest, int msg_type, const float* pOrigin, edict_
                             // If match is running
                             if (State != STATE_DEAD)
                             {
-                                // If player is not null
-                                if (Player)
-                                {
-                                    // If text is not null
-                                    if (TextMsg)
-                                    {
-                                        // Get player auth
-                                        auto Auth = gPugStats.GetAuthId(Player);
+								// Get player auth
+								auto Auth = gPugStats.GetAuthId(Player);
 
-                                        // If is not null
-                                        if (Auth)
-                                        {
-                                            // Chat struct
-                                            P_PLAYER_CHAT Chat = { };
+								// If is not null
+								if (Auth)
+								{
+									// Chat struct
+									P_PLAYER_CHAT Chat = { };
 
-                                            // Set time
-                                            Chat.Time = time(NULL);
+									// Set time
+									Chat.Time = time(NULL);
 
-                                            // Set match state
-                                            Chat.State = State;
+									// Set match state
+									Chat.State = State;
 
-                                            // Set team
-                                            Chat.Team = static_cast<int>(Player->m_iTeam);
+									// Set team
+									Chat.Team = static_cast<int>(Player->m_iTeam);
 
-                                            // Player is alive
-                                            Chat.Alive = Player->IsAlive() ? 1 : 0;
+									// Player is alive
+									Chat.Alive = Player->IsAlive() ? 1 : 0;
 
-                                            // Set message
-                                            Chat.Message = TextMsg;
+									// Set message
+									Chat.Message = TextMsg;
 
-                                            // Push to vector
-                                            gPugStats.m_Player[Auth].ChatLog.push_back(Chat);
-                                        }
-                                    }
-                                }
+									// Push to vector
+									gPugStats.m_Player[Auth].ChatLog.push_back(Chat);
+								}
                             }
 						}
 					}
@@ -1266,7 +1273,7 @@ void CPugStats::DumpData()
 					Result.DamageReceived += Stats.second.DamageReceived;
 					Result.Money += Stats.second.Money;
 					Result.Suicides += Stats.second.Suicides;
-					Result.Survives = Stats.second.Survives;
+					Result.Survives += Stats.second.Survives;
 					Result.TradeKills += Stats.second.TradeKills;
 					Result.TradeDeaths += Stats.second.TradeDeaths;
 					//

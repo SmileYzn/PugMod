@@ -12,13 +12,13 @@ CLEAN_CMD=rm -rf $(BUILD_DIR)
 # Common build definitions
 BUILD_NAME=pugmod_mm
 BUILD_SOURCES=$(wildcard *.cpp)
-BUILD_CFLAGS=-std=c++11 -Wall -Wno-unknown-pragmas -fcommon -m32 -mtune=generic -msse3 -msse4.1 -msse4.2 -shared -s -pipe -g0 -O2 -fPIC -fvisibility=hidden -DNDEBUG
+BUILD_CFLAGS=-std=c++14 -Wall -Wno-unknown-pragmas -fcommon -m32 -mtune=generic -march=i686 -msse2 -shared -s -pipe -g0 -O2 -fPIC -fvisibility=hidden -DNDEBUG
 BUILD_TARGET=linux32
 BUILD_EXTENSION=so
 BUILD_OBJECTS=$(BUILD_SOURCES:%.cpp=$(BUILD_DIR)/%.o)
 BUILD_COMPILER=c++
-BUILD_LINKER=-static-libgcc -static-libstdc++ -lcurl -lssl -lcrypto -ldl -lm -lz
-BUILD_CCFLAGS=$(BUILD_CFLAGS) -Dlinux -D__BUILD__ -DCURL_STATICLIB -DHTTP_ONLY
+BUILD_LINKER=-static-libgcc -static-libstdc++ -Wl,--as-needed -lcurl -ldl -lm
+BUILD_CCFLAGS=$(BUILD_CFLAGS) -Dlinux -D__BUILD__ -DHTTP_ONLY
 #
 # Include directory
 SRCDIR=.

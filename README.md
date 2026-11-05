@@ -11,10 +11,18 @@
 
 <h4>Requisites</h4>
 <ul>
-    <li>ReHLDS</li>
-    <li>ReGameDLL_CS</li>
-    <li>Metamod</li>
-</ul> 
+    <li><a href="https://github.com/rehlds/ReHLDS">ReHLDS</a> 3.15.0.908 or newer</li>
+    <li><a href="https://github.com/rehlds/ReGameDLL_CS">ReGameDLL_CS</a> 5.30.0.831 or newer</li>
+    <li><a href="https://github.com/rehlds/metamod-r">Metamod-R</a></li>
+</ul>
+
+<h4>Server libraries (Linux)</h4>
+<p>The Linux build (<code>pugmod_mm.so</code>) is a 32-bit library that links cURL dynamically. The server needs the 32-bit cURL library and CA certificates (used for HTTPS requests to the API):</p>
+<ul>
+    <li>Debian / Ubuntu: <code>sudo dpkg --add-architecture i386 &amp;&amp; sudo apt-get update &amp;&amp; sudo apt-get install libcurl4:i386 ca-certificates</code></li>
+    <li>Arch Linux (multilib enabled): <code>sudo pacman -S lib32-curl ca-certificates</code></li>
+</ul>
+<p>The release binary requires glibc 2.4 or newer and a CPU with SSE3 support. No other libraries are needed (libstdc++ and libgcc are linked statically).</p>
 
 <h4>Features</h4>
 <ul>
@@ -47,6 +55,21 @@
     <li>Automatic ban of players that rage quit from game</li>
     <li>Smoke Bug Fix</li>
     <li>Supports for Windows and Linux Systems</li>
+</ul>
+
+<h4>Building</h4>
+<p>The source code uses <b>C++14</b>.</p>
+<ul>
+    <li>
+        Linux (32-bit, GCC 7 or newer with multilib):
+        <ul>
+            <li>Debian / Ubuntu: <code>sudo apt-get install build-essential gcc-multilib g++-multilib libcurl4-openssl-dev:i386</code></li>
+            <li>Arch Linux (multilib enabled): <code>sudo pacman -S base-devel lib32-gcc-libs lib32-glibc lib32-curl</code></li>
+            <li>Build: <code>cd PugMod &amp;&amp; make prebuild linux32</code> (output: <code>PugMod/Release/pugmod_mm.so</code>)</li>
+            <li>For release builds use an old distribution (the CI uses an <code>ubuntu:18.04</code> container with GCC 7.5): the binary requires the glibc version of the system where it was built.</li>
+        </ul>
+    </li>
+    <li>Windows (32-bit): Visual Studio with the v143 toolset, project <code>PugMod/PugMod.vcxproj</code>, configuration <code>Release</code>, platform <code>Win32</code>.</li>
 </ul>
 
 <h4>Settings</h4>

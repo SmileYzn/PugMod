@@ -812,6 +812,11 @@ std::array<std::vector<CBasePlayer *>, SPECTATOR + 1U> CPugUtil::GetPlayers()
         {
             if (!Player->IsDormant())
             {
+                if ((Player->edict()->v.flags & FL_PROXY) == FL_PROXY)
+                {
+                    continue;
+                }
+                
                 Players[Player->m_iTeam].push_back(Player);
             }
         }

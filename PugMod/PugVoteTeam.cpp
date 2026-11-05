@@ -18,6 +18,8 @@ void CPugVoteTeam::ServerActivate()
     this->m_VoteList.push_back({VOTE_TEAM_SKILL_BALANCE, 0, _T("Balance Skill")});
     this->m_VoteList.push_back({VOTE_TEAM_SWAP_SIDES, 0, _T("Swap Teams")});
     this->m_VoteList.push_back({VOTE_TEAM_KNIFE_ROUND, 0, _T("Knife Round")});
+
+    this->m_Voter.fill(false);
 }
 
 void CPugVoteTeam::ServerDeactivate()
@@ -31,6 +33,8 @@ void CPugVoteTeam::ServerDeactivate()
     this->m_VotesLeft = 0;
 
     this->m_VoteList.clear();
+
+    this->m_Voter.fill(false);
 }
 
 void CPugVoteTeam::Init()
@@ -68,8 +72,12 @@ void CPugVoteTeam::Init()
 
         this->m_VotesLeft = Players.size();
 
+        this->m_Voter.fill(false);
+
         for (auto const &Player : Players)
         {
+            this->m_Voter[Player->entindex()] = true;
+
             gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_TEAM, _T("Game mode:"));
 
             for (size_t i = 0; i < this->m_VoteList.size(); ++i)
@@ -209,9 +217,19 @@ void CPugVoteTeam::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Player)
         {
-            this->m_VotesLeft -= 1;
+            if (!this->m_Voter[Player->entindex()])
+            {
+                return;
+            }
 
+            if (Item.Info < 0 || static_cast<size_t>(Item.Info) >= this->m_VoteList.size())
+            {
+                return;
+            }
+            
+            this->m_VotesLeft -= 1;
             this->m_VoteList[Item.Info].Votes += 1;
+            this->m_Voter[Player->entindex()] = false;
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 chose ^3%s^1."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_VoteList[Item.Info].Name.c_str());
 

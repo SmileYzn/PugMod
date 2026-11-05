@@ -233,6 +233,11 @@ int CPugMod::SetState(int State)
         }
         case STATE_OVERTIME:
         {
+            if ((this->m_ScoreOT[TERRORIST] + this->m_ScoreOT[CT]) >= static_cast<int>(gPugCvar.m_RoundsOT->value))
+            {
+                this->m_ScoreOT = {};
+            }
+
             gPugDM.Stop();
             gPugReady.Stop(true);
             gPugTimer.Stop(true);
@@ -539,19 +544,23 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                             {
                                 switch (static_cast<int>(gPugCvar.m_OvertimeType->value))
                                 {
-                                    case 0: // Vote OT
+                                    case 0: // Vote OT: Vote to play Overtime
                                     {
                                         gPugTask.Create(E_TASK::VOTE_OVERTIME, (tmDelay + 1.0f), false, 0);
                                         break;
                                     }
-                                    case 1: // OT
+                                    case 1: // OT: Play Overtime
                                     {
                                         gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_HALFTIME);
                                         break;
                                     }
-                                    case 2: // End Tied
+                                    case 2: // End Tied: End Game tied
                                     {
                                         gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
+                                        break;
+                                    }
+                                    case 3: // Sudden Death: Continue match until a winner decided
+                                    {
                                         break;
                                     }
                                 }
@@ -574,19 +583,23 @@ void CPugMod::RoundEnd(int winStatus, ScenarioEventEndRound event, float tmDelay
                             {
                                 switch (static_cast<int>(gPugCvar.m_OvertimeType->value))
                                 {
-                                    case 0: // Vote OT
+                                    case 0: // Vote OT: Vote to play Overtime
                                     {
                                         gPugTask.Create(E_TASK::VOTE_OVERTIME, (tmDelay + 1.0f), false, 0);
                                         break;
                                     }
-                                    case 1: // OT
+                                    case 1: // OT: Play Overtime
                                     {
                                         gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_HALFTIME);
                                         break;
                                     }
-                                    case 2: // End Tied
+                                    case 2: // End Tied: End Game tied
                                     {
                                         gPugTask.Create(E_TASK::SET_STATE, (tmDelay + 1.0f), false, STATE_END);
+                                        break;
+                                    }
+                                    case 3: // Sudden Death: Continue match until a winner decided
+                                    {
                                         break;
                                     }
                                 }

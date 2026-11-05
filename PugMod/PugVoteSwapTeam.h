@@ -38,6 +38,7 @@ private:
     int m_Team = UNASSIGNED;
     int m_VotesLeft = 0;
     std::vector<P_VOTE_SWAP_INFO> m_VoteList = {};
+    std::array<bool, MAX_CLIENTS + 1U> m_Voter = {};
 };
 
 extern CPugVoteSwapTeam gPugVoteSwapTeam;

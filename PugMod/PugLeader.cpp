@@ -28,13 +28,13 @@ void CPugLeader::Init()
 {
 	auto Players = gPugUtil.GetPlayers(false, true);
 
-    this->m_PlayersMin = static_cast<unsigned int>(gPugCvar.m_PlayersMin->value);
-
-	if (Players.size() > this->m_PlayersMin) // this->m_PlayersMin = 5
+	if (Players.size() >= 2 && gPugCvar.m_PlayersMin->value >= 2.0f)
 	{
 		this->m_Run = true;
 
         this->m_NextFrame = 0.0f;
+
+		this->m_PlayersMin = static_cast<unsigned int>(gPugCvar.m_PlayersMin->value);
 
 		this->m_Team.clear();
 
@@ -80,7 +80,16 @@ void CPugLeader::Init()
 	}
 	else
 	{
-		this->Stop();
+		gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Pick failed: Teams are incomplete.^1"), gPugCvar.m_Tag->string);
+
+		if (gPugCvar.m_KnifeRound->value)
+		{
+			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_KNIFE_ROUND);
+		}
+		else
+		{
+			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
+		}
 	}
 }
 
@@ -263,7 +272,11 @@ void CPugLeader::GetPlayer(CBasePlayer* Leader, CBasePlayer* Target)
 
 			if (Players[SPECTATOR].size() > 0)
 			{
-				this->GetPlayer(Leader, Players[SPECTATOR].at(0));
+				this->GetPlayer(Leader, Players[SPECTATOR].at(RANDOM_LONG(0, Players[SPECTATOR].size() - 1)));
+			}
+			else
+			{
+				this->Stop();
 			}
 		}
 	}
@@ -293,10 +306,8 @@ void CPugLeader::Next(CBasePlayer* Leader)
 			return;
 		}
 	}
-    else
-    {
-        this->Stop();
-    }
+
+	this->Stop();
 }
 
 void CPugLeader::Menu(CBasePlayer* Leader)
@@ -381,6 +392,11 @@ void CPugLeader::StartFrame()
 
                 if (Player)
                 {
+					if ((Player->edict()->v.flags & FL_PROXY) == FL_PROXY)
+					{
+						continue;
+					}
+					
                     if (!Player->IsDormant() && (Player->m_iTeam != UNASSIGNED))
                     {
 						Count[Player->m_iTeam]++;

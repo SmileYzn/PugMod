@@ -13,6 +13,8 @@ void CPugVoteMap::ServerActivate()
     this->m_VotesLeft = 0;
 
     this->m_MapList.clear();
+
+    this->m_Voter.fill(false);
 }
 
 void CPugVoteMap::ServerDeactivate()
@@ -26,6 +28,8 @@ void CPugVoteMap::ServerDeactivate()
     this->m_VotesLeft = 0;
 
     this->m_MapList.clear();
+
+    this->m_Voter.fill(false);
 }
 
 void CPugVoteMap::Init()
@@ -34,7 +38,9 @@ void CPugVoteMap::Init()
     
     if (this->m_MapList.empty())
     {
-        gPugMod.SetState(STATE_VOTETEAM);
+        gPugTask.Create(E_TASK::SET_STATE, 1.0f, false, STATE_VOTETEAM);
+
+        gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No maps available to vote, skipping map vote."), gPugCvar.m_Tag->string);
     }
     else
     {
@@ -59,18 +65,19 @@ void CPugVoteMap::Init()
 
         this->m_VotesLeft = Players.size();
 
+        this->m_Voter.fill(false);
+
         for (auto const &Player : Players)
         {
+            this->m_Voter[Player->entindex()] = true;
+
             gPugMenu[Player->entindex()].Create(false, E_MENU::ME_VOTE_MAP, _T("Choose the map:"));
 
             for (size_t i = 0; i < this->m_MapList.size(); ++i)
             {
                 this->m_MapList[i].Votes = 0;
 
-                if (!this->m_MapList[i].This && !this->m_MapList[i].Last)
-                {
-                    gPugMenu[Player->entindex()].AddItem(i, false, i, this->m_MapList[i].Name.c_str());
-                }
+                gPugMenu[Player->entindex()].AddItem(i, false, i, "%s", this->m_MapList[i].Name.c_str());
             }
 
             if (gPugCvar.m_SoundEnable->value != 0.0f)
@@ -132,23 +139,29 @@ void CPugVoteMap::LoadMaps()
 {
     auto MapList = gPugMapList.Get();
 
+    this->m_MapList.clear();
+
     if (!MapList.empty())
     {
-        this->m_MapList.clear();
-
         for (const auto& Map : MapList)
         {
-            P_VOTE_MAP_INFO MapInfo;
+            if (Map.second.compare(STRING(gpGlobals->mapname)) == 0)
+            {
+                continue;
+            }
+
+            if (gPugCvar.m_LastMap->string && (Map.second.compare(gPugCvar.m_LastMap->string) == 0))
+            {
+                continue;
+            }
+
+            P_VOTE_MAP_INFO MapInfo = {};
 
             MapInfo.Index = Map.first;
 
             MapInfo.Votes = 0;
 
             MapInfo.Name = Map.second;
-
-            MapInfo.This = (Map.second.compare(STRING(gpGlobals->mapname)) == 0);
-
-            MapInfo.Last = (gPugCvar.m_LastMap->string && (Map.second.compare(gPugCvar.m_LastMap->string) == 0));
 
             this->m_MapList.push_back(MapInfo);
         }
@@ -157,7 +170,7 @@ void CPugVoteMap::LoadMaps()
 
 P_VOTE_MAP_INFO CPugVoteMap::GetWinner()
 {
-    P_VOTE_MAP_INFO Winner = {0, 0, STRING(gpGlobals->mapname), true};
+    P_VOTE_MAP_INFO Winner = {0, 0, STRING(gpGlobals->mapname)};
 
     if (!this->m_MapList.empty())
     {
@@ -182,42 +195,15 @@ P_VOTE_MAP_INFO CPugVoteMap::GetWinner()
 
 P_VOTE_MAP_INFO CPugVoteMap::GetRandom()
 {
-    std::vector<P_VOTE_MAP_INFO> Candidates;
-
-    for (auto const &Map : this->m_MapList)
-    {
-        if (!Map.This && !Map.Last)
-        {
-            Candidates.push_back(Map);
-        }
-    }
-
-    if (Candidates.empty())
-    {
-        for (auto const &Map : this->m_MapList)
-        {
-            if (!Map.This)
-            {
-                Candidates.push_back(Map);
-            }
-        }
-    }
-
-    if (!Candidates.empty())
-    {
-        return Candidates[RANDOM_LONG(0, static_cast<long>(Candidates.size()) - 1)];
-    }
-
     if (!this->m_MapList.empty())
     {
-        return this->m_MapList.front();
+        return this->m_MapList[RANDOM_LONG(0, static_cast<long>(this->m_MapList.size()) - 1)];
     }
 
-    P_VOTE_MAP_INFO Map = {0, 0, STRING(gpGlobals->mapname), true, false};
+    P_VOTE_MAP_INFO Map = {0, 0, STRING(gpGlobals->mapname)};
 
     return Map;
 }
-
 
 void CPugVoteMap::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
@@ -225,8 +211,19 @@ void CPugVoteMap::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
     {
         if (Player)
         {
+            if (!this->m_Voter[Player->entindex()])
+            {
+                return;
+            }
+            
+            if (Item.Info < 0 || static_cast<size_t>(Item.Info) >= this->m_MapList.size())
+            {
+                return;
+            }
+
             this->m_VotesLeft -= 1;
             this->m_MapList[Item.Info].Votes += 1;
+            this->m_Voter[Player->entindex()] = false;
 
             gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 chose ^3%s^1."), gPugCvar.m_Tag->string, STRING(Player->edict()->v.netname), this->m_MapList[Item.Info].Name.c_str());
 
