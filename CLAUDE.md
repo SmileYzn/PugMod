@@ -1,27 +1,27 @@
-# PugMod — Plugin MetaMod para Counter-Strike 1.6
+# PugMod — MetaMod plugin for Counter-Strike 1.6
 
-Repositório: https://github.com/SmileYzn/PugMod (branch `main`)
-Responda sempre em português.
+Repository: https://github.com/SmileYzn/PugMod (branch `main`)
+Always reply to the user in Brazilian Portuguese (pt-BR). Files in the repository (code, comments, docs, commit messages) are written in English.
 
-## Arquivos de trabalho
+## Working files
 
-- `CLAUDE.md` (este arquivo): instruções e contexto do projeto.
-- `REVISAO.md`: relatório da revisão de código e progresso, item por item.
-- Código em `PugMod/`; configs, traduções e spawns em `cstrike/addons/pugmod/`.
+- `CLAUDE.md` (this file): project instructions and context.
+- `REVISION.md`: code review report and progress, item by item.
+- Code in `PugMod/`; configs, translations and spawns in `cstrike/addons/pugmod/`.
 
 ## Stack
 
-- C++14 (`-std=c++14` no `Makefile`, `stdcpp14` no `.vcxproj`). O CI compila o Linux com o GCC 7.5 do container `ubuntu:18.04`: não use recursos além de C++14.
+- C++14 (`-std=c++14` in the `Makefile`, `stdcpp14` in the `.vcxproj`). CI builds Linux with the GCC 7.5 from the `ubuntu:18.04` container: do not use features beyond C++14.
 - MetaMod-R: https://github.com/rehlds/metamod-r
-- ReHLDS 3.15.0.908+ e ReGameDLL_CS 5.30.0.831+ (versões do GitHub Actions, não apenas releases)
-- cURL (multi, não bloqueante) e nlohmann/json 3.12.0 (`PugMod/include/json.hpp`)
-- Binário 32 bits: `pugmod_mm.so` (Linux) / `pugmod_mm.dll` (Windows)
+- ReHLDS 3.15.0.908+ and ReGameDLL_CS 5.30.0.831+ (GitHub Actions builds, not only releases)
+- cURL (multi, non-blocking) and nlohmann/json 3.12.0 (`PugMod/include/json.hpp`)
+- 32-bit binary: `pugmod_mm.so` (Linux) / `pugmod_mm.dll` (Windows)
 
 ## Build
 
 ### Linux
 
-Arch (requer o repositório `[multilib]` habilitado em `/etc/pacman.conf`):
+Arch (requires the `[multilib]` repository enabled in `/etc/pacman.conf`):
 
 ```sh
 sudo pacman -S --needed base-devel lib32-gcc-libs lib32-glibc lib32-curl
@@ -31,20 +31,20 @@ make clean && make prebuild linux32
 
 Debian/Ubuntu: `sudo apt-get install build-essential gcc-multilib g++-multilib libcurl4-openssl-dev:i386`.
 
-- Saída: `PugMod/Release/pugmod_mm.so`.
-- `make` sem alvo também executa o `PostBuild.sh`, que mata o hlds, copia o `.so` e reinicia o servidor de teste. Se a pasta do HLDS não existir, o script só sai. Para só compilar, use `make prebuild linux32`.
-- Sempre faça build limpo (`make clean` antes): o Makefile não rastreia dependências de `.h`.
-- O Makefile compila em paralelo (`-j$(shell nproc)`) e gera o precompiled header `PugMod/precompiled.h.gch` (cerca de 120 MB, ignorado pelo git, apagado pelo `make clean`). O SDK e o Metamod entram com `-isystem`: o build esperado tem **0 avisos**. Um aviso novo indica problema no código do projeto.
-- `precompiled.h` usa include guard (`PUGMOD_PRECOMPILED_H`), não `#pragma once` (o GCC 7 avisa ao gerar o PCH).
-- cURL é ligado dinamicamente (`-Wl,--as-needed -lcurl -ldl -lm`). O `.so` depende só de `libcurl.so.4`, `libdl`, `libm`, `libc` e `ld-linux`; `libstdc++` e `libgcc` são estáticas.
-- `-Wl,--exclude-libs,ALL` evita exportar os símbolos da libstdc++ estática (colisão com outros módulos), e `-Wl,--gc-sections` descarta o código não usado. Confira com `nm -D --defined-only Release/pugmod_mm.so | wc -l` (cerca de 57).
-- O binário exige a glibc da máquina onde foi compilado. Um build numa distro recente serve só para teste local. Para distribuir, use o artefato do CI ou o container (resultado: GLIBC 2.4 no máximo):
+- Output: `PugMod/Release/pugmod_mm.so`.
+- `make` with no target also runs `PostBuild.sh`, which kills hlds, copies the `.so` and restarts the test server. If the HLDS folder does not exist, the script just exits. To only build, use `make prebuild linux32`.
+- Always do a clean build (`make clean` first): the Makefile does not track `.h` dependencies.
+- The Makefile builds in parallel (`-j$(shell nproc)`) and generates the precompiled header `PugMod/precompiled.h.gch` (about 120 MB, ignored by git, removed by `make clean`). The SDK and Metamod are included with `-isystem`: the expected build has **0 warnings**. A new warning means a problem in the project's code.
+- `precompiled.h` uses an include guard (`PUGMOD_PRECOMPILED_H`), not `#pragma once` (GCC 7 warns when generating the PCH).
+- cURL is linked dynamically (`-Wl,--as-needed -lcurl -ldl -lm`). The `.so` depends only on `libcurl.so.4`, `libdl`, `libm`, `libc` and `ld-linux`; `libstdc++` and `libgcc` are static.
+- `-Wl,--exclude-libs,ALL` avoids exporting the static libstdc++ symbols (collisions with other modules), and `-Wl,--gc-sections` drops unused code. Check with `nm -D --defined-only Release/pugmod_mm.so | wc -l` (about 57).
+- The binary requires the glibc of the machine where it was built. A build on a recent distro is for local testing only. To distribute, use the CI artifact or the container (result: GLIBC 2.4 at most):
 
 ```sh
 docker run --rm -v "$PWD":/desktop ubuntu:18.04 bash -c "dpkg --add-architecture i386 && apt-get update > /dev/null && apt-get install -qq -y build-essential gcc-multilib g++-multilib libcurl4-openssl-dev:i386 > /dev/null && cd /desktop/PugMod && make prebuild linux32"
 ```
 
-- Flags de CPU: `-march=i686 -mtune=generic -msse2 -msse3` (sem SSE4, para não dar "illegal instruction" em CPUs antigas).
+- CPU flags: `-march=i686 -mtune=generic -msse2` (no SSE3/SSE4, to avoid "illegal instruction" on old CPUs).
 
 ### Windows
 
@@ -52,45 +52,45 @@ docker run --rm -v "$PWD":/desktop ubuntu:18.04 bash -c "dpkg --add-architecture
 & "C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Current\Bin\MSBuild.exe" PugMod\PugMod.vcxproj -property:configuration=Release -property:platform=Win32 -nologo -verbosity:minimal
 ```
 
-- Toolset v143, Win32. A cURL é estática (`PugMod/include/curl/lib/libcurl_a.lib`).
-- Pendente (B5 no `REVISAO.md`): passar `RuntimeLibrary` para `MultiThreaded` (`/MT`, Release) e `MultiThreadedDebug` (`/MTd`, Debug). Isso remove a dependência do VC++ Redistributable e o aviso `LNK4098 LIBCMT`. Conferir com `dumpbin /dependents Release\pugmod_mm.dll` (sem `VCRUNTIME140.dll`).
+- Toolset v143, Win32. cURL is static (`PugMod/include/curl/lib/libcurl_a.lib`).
+- Pending (B5 in `REVISION.md`): set `RuntimeLibrary` to `MultiThreaded` (`/MT`, Release) and `MultiThreadedDebug` (`/MTd`, Debug). This removes the VC++ Redistributable dependency and the `LNK4098 LIBCMT` warning. Check with `dumpbin /dependents Release\pugmod_mm.dll` (no `VCRUNTIME140.dll`).
 
-O CI (GitHub Actions, `.github/workflows/build.yml`) compila Linux e Windows a cada push.
+CI (GitHub Actions, `.github/workflows/build.yml`) builds Linux and Windows on every push.
 
-## Arquitetura
+## Architecture
 
-- `MetaMod.cpp`: distribui os eventos da engine (ServerActivate/Deactivate, StartFrame, ClientCommand, Message*) para os módulos.
-- `ReGameDLL.cpp`: hookchains do ReGameDLL. `ReAPI.cpp`: `SV_DropClient` do ReHLDS.
-- Cada módulo é uma classe `CPug*` com instância global `gPug*` (ex.: `gPugVoteMap`).
-- Um módulo novo com `StartFrame`/`ServerActivate`/`ServerDeactivate` precisa ser registrado em `MetaMod.cpp`, e o `DropClient` em `ReAPI.cpp`.
-- `precompiled.h` inclui todos os headers do projeto.
-- Troca de estado (`CPugMod::SetState`) a partir de código que já roda dentro de um `SetState` deve ser agendada com `gPugTask.Create(E_TASK::SET_STATE, ...)`, nunca chamada direto.
-- Configs, traduções e spawns: `cstrike/addons/pugmod/` (`cfg/language.cfg`, `cfg/clientcmd.cfg`, `spawns/`).
+- `MetaMod.cpp`: dispatches engine events (ServerActivate/Deactivate, StartFrame, ClientCommand, Message*) to the modules.
+- `ReGameDLL.cpp`: ReGameDLL hookchains. `ReAPI.cpp`: ReHLDS `SV_DropClient`.
+- Each module is a `CPug*` class with a global `gPug*` instance (e.g. `gPugVoteMap`).
+- A new module with `StartFrame`/`ServerActivate`/`ServerDeactivate` must be registered in `MetaMod.cpp`, and its `DropClient` in `ReAPI.cpp`.
+- `precompiled.h` includes every project header.
+- A state change (`CPugMod::SetState`) from code that is already running inside a `SetState` must be scheduled with `gPugTask.Create(E_TASK::SET_STATE, ...)`, never called directly.
+- Configs, translations and spawns: `cstrike/addons/pugmod/` (`cfg/language.cfg`, `cfg/clientcmd.cfg`, `spawns/`).
 
-## Convenções de código
+## Code conventions
 
-- Indentação de 4 espaços, chaves na linha de baixo (Allman), uma linha em branco entre instruções. Alguns arquivos antigos usam TAB: mantenha o estilo do arquivo que estiver editando.
-- O repositório tem arquivos com final de linha CRLF e LF: mantenha o do arquivo que estiver editando.
-- Prefixo `this->` nos membros; variáveis em PascalCase.
-- Textos exibidos ao jogador usam `_T("...")` e precisam de entrada no `cfg/language.cfg` (UTF-8), com a chave idêntica ao texto do código, mais `en:`, `ru:` e `br:`.
+- 4-space indentation, braces on the next line (Allman), one blank line between statements. Some older files use TAB: keep the style of the file you are editing.
+- The repository has files with CRLF and LF line endings: keep the one of the file you are editing.
+- `this->` prefix on members; PascalCase variables.
+- Texts shown to players use `_T("...")` and need an entry in `cfg/language.cfg` (UTF-8), with the key identical to the text in the code, plus `en:`, `ru:` and `br:`.
 
-## Regras de segurança aprendidas na revisão
+## Safety rules learned in the review
 
-- Use `snprintf`/`vsnprintf` padrão, nunca `Q_snprintf`/`Q_vsnprintf`/`_snprintf` (no MSVC não terminam a string ao truncar).
-- Nick de jogador ou qualquer texto externo nunca vai como formato: use `AddItem(..., "%s", nome)`, `SendHud(..., "%s", texto)`.
-- Ao concatenar em buffer: `snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), ...)`, ou use `std::string`.
-- Sempre cheque `if (Player)` depois de `UTIL_PlayerByIndexSafe` (o private data pode ser nulo para quem ainda está conectando).
-- `RANDOM_LONG(low, high)` inclui o `high`: para índice, use `size() - 1`.
-- Sem loops "sortear até achar": filtre candidatos primeiro e sorteie entre eles.
-- JSON: `dump(-1, ' ', false, nlohmann::json::error_handler_t::replace)` (nick fora de UTF-8 lança exceção e derruba o servidor).
-- Exceções não podem escapar de callbacks da engine. Use `try/catch` só onde há dado externo (JSON, `std::stoi` de config), não de forma genérica.
-- Handlers de menu revalidam permissão (`gPugAdmin.CheckAccess`), estado (ex.: `m_Run`), limite do índice (`Item.Info < size()`) e se o jogador participa da votação (`m_Voter[]`).
-- `gPugUtil.GetPlayers()` (as duas versões) ignora o HLTV (`FL_PROXY`); laços próprios sobre `maxClients` precisam fazer o mesmo.
-- Nada de extensões exclusivas do MSVC (ex.: `std::string::_Copy_s`): o código precisa compilar no g++.
+- Use standard `snprintf`/`vsnprintf`, never `Q_snprintf`/`Q_vsnprintf`/`_snprintf` (on MSVC they do not terminate the string when truncating).
+- A player name or any external text never goes in as the format: use `AddItem(..., "%s", name)`, `SendHud(..., "%s", text)`.
+- When appending to a buffer: `snprintf(buf + strlen(buf), sizeof(buf) - strlen(buf), ...)`, or use `std::string`.
+- Always check `if (Player)` after `UTIL_PlayerByIndexSafe` (private data can be null for a player who is still connecting).
+- `RANDOM_LONG(low, high)` includes `high`: for an index, use `size() - 1`.
+- No "draw until found" loops: filter candidates first and pick among them.
+- JSON: `dump(-1, ' ', false, nlohmann::json::error_handler_t::replace)` (a non-UTF-8 name throws an exception and crashes the server).
+- Exceptions must not escape engine callbacks. Use `try/catch` only where there is external data (JSON, `std::stoi` from config), not as a generic wrapper.
+- Menu handlers recheck permission (`gPugAdmin.CheckAccess`), state (e.g. `m_Run`), index bounds (`Item.Info < size()`) and whether the player takes part in the vote (`m_Voter[]`).
+- `gPugUtil.GetPlayers()` (both versions) ignores HLTV (`FL_PROXY`); custom loops over `maxClients` must do the same.
+- No MSVC-only extensions (e.g. `std::string::_Copy_s`): the code must build with g++.
 
-## Fluxo de trabalho
+## Workflow
 
-- O trabalho segue o `REVISAO.md`, item por item (códigos B = build, A = alta, M = média, L = baixa).
-- Em geral o usuário aplica as correções. O Claude mostra a correção, depois valida (`git diff` mais build limpo) e marca o item como `[x]` no `REVISAO.md`.
-- Só edite o código diretamente quando o usuário pedir.
-- Não faça commit nem push sem o usuário pedir.
+- Work follows `REVISION.md`, item by item (codes B = build, A = high, M = medium, L = low).
+- Usually the user applies the fixes. Claude shows the fix, then validates it (`git diff` plus a clean build) and marks the item as `[x]` in `REVISION.md`.
+- Only edit the code directly when the user asks.
+- Do not commit or push unless the user asks.
