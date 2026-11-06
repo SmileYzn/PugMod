@@ -44,7 +44,7 @@ Debian/Ubuntu: `sudo apt-get install build-essential gcc-multilib g++-multilib l
 docker run --rm -v "$PWD":/desktop ubuntu:18.04 bash -c "dpkg --add-architecture i386 && apt-get update > /dev/null && apt-get install -qq -y build-essential gcc-multilib g++-multilib libcurl4-openssl-dev:i386 > /dev/null && cd /desktop/PugMod && make prebuild linux32"
 ```
 
-- CPU flags: `-march=i686 -mtune=generic -msse2` (no SSE3/SSE4, to avoid "illegal instruction" on old CPUs).
+- CPU flags: `-march=i686 -mtune=generic -msse2 -msse3` (no SSE4, to avoid "illegal instruction" on old CPUs).
 
 ### Windows
 
