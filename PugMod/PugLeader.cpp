@@ -26,13 +26,13 @@ void CPugLeader::ServerDeactivate()
 
 void CPugLeader::Init()
 {
-	auto Players = gPugUtil.GetPlayers(false, true);
+	auto Players = gPugUtil.GetPlayers();
 
-	if (Players.size() >= 2 && gPugCvar.m_PlayersMin->value >= 2.0f)
+	if (Players[TERRORIST].size() >= 2 && Players[CT].size() >= 2)
 	{
 		this->m_Run = true;
 
-        this->m_NextFrame = 0.0f;
+		this->m_NextFrame = 0.0f;
 
 		this->m_PlayersMin = static_cast<unsigned int>(gPugCvar.m_PlayersMin->value);
 
@@ -46,50 +46,40 @@ void CPugLeader::Init()
 
 		g_engfuncs.pfnCvar_DirectSet(gPugCvar.m_AllowSpectators, "1");
 
-		for (auto & Player : Players)
+		for (auto const &Team : Players)
 		{
-			if (Player->m_iTeam != UNASSIGNED)
+			for (auto const &Player : Team)
 			{
-				this->m_Team[Player->entindex()] = Player->m_iTeam;
+				if (Player->m_iTeam != UNASSIGNED)
+				{
+					this->m_Team[Player->entindex()] = Player->m_iTeam;
 
-				Player->edict()->v.deadflag = DEAD_DEAD;
+					Player->edict()->v.deadflag = DEAD_DEAD;
 
-				Player->CSPlayer()->JoinTeam(SPECTATOR);
+					Player->CSPlayer()->JoinTeam(SPECTATOR);
 
-				Player->ClearConditions(BIT_LEADER_TYPE);
+					Player->ClearConditions(BIT_LEADER_TYPE);
 
-				Player->ClearConditions(BIT_LEADER_MENU);
+					Player->ClearConditions(BIT_LEADER_MENU);
+				}
 			}
 		}
 
-		int PlayerTR = RANDOM_LONG(0, Players.size() - 1);
+		auto PlayerA = Players[TERRORIST].at(RANDOM_LONG(0, Players[TERRORIST].size() - 1));
+		auto PlayerB = Players[CT].at(RANDOM_LONG(0, Players[CT].size() - 1));
 
-		int PlayerCT = -1;
+		auto Random = RANDOM_LONG(0, 1);
 
-		do
-		{
-			PlayerCT = RANDOM_LONG(0, Players.size() - 1);
-		}
-		while (PlayerTR == PlayerCT);
+		this->SetLeader(PlayerA, Random ? TERRORIST : CT);
+		this->SetLeader(PlayerB, Random ? CT : TERRORIST);
 
-		this->SetLeader(Players.at(PlayerTR), TERRORIST);
-
-		this->SetLeader(Players.at(PlayerCT), CT);
-
-		this->Menu(Players.at(RANDOM_LONG(0, 1) == 0 ? PlayerTR : PlayerCT));
+		this->Menu(Random ? PlayerA : PlayerB);
 	}
 	else
 	{
-		gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Pick failed: Teams are incomplete.^1"), gPugCvar.m_Tag->string);
+		gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_DEATHMATCH);
 
-		if (gPugCvar.m_KnifeRound->value)
-		{
-			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_KNIFE_ROUND);
-		}
-		else
-		{
-			gPugTask.Create(E_TASK::SET_STATE, 2.0f, false, STATE_FIRST_HALF);
-		}
+		gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Pick failed: Teams are incomplete.^1"), gPugCvar.m_Tag->string);
 	}
 }
 

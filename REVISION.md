@@ -22,8 +22,8 @@ Legend:
 |---|---|---|
 | Build (B) | B1, B2, B3, B6, B8, B9 (B4, B7 skipped) | B5, B10, B11, B12 🆕 |
 | High (A) | A1–A15 | — |
-| Medium (M) | M1–M12, M14, M15, M21–M23, M28, M29, M31 | M13, M16–M20, M24–M27, M30, M32–M37 🆕 |
-| Low (L) | L2, L4, L5, L8, L11, L12 | L1, L3, L6, L7, L9, L10, L13, L14 🆕 |
+| Medium (M) | M1–M12, M14, M15, M21–M23, M28, M29, M31, M37 | M13, M16–M20, M24–M27, M30, M32–M36 🆕 |
+| Low (L) | L2, L4, L5, L8, L11–L15 | L1, L3, L6, L7, L9, L10 🆕 |
 
 M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other checked items, in the 2026-11-05 fixes.
 
@@ -140,10 +140,11 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
 - [ ] **M34 🆕** `PugPause.cpp:97-103` — when leaving live, only `m_State` is reset. The `PAUSE_MATCH` task keeps running ("paused" HUD and `SetRoundTime`). If the map changes during a pause, `mp_buytime` keeps the pause value. Fix: `gPugTask.Remove(PAUSE_MATCH)` and restore `mp_buytime`, also in `ServerDeactivate`.
 - [ ] **M35 🆕** `PugLO3.cpp:29-36` — the LO3 sequence is not cancelled if the match is cancelled during its ~9 s. It keeps issuing `sv_restart` and showing "LIVE" in DM. Abort if the state is not FIRST/SECOND_HALF/OVERTIME.
 - [ ] **M36 🆕 ✔** `PugSmokeGrenade.cpp:11` — `v.origin.y -= 100` changes the grenade's **real** position (on the horizontal Y axis). The extra cloud ends up 100 units to the side and the entity is moved. Use a local copy of the origin (and probably the Z axis).
-- [ ] **M37 🆕 ✔** `PugLeader.cpp:81-93` (`Init`, follow-up to A11/A13) — when the captain pick cannot start (fewer than 2 players or `pug_players_min < 2`), the `else` prints "Pick failed: Teams are incomplete" and **still schedules the knife round or the first half**.
+- [x] **M37 🆕 ✔** `PugLeader.cpp:81-93` (`Init`, follow-up to A11/A13) — when the captain pick cannot start (fewer than 2 players or `pug_players_min < 2`), the `else` prints "Pick failed: Teams are incomplete" and **still schedules the knife round or the first half**.
   - If someone leaves during the team vote, a live match can start with 0 or 1 player. `Stop()` handles the same case correctly by going to `STATE_DEATHMATCH`.
   - With `pug_players_min 1` (1v1) the match is valid, but the failure message is wrong.
   - Fix: with `pug_players_min < 2`, continue to the match without the failure message; with fewer than 2 players, schedule `STATE_DEATHMATCH` like `Stop()`.
+  - Fixed: `Init()` requires at least 2 players on each team (teams are kept balanced by `mp_limitteams 1`, now in every `.cfg`, and `pug_players_max`); otherwise it prints "Pick failed" and schedules `STATE_DEATHMATCH`. Captains are drawn one from each team. Known limit: with `pug_players_min 1` (1v1) the captain pick always fails (validated 2026-11-05, Windows build OK).
 
 ---
 
@@ -166,8 +167,10 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
   - In half-hour time zones the minutes are wrong. Use `gmtime()` or `%02d:%02d` with `/60` and `%60`.
 - [x] **L11 🆕 ✔** `PugUtil.cpp` — `*((int32_t *)&float)` replaced by `FloatBits()`, which uses `memcpy` (no strict-aliasing issue) (validated 2026-11-05).
 - [x] **L12 🆕 ✔** `PugMenu.cpp:430` — `strncpy` replaced by `strnlen` + `memcpy` + terminator (no warning and no read past the string) (validated 2026-11-05).
-- [ ] **L13 🆕 ✔** `PugMod.cpp:236` (follow-up to A15) — the OT score reset compares the sum with `pug_rounds_ot`, but the OT tie happens at `2 * (int)(pug_rounds_ot / 2)` rounds. With an odd value (e.g. 5) the tie is 2-2 (sum 4 < 5), the score is not reset and the next OT ends after 1 round. The default 6 works. Fix: `>= 2 * static_cast<int>(gPugCvar.m_RoundsOT->value / 2.0f)`.
-- [ ] **L14 🆕 ✔** `PugVoteMap.cpp:273` — `SendHud(nullptr, g_VoteMap_HudParam[1], VoteList.c_str())` uses the map list as the format string. Map names come from the admin's `maplist.cfg`, but a `%` in a name breaks the HUD. Fix: `SendHud(..., "%s", VoteList.c_str())`.
+- [x] **L13 🆕 ✔** `PugMod.cpp:236` (follow-up to A15) — the OT score reset compares the sum with `pug_rounds_ot`, but the OT tie happens at `2 * (int)(pug_rounds_ot / 2)` rounds. With an odd value (e.g. 5) the tie is 2-2 (sum 4 < 5), the score is not reset and the next OT ends after 1 round. The default 6 works. Fix: `>= 2 * static_cast<int>(gPugCvar.m_RoundsOT->value / 2.0f)`.
+  - Fixed: `pug_rounds_ot` must be an even number greater than 1. Otherwise overtime is never started: a tied second half continues as sudden death. A tie inside OT now votes again (`pug_ot_type 0`) or plays another OT (any other type). Documented in `pugmod.cfg` and README. Known limit: an admin forcing `STATE_OVERTIME` or changing the cvar during OT can still hit the old reset rule (validated 2026-11-05, Windows build OK).
+- [x] **L14 🆕 ✔** `PugVoteMap.cpp:273` — `SendHud(nullptr, g_VoteMap_HudParam[1], VoteList.c_str())` uses the map list as the format string. Map names come from the admin's `maplist.cfg`, but a `%` in a name breaks the HUD. Fix: `SendHud(..., "%s", VoteList.c_str())`.
+- [x] **L15 🆕 ✔** Same pattern as L14 in `PugVoteEnd.cpp:219`, `PugVoteOvertime.cpp:247`, `PugVoteSwapTeam.cpp:226` and `PugVoteTeam.cpp:279`: the `VoteList` (option names from `_T()` translations) was used as the format. Now `SendHud(..., "%s", VoteList.c_str())`. Also, the overtime vote HUD used `g_VoteSwapTeam_HudParam` instead of `g_VoteOvertime_HudParam` (`PugVoteOvertime.cpp:232, 247, 251`; same values, no visible change) (validated 2026-11-05, Windows build OK).
 
 ---
 
@@ -186,5 +189,5 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
 2. ~~M31~~ ✔, ~~M23~~ ✔, ~~M29~~ ✔, ~~M15~~ ✔ (one line each).
 3. ~~A15~~ ✔, ~~M21~~ ✔, ~~M22~~ ✔, ~~M28~~ ✔.
 4. Build: ~~B1~~ ✔, ~~B3~~ ✔, ~~B6~~ ✔, ~~B8~~ ✔, ~~B9~~ ✔, B4/B7 skipped; **B11** (PostBuild); **B5**, **B10** and **B12** (Windows) later.
-5. **M37** (a match can start with 0 or 1 player), then **L13** and **L14** (one line each).
+5. ~~M37~~ ✔, ~~L13~~ ✔, ~~L14~~ ✔.
 6. The rest of M and L.

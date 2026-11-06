@@ -90,7 +90,7 @@
 | pug_players_min | 5 | Minimum players per team |
 | pug_players_max | 5 | Maximum players per team |
 | pug_rounds | 30 | Total rounds per map |
-| pug_rounds_ot | 6 | Total overtime rounds |
+| pug_rounds_ot | 6 | Total overtime rounds (even number greater than 1, otherwise sudden death) |
 | pug_ot_type | 0 | Overtime type (0 Vote / 1 Play / 2 Allow tie / 3 Sudden death) |
 | pug_ready_type | 1 | Ready system mode (0 Off / 1 Auto / 2 Manual) |
 | pug_ready_list | 0 | Ready list display type (0 Full list / 1 Only numbers) |

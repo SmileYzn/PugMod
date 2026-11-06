@@ -229,7 +229,7 @@ void CPugVoteOvertime::StartFrame()
 
                         strftime(szTime, sizeof(szTime), "%M:%S", tm_info);
                         
-                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[0], _T("Overtime Mode: %s"), szTime);
+                        gPugUtil.SendHud(nullptr, g_VoteOvertime_HudParam[0], _T("Overtime Mode: %s"), szTime);
                     }
 
                     std::string VoteList = "";
@@ -244,11 +244,11 @@ void CPugVoteOvertime::StartFrame()
 
                     if (!VoteList.empty())
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[1], VoteList.c_str());
+                        gPugUtil.SendHud(nullptr, g_VoteOvertime_HudParam[1], "%s", VoteList.c_str());
                     }
                     else
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteSwapTeam_HudParam[1], _T("No votes registered."));
+                        gPugUtil.SendHud(nullptr, g_VoteOvertime_HudParam[1], _T("No votes registered."));
                     }
                 }
                 else

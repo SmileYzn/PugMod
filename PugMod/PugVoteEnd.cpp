@@ -216,7 +216,7 @@ void CPugVoteEnd::StartFrame()
 
                     if (!VoteList.empty())
                     {
-                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[1], VoteList.c_str());
+                        gPugUtil.SendHud(nullptr, g_VoteEnd_HudParam[1], "%s", VoteList.c_str());
                     }
                     else
                     {
