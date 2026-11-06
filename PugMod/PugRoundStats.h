@@ -14,8 +14,8 @@ class CPugRoundStats
 public:
 	void RoundStart();
 	void RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, float tmDelay);
-    void GetIntoGame(CBasePlayer *Player);
-    void DropClient(edict_t *pEntity);
+	void GetIntoGame(CBasePlayer *Player);
+	void DropClient(edict_t *pEntity);
 	void TakeDamage(CBasePlayer *Victim, entvars_t *pevInflictor, entvars_t *pevAttacker, float& flDamage, int bitsDamageType);
 	void StartDeathCam(CBasePlayer *Player);
 	bool ShowHP(CBasePlayer *Player);

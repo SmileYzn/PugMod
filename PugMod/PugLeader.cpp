@@ -4,22 +4,22 @@ CPugLeader gPugLeader;
 
 void CPugLeader::ServerActivate()
 {
-    this->m_Run = false;
+	this->m_Run = false;
 
-    this->m_NextFrame = 0.0f;
+	this->m_NextFrame = 0.0f;
 
-    this->m_PlayersMin = 0;
+	this->m_PlayersMin = 0;
 
 	this->m_Team.clear();
 }
 
 void CPugLeader::ServerDeactivate()
 {
-    this->m_Run = false;
+	this->m_Run = false;
 
-    this->m_NextFrame = 0.0f;
+	this->m_NextFrame = 0.0f;
 
-    this->m_PlayersMin = 0;
+	this->m_PlayersMin = 0;
 
 	this->m_Team.clear();
 }
@@ -207,21 +207,21 @@ void CPugLeader::DropClient(edict_t *pEntity)
 
 void CPugLeader::SetLeader(CBasePlayer* Player, int Team)
 {
-    if (Player)
-    {
-        Player->CSPlayer()->JoinTeam(static_cast<TeamName>(Team));
+	if (Player)
+	{
+		Player->CSPlayer()->JoinTeam(static_cast<TeamName>(Team));
 
-        if (!Player->IsAlive())
-        {
-            Player->RoundRespawn();
-        }
+		if (!Player->IsAlive())
+		{
+			Player->RoundRespawn();
+		}
 
-        Player->SetConditions(BIT_LEADER_TYPE);
+		Player->SetConditions(BIT_LEADER_TYPE);
 
-        Player->ClearConditions(BIT_LEADER_MENU);
+		Player->ClearConditions(BIT_LEADER_MENU);
 
-        gPugUtil.PrintColor(nullptr, (Team == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 New captain of ^3%s^1: %s"), gPugCvar.m_Tag->string, g_Pug_TeamName[Team], STRING(Player->edict()->v.netname));
-    }
+		gPugUtil.PrintColor(nullptr, (Team == TERRORIST ? E_PRINT_TEAM::RED : E_PRINT_TEAM::BLUE), _T("^4[%s]^1 New captain of ^3%s^1: %s"), gPugCvar.m_Tag->string, g_Pug_TeamName[Team], STRING(Player->edict()->v.netname));
+	}
 }
 
 void CPugLeader::GetPlayer(CBasePlayer* Leader, CBasePlayer* Target)
@@ -302,8 +302,8 @@ void CPugLeader::Next(CBasePlayer* Leader)
 
 void CPugLeader::Menu(CBasePlayer* Leader)
 {
-    if (Leader)
-    {
+	if (Leader)
+	{
 		auto Players = gPugUtil.GetPlayers();
 
 		if (Players[SPECTATOR].size() > 0)
@@ -334,7 +334,7 @@ void CPugLeader::Menu(CBasePlayer* Leader)
 		{
 			this->Stop();
 		}
-    }
+	}
 }
 
 void CPugLeader::MenuHandle(CBasePlayer *Player, P_MENU_ITEM Item)
@@ -368,27 +368,27 @@ void CPugLeader::GetRandomPlayer(int EntityIndex)
 
 void CPugLeader::StartFrame()
 {
-    if (this->m_Run)
-    {
-        if (gpGlobals->time >= this->m_NextFrame)
-        {
-            std::map<int, std::string> PlayerList = {};
+	if (this->m_Run)
+	{
+		if (gpGlobals->time >= this->m_NextFrame)
+		{
+			std::map<int, std::string> PlayerList = {};
 
-            std::map<int, int> Count = {};
+			std::map<int, int> Count = {};
 
-            for (auto i = 1; i <= gpGlobals->maxClients; ++i)
-            {
-                auto Player = UTIL_PlayerByIndexSafe(i);
+			for (auto i = 1; i <= gpGlobals->maxClients; ++i)
+			{
+				auto Player = UTIL_PlayerByIndexSafe(i);
 
-                if (Player)
-                {
+				if (Player)
+				{
 					if ((Player->edict()->v.flags & FL_PROXY) == FL_PROXY)
 					{
 						continue;
 					}
 					
-                    if (!Player->IsDormant() && (Player->m_iTeam != UNASSIGNED))
-                    {
+					if (!Player->IsDormant() && (Player->m_iTeam != UNASSIGNED))
+					{
 						Count[Player->m_iTeam]++;
 
 						PlayerList[Player->m_iTeam] += STRING(Player->edict()->v.netname);
@@ -404,18 +404,18 @@ void CPugLeader::StartFrame()
 						}
 
 						PlayerList[Player->m_iTeam] += "\n";
-                    }
-                }
-            }
+					}
+				}
+			}
 
-            int Rows = std::max(static_cast<int>(this->m_PlayersMin), Count[CT]);
+			int Rows = std::max(static_cast<int>(this->m_PlayersMin), Count[CT]);
 
-            if (Count[CT] < Rows)
-            {
-                PlayerList[CT] += std::string(static_cast<size_t>(Rows - Count[CT]), '\n');
-            }
+			if (Count[CT] < Rows)
+			{
+				PlayerList[CT] += std::string(static_cast<size_t>(Rows - Count[CT]), '\n');
+			}
 			
-            gPugUtil.SendHud(nullptr, g_Leader_HudParam[0], "%s (%d / %d):", g_Pug_TeamName[TERRORIST], Count[TERRORIST], this->m_PlayersMin);
+			gPugUtil.SendHud(nullptr, g_Leader_HudParam[0], "%s (%d / %d):", g_Pug_TeamName[TERRORIST], Count[TERRORIST], this->m_PlayersMin);
 
 			gPugUtil.SendHud(nullptr, g_Leader_HudParam[1], "\n%s", PlayerList[TERRORIST].c_str());
 

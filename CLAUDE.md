@@ -69,8 +69,11 @@ CI (GitHub Actions, `.github/workflows/build.yml`) builds Linux and Windows on e
 
 ## Code conventions
 
-- 4-space indentation, braces on the next line (Allman), one blank line between statements. Some older files use TAB: keep the style of the file you are editing.
-- The repository has files with CRLF and LF line endings: keep the one of the file you are editing.
+- Code (`.cpp`, `.h`) and config files (`.cfg`): always TAB, with a tab width of 4 (see `.editorconfig`). Never indent or align with spaces.
+  - Code: braces on the next line (Allman), one blank line between statements.
+  - Config: values aligned with TABs in each block of `name value` lines; single-space lines stay as they are.
+  - Vendored code in `PugMod/include/` keeps its own style.
+- Line endings: the repository stores LF; with `core.autocrlf=true` (Windows) the working copy is CRLF. Do not commit line ending changes.
 - `this->` prefix on members; PascalCase variables.
 - Texts shown to players use `_T("...")` and need an entry in `cfg/language.cfg` (UTF-8), with the key identical to the text in the code, plus `en:`, `ru:` and `br:`.
 

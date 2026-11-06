@@ -354,7 +354,7 @@ class CPugStats
 public:
 	void ServerActivate();
 	void SetState();
-    const char* GetAuthId(CBasePlayer* Player);
+	const char* GetAuthId(CBasePlayer* Player);
 	void GetIntoGame(CBasePlayer* Player);
 	void DropClient(edict_t *pEntity);
 	void ChooseTeam(CBasePlayer* Player);

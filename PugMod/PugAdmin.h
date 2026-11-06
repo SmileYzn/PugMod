@@ -37,8 +37,8 @@ constexpr auto ADMIN_USER			= BIT(25);	/* flag "z" */
 class CPugAdmin
 {
 public:
-    void ServerActivate();
-    void Set(std::string Auth, std::string Name, std::string Flag);
+	void ServerActivate();
+	void Set(std::string Auth, std::string Name, std::string Flag);
 	int ReadFlags(const char* Flags);
 	void PutInServer(edict_t* pEntity);
 	int GetFlags(int EntityIndex);

@@ -1,0 +1,11 @@
+root = true
+
+[*.{cpp,h,cfg}]
+indent_style = tab
+indent_size = 4
+tab_width = 4
+
+[PugMod/include/**]
+indent_style = unset
+indent_size = unset
+tab_width = unset

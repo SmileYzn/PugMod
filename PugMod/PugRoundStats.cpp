@@ -4,105 +4,105 @@ CPugRoundStats gPugRoundStats;
 
 void CPugRoundStats::RoundStart()
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		this->m_RoundDmg = {};
 		this->m_RoundHit = {};
 
-        this->m_Flags = R_STATS_ALL;
+		this->m_Flags = R_STATS_ALL;
 
-        if (gPugCvar.m_RoundStats->string)
-        {
-            if (gPugCvar.m_RoundStats->string[0u] != '\0')
-            {
-                this->m_Flags |= gPugAdmin.ReadFlags(gPugCvar.m_RoundStats->string);
-            }
-        }
+		if (gPugCvar.m_RoundStats->string)
+		{
+			if (gPugCvar.m_RoundStats->string[0u] != '\0')
+			{
+				this->m_Flags |= gPugAdmin.ReadFlags(gPugCvar.m_RoundStats->string);
+			}
+		}
 	}
 }
 
 void CPugRoundStats::RoundEnd(int winStatus, ScenarioEventEndRound eventScenario, float tmDelay)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (g_pGameRules)
-        {
-            if (CSGameRules()->m_bRoundTerminating)
-            {
-                auto Players = gPugUtil.GetPlayers(true, false);
+	{
+		if (g_pGameRules)
+		{
+			if (CSGameRules()->m_bRoundTerminating)
+			{
+				auto Players = gPugUtil.GetPlayers(true, false);
 
-                if (Players.size() > 0)
-                {
-                    for (auto const & Player : Players)
-                    {
+				if (Players.size() > 0)
+				{
+					for (auto const & Player : Players)
+					{
 						if (Player->IsAlive())
 						{
 							this->StartDeathCam(Player);
 						}
-                    }
-                }
-            }
-        }
-    }
+					}
+				}
+			}
+		}
+	}
 }
 
 void CPugRoundStats::StartDeathCam(CBasePlayer *Player)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
 
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (Player)
-        {
-            if (g_pGameRules)
-            {
-                if (!Player->IsBot())
-                {
-                    if (gPugCvar.m_RoundEndStats->string)
-                    {
-                        switch (gPugCvar.m_RoundEndStats->string[0u])
-                        {
-                            case 'a':
-                            {
-                                this->ShowHP(Player);
-                                break;
-                            }
-                            case 'b':
-                            {
-                                this->ShowDamage(Player);
-                                break;
-                            }
-                            case 'c':
-                            {
-                                this->ShowReceivedDamage(Player);
-                                break;
-                            }
-                            case 'd':
-                            {
-                                this->ShowSummary(Player);
-                                break;
-                            }
-                            case 'e':
-                            {
-                                this->ShowStats(Player);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	{
+		if (Player)
+		{
+			if (g_pGameRules)
+			{
+				if (!Player->IsBot())
+				{
+					if (gPugCvar.m_RoundEndStats->string)
+					{
+						switch (gPugCvar.m_RoundEndStats->string[0u])
+						{
+							case 'a':
+							{
+								this->ShowHP(Player);
+								break;
+							}
+							case 'b':
+							{
+								this->ShowDamage(Player);
+								break;
+							}
+							case 'c':
+							{
+								this->ShowReceivedDamage(Player);
+								break;
+							}
+							case 'd':
+							{
+								this->ShowSummary(Player);
+								break;
+							}
+							case 'e':
+							{
+								this->ShowStats(Player);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void CPugRoundStats::GetIntoGame(CBasePlayer *Player)
 {
-    this->m_RoundDmg[Player->entindex()] = {};
-    this->m_RoundHit[Player->entindex()] = {};
+	this->m_RoundDmg[Player->entindex()] = {};
+	this->m_RoundHit[Player->entindex()] = {};
 }
 
 void CPugRoundStats::DropClient(edict_t *pEntity)
@@ -124,13 +124,13 @@ void CPugRoundStats::DropClient(edict_t *pEntity)
 
 void CPugRoundStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, entvars_t *pevAttacker, float &flDamage, int bitsDamageType)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
 
 	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
 	{
 		if (!Player->m_bKilledByBomb)
 		{
-            auto Attacker = UTIL_PlayerByIndexSafe(ENTINDEX(pevAttacker));
+			auto Attacker = UTIL_PlayerByIndexSafe(ENTINDEX(pevAttacker));
 
 			if (Attacker)
 			{
@@ -146,292 +146,292 @@ void CPugRoundStats::TakeDamage(CBasePlayer *Player, entvars_t *pevInflictor, en
 		}
 		else
 		{
-            gPugUtil.SendDeathMsg(NULL, NULL, Player, NULL, NULL, "c4", 0, 0);
+			gPugUtil.SendDeathMsg(NULL, NULL, Player, NULL, NULL, "c4", 0, 0);
 		}
 	}
 }
 
 bool CPugRoundStats::ShowHP(CBasePlayer *Player)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
 
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (this->m_Flags & R_STATS_HP)
-        {
-            if (g_pGameRules)
-            {
-                if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating)
-                {
-                    if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
-                    {
-                        auto StatsCount = 0;
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	{
+		if (this->m_Flags & R_STATS_HP)
+		{
+			if (g_pGameRules)
+			{
+				if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating)
+				{
+					if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+					{
+						auto StatsCount = 0;
 
-                        auto Players = gPugUtil.GetPlayers(true, true);
+						auto Players = gPugUtil.GetPlayers(true, true);
 
-                        for (auto Target : Players)
-                        {
-                            if (Target->m_iTeam != Player->m_iTeam)
-                            {
-                                if (Target->IsAlive())
-                                {
-                                    StatsCount++;
+						for (auto Target : Players)
+						{
+							if (Target->m_iTeam != Player->m_iTeam)
+							{
+								if (Target->IsAlive())
+								{
+									StatsCount++;
 
-                                    gPugUtil.PrintColor(Player->edict(), Target->entindex(), _T("^4[%s]^1 ^3%s^1 with %d HP (%d AP)"), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname), (int)Target->edict()->v.health, (int)Target->edict()->v.armorvalue);
-                                }
-                            }
-                        }
+									gPugUtil.PrintColor(Player->edict(), Target->entindex(), _T("^4[%s]^1 ^3%s^1 with %d HP (%d AP)"), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname), (int)Target->edict()->v.health, (int)Target->edict()->v.armorvalue);
+								}
+							}
+						}
 
-                        if (!StatsCount)
-                        {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No player alive."), gPugCvar.m_Tag->string);
-                        }
+						if (!StatsCount)
+						{
+							gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No player alive."), gPugCvar.m_Tag->string);
+						}
 
-                        return true;
-                    }
-                }
-            }
-        }
-    }
+						return true;
+					}
+				}
+			}
+		}
+	}
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
+	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }
 
 bool CPugRoundStats::ShowDamage(CBasePlayer *Player)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
         
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (this->m_Flags & R_STATS_DMG)
-        {
-            if (g_pGameRules)
-            {
-                if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
-                {
-                    if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
-                    {
-                        auto StatsCount = 0;
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	{
+		if (this->m_Flags & R_STATS_DMG)
+		{
+			if (g_pGameRules)
+			{
+				if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
+				{
+					if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+					{
+						auto StatsCount = 0;
 
-                        auto Players = gPugUtil.GetPlayers(true, true);
+						auto Players = gPugUtil.GetPlayers(true, true);
 
-                        for (auto Target : Players)
-                        {
-                            if (this->m_RoundHit[Player->entindex()][Target->entindex()])
-                            {
-                                StatsCount++;
+						for (auto Target : Players)
+						{
+							if (this->m_RoundHit[Player->entindex()][Target->entindex()])
+							{
+								StatsCount++;
 
-                                gPugUtil.PrintColor
-                                (
-                                    Player->edict(),
-                                    Target->entindex(),
-                                    _T("^4[%s]^1 Hit ^3%s^1 %d time(s) (Damage %d)"),
-                                    gPugCvar.m_Tag->string,
-                                    STRING(Target->edict()->v.netname),
-                                    this->m_RoundHit[Player->entindex()][Target->entindex()],
-                                    this->m_RoundDmg[Player->entindex()][Target->entindex()]
-                                );
-                            }
-                        }
+								gPugUtil.PrintColor
+								(
+									Player->edict(),
+									Target->entindex(),
+									_T("^4[%s]^1 Hit ^3%s^1 %d time(s) (Damage %d)"),
+									gPugCvar.m_Tag->string,
+									STRING(Target->edict()->v.netname),
+									this->m_RoundHit[Player->entindex()][Target->entindex()],
+									this->m_RoundDmg[Player->entindex()][Target->entindex()]
+								);
+							}
+						}
 
-                        if (!StatsCount)
-                        {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage this round."), gPugCvar.m_Tag->string);
-                        }
+						if (!StatsCount)
+						{
+							gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage this round."), gPugCvar.m_Tag->string);
+						}
 
-                        return true;
-                    }
-                }
-            }
-        }
-    }
+						return true;
+					}
+				}
+			}
+		}
+	}
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
+	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }
 
 bool CPugRoundStats::ShowReceivedDamage(CBasePlayer *Player)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
         
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (this->m_Flags & R_STATS_RDMG)
-        {
-            if (g_pGameRules)
-            {
-                if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
-                {
-                    if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
-                    {
-                        auto StatsCount = 0;
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	{
+		if (this->m_Flags & R_STATS_RDMG)
+		{
+			if (g_pGameRules)
+			{
+				if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
+				{
+					if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+					{
+						auto StatsCount = 0;
 
-                        auto Players = gPugUtil.GetPlayers(true, true);
+						auto Players = gPugUtil.GetPlayers(true, true);
 
-                        for (auto Target : Players)
-                        {
-                            if (this->m_RoundHit[Target->entindex()][Player->entindex()])
-                            {
-                                StatsCount++;
+						for (auto Target : Players)
+						{
+							if (this->m_RoundHit[Target->entindex()][Player->entindex()])
+							{
+								StatsCount++;
 
-                                gPugUtil.PrintColor
-                                (
-                                    Player->edict(),
-                                    Target->entindex(),
-                                    _T("^4[%s]^1 Damage received from ^3%s^1 %d time(s) (Damage %d)"),
-                                    gPugCvar.m_Tag->string,
-                                    STRING(Target->edict()->v.netname),
-                                    this->m_RoundHit[Target->entindex()][Player->entindex()],
-                                    this->m_RoundDmg[Target->entindex()][Player->entindex()]
-                                );
-                            }
-                        }
+								gPugUtil.PrintColor
+								(
+									Player->edict(),
+									Target->entindex(),
+									_T("^4[%s]^1 Damage received from ^3%s^1 %d time(s) (Damage %d)"),
+									gPugCvar.m_Tag->string,
+									STRING(Target->edict()->v.netname),
+									this->m_RoundHit[Target->entindex()][Player->entindex()],
+									this->m_RoundDmg[Target->entindex()][Player->entindex()]
+								);
+							}
+						}
 
-                        if (!StatsCount)
-                        {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage received this round."), gPugCvar.m_Tag->string);
-                        }
+						if (!StatsCount)
+						{
+							gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage received this round."), gPugCvar.m_Tag->string);
+						}
 
-                        return true;
-                    }
-                }
-            }
-        }
-    }
+						return true;
+					}
+				}
+			}
+		}
+	}
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
+	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }
 
 bool CPugRoundStats::ShowSummary(CBasePlayer *Player)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
         
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (this->m_Flags & R_STATS_SUM)
-        {
-            if (g_pGameRules)
-            {
-                if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
-                {
-                    if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
-                    {
-                        auto StatsCount = 0;
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	{
+		if (this->m_Flags & R_STATS_SUM)
+		{
+			if (g_pGameRules)
+			{
+				if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
+				{
+					if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+					{
+						auto StatsCount = 0;
     
-                        auto Players = gPugUtil.GetPlayers(true, true);
+						auto Players = gPugUtil.GetPlayers(true, true);
     
-                        for (auto Target : Players)
-                        {
-                            if (this->m_RoundHit[Player->entindex()][Target->entindex()] || this->m_RoundHit[Target->entindex()][Player->entindex()])
-                            {
-                                StatsCount++;
+						for (auto Target : Players)
+						{
+							if (this->m_RoundHit[Player->entindex()][Target->entindex()] || this->m_RoundHit[Target->entindex()][Player->entindex()])
+							{
+								StatsCount++;
     
-                                gPugUtil.PrintColor
-                                (
-                                    Player->edict(),
-                                    Target->entindex(),
-                                    _T("^4[%s]^1 (%d dmg | %d hits) to (%d dmg | %d hits) from ^3%s^1 (%d HP)"),
-                                    gPugCvar.m_Tag->string,
-                                    this->m_RoundDmg[Player->entindex()][Target->entindex()],
-                                    this->m_RoundHit[Player->entindex()][Target->entindex()],
-                                    this->m_RoundDmg[Target->entindex()][Player->entindex()],
-                                    this->m_RoundHit[Target->entindex()][Player->entindex()],
-                                    STRING(Target->edict()->v.netname),
-                                    Target->IsAlive() ? (int)Target->edict()->v.health : 0
-                                );
-                            }
-                        }
+								gPugUtil.PrintColor
+								(
+									Player->edict(),
+									Target->entindex(),
+									_T("^4[%s]^1 (%d dmg | %d hits) to (%d dmg | %d hits) from ^3%s^1 (%d HP)"),
+									gPugCvar.m_Tag->string,
+									this->m_RoundDmg[Player->entindex()][Target->entindex()],
+									this->m_RoundHit[Player->entindex()][Target->entindex()],
+									this->m_RoundDmg[Target->entindex()][Player->entindex()],
+									this->m_RoundHit[Target->entindex()][Player->entindex()],
+									STRING(Target->edict()->v.netname),
+									Target->IsAlive() ? (int)Target->edict()->v.health : 0
+								);
+							}
+						}
     
-                        if (!StatsCount)
-                        {
-                            gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage this round."), gPugCvar.m_Tag->string);
-                        }
+						if (!StatsCount)
+						{
+							gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No damage this round."), gPugCvar.m_Tag->string);
+						}
     
-                        return true;
-                    }
-                }
-            }
-        }
-    }
+						return true;
+					}
+				}
+			}
+		}
+	}
 
-    gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
+	gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 Command unavailable."), gPugCvar.m_Tag->string);
 
 	return false;
 }
 
 bool CPugRoundStats::ShowStats(CBasePlayer *Player)
 {
-    auto State = gPugMod.GetState();
+	auto State = gPugMod.GetState();
         
-    if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
-    {
-        if (this->m_Flags & R_STATS_STATS)
-        {
-            if (g_pGameRules)
-            {
-                if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
-                {
-                    if (!Player->IsBot())
-                    {
-                        if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
-                        {
-                            auto Players = gPugUtil.GetPlayers(true, true);
+	if (State == STATE_FIRST_HALF || State == STATE_SECOND_HALF || State == STATE_OVERTIME)
+	{
+		if (this->m_Flags & R_STATS_STATS)
+		{
+			if (g_pGameRules)
+			{
+				if (!Player->IsAlive() || CSGameRules()->m_bRoundTerminating || CSGameRules()->IsFreezePeriod())
+				{
+					if (!Player->IsBot())
+					{
+						if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
+						{
+							auto Players = gPugUtil.GetPlayers(true, true);
 
-                            if (Players.size() > 0)
-                            {
-                                std::string Victims, Attackers;
+							if (Players.size() > 0)
+							{
+								std::string Victims, Attackers;
 
-                                char Line[128] = {};
+								char Line[128] = {};
 
-                                auto EntityIndex = Player->entindex();
+								auto EntityIndex = Player->entindex();
 
-                                for (auto const &Target : Players)
-                                {
-                                    auto TargetIndex = Target->entindex();
+								for (auto const &Target : Players)
+								{
+									auto TargetIndex = Target->entindex();
 
-                                    if (this->m_RoundHit[EntityIndex][TargetIndex] > 0)
-                                    {
-                                        snprintf(Line, sizeof(Line), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[EntityIndex][TargetIndex], this->m_RoundDmg[EntityIndex][TargetIndex]);
-                                        Victims += Line;
-                                    }
+									if (this->m_RoundHit[EntityIndex][TargetIndex] > 0)
+									{
+										snprintf(Line, sizeof(Line), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[EntityIndex][TargetIndex], this->m_RoundDmg[EntityIndex][TargetIndex]);
+										Victims += Line;
+									}
 
-                                    if (this->m_RoundHit[TargetIndex][EntityIndex] > 0)
-                                    {
-                                        snprintf(Line, sizeof(Line), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[TargetIndex][EntityIndex], this->m_RoundDmg[TargetIndex][EntityIndex]);
-                                        Attackers += Line;
-                                    }
-                                }
+									if (this->m_RoundHit[TargetIndex][EntityIndex] > 0)
+									{
+										snprintf(Line, sizeof(Line), _T("%s -- %d hit(s) / %d dmg\n"), STRING(Target->edict()->v.netname), this->m_RoundHit[TargetIndex][EntityIndex], this->m_RoundDmg[TargetIndex][EntityIndex]);
+										Attackers += Line;
+									}
+								}
 
-                                std::string Hud;
+								std::string Hud;
 
-                                if (!Victims.empty())
-                                {
-                                    Hud = _T("Victims:^n") + Victims;
-                                }
+								if (!Victims.empty())
+								{
+									Hud = _T("Victims:^n") + Victims;
+								}
 
-                                if (!Attackers.empty())
-                                {
-                                    Hud += _T("^n^n^n^nAttackers:\n") + Attackers;
-                                }
+								if (!Attackers.empty())
+								{
+									Hud += _T("^n^n^n^nAttackers:\n") + Attackers;
+								}
 
-                                if (!Hud.empty())
-                                {
-                                    gPugUtil.SendHud(Player->edict(), g_RoundStats_HudParam, "%s", Hud.c_str());
-                                }
-                            }
+								if (!Hud.empty())
+								{
+									gPugUtil.SendHud(Player->edict(), g_RoundStats_HudParam, "%s", Hud.c_str());
+								}
+							}
     
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-    }
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
 
-    return false;
+	return false;
 }

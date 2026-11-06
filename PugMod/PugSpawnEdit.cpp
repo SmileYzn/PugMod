@@ -240,7 +240,7 @@ void CPugSpawnEdit::DiscardChangesHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 
 				Player->edict()->v.movetype = MOVETYPE_WALK;
 
-                gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 All changes have been discarded."), gPugCvar.m_Tag->string);
+				gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 All changes have been discarded."), gPugCvar.m_Tag->string);
 
 				auto pCommand = gPugClientCmd.Get(CMD_DM_SPAWN_EDITOR);
 
@@ -252,7 +252,7 @@ void CPugSpawnEdit::DiscardChangesHandle(CBasePlayer* Player, P_MENU_ITEM Item)
 					}
 				}
                 
-                break;
+				break;
 			}
 		}
 	}
@@ -432,16 +432,16 @@ bool CPugSpawnEdit::IsStuck(int EntityIndex)
 {
 	auto pEntity = this->m_Entities[EntityIndex];
 
-    if (!FNullEnt(pEntity))
-    {
-        TraceResult trResult = {};
+	if (!FNullEnt(pEntity))
+	{
+		TraceResult trResult = {};
 
-        TRACE_HULL(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? head_hull : human_hull, pEntity, &trResult);
+		TRACE_HULL(pEntity->v.origin, pEntity->v.origin, dont_ignore_monsters, (pEntity->v.flags & FL_DUCKING) ? head_hull : human_hull, pEntity, &trResult);
 
-        return (trResult.fStartSolid || trResult.fAllSolid || !trResult.fInOpen);
-    }
+		return (trResult.fStartSolid || trResult.fAllSolid || !trResult.fInOpen);
+	}
 
-    return false;
+	return false;
 }
 
 void CPugSpawnEdit::SetPosition(int EntityIndex)

@@ -23,24 +23,24 @@ void CPugStats::SetState()
 	auto State = gPugMod.GetState();
 
 	// Switch
-    switch (State)
-    {
-        case STATE_DEAD:
-        {
-            // Clear match data
-            this->m_Match.Reset();
+	switch (State)
+	{
+		case STATE_DEAD:
+		{
+			// Clear match data
+			this->m_Match.Reset();
 
-            // Clear player data
-            this->m_Player.clear();
+			// Clear player data
+			this->m_Player.clear();
 
-            // Clear event data
-            this->m_RoundEvent.clear();
-            break;
-        }
-        case STATE_DEATHMATCH:
-        case STATE_VOTEMAP:
-        case STATE_VOTETEAM:
-        case STATE_CAPTAIN:
+			// Clear event data
+			this->m_RoundEvent.clear();
+			break;
+		}
+		case STATE_DEATHMATCH:
+		case STATE_VOTEMAP:
+		case STATE_VOTETEAM:
+		case STATE_CAPTAIN:
 		{
 			// Clear match data
 			this->m_Match.Reset();
@@ -59,52 +59,52 @@ void CPugStats::SetState()
 			this->m_RoundEvent.clear();
 			break;
 		}
-        case STATE_KNIFE_ROUND:
-        {
-            // Clear match data
-            this->m_Match.Reset();
+		case STATE_KNIFE_ROUND:
+		{
+			// Clear match data
+			this->m_Match.Reset();
 
-            // Clear event data
-            this->m_RoundEvent.clear();
-            break;
-        }
-        case STATE_FIRST_HALF:
-        {
-            // Set start time
-            this->m_Match.StartTime = time(NULL);
+			// Clear event data
+			this->m_RoundEvent.clear();
+			break;
+		}
+		case STATE_FIRST_HALF:
+		{
+			// Set start time
+			this->m_Match.StartTime = time(NULL);
             
-            // Set end time
-            this->m_Match.EndTime = 0;
+			// Set end time
+			this->m_Match.EndTime = 0;
             
-            // Set hostname
-            this->m_Match.HostName = CVAR_GET_STRING("hostname");
+			// Set hostname
+			this->m_Match.HostName = CVAR_GET_STRING("hostname");
             
-            // Set map name
-            this->m_Match.Map = STRING(gpGlobals->mapname);
+			// Set map name
+			this->m_Match.Map = STRING(gpGlobals->mapname);
             
-            // Set address
-            this->m_Match.Address = CVAR_GET_STRING("net_address");
+			// Set address
+			this->m_Match.Address = CVAR_GET_STRING("net_address");
             
-            // Set score
-            this->m_Match.Score.fill(0);
+			// Set score
+			this->m_Match.Score.fill(0);
             
-            // Set winner
-            this->m_Match.Winner = 0;
+			// Set winner
+			this->m_Match.Winner = 0;
             
-            // Set rounds played
-            this->m_Match.Rounds = 0;
+			// Set rounds played
+			this->m_Match.Rounds = 0;
 
-            // Number of rounds in match
-            this->m_Match.MaxRounds = static_cast<int>(gPugCvar.m_Rounds->value);
+			// Number of rounds in match
+			this->m_Match.MaxRounds = static_cast<int>(gPugCvar.m_Rounds->value);
 
-            // Number of overtime rounds
-            this->m_Match.MaxRoundsOT = static_cast<int>(gPugCvar.m_RoundsOT->value);
+			// Number of overtime rounds
+			this->m_Match.MaxRoundsOT = static_cast<int>(gPugCvar.m_RoundsOT->value);
 
-            // Match Game Mode
-            this->m_Match.GameMode = static_cast<int>(gPugCvar.m_PlayGameMode->value);
+			// Match Game Mode
+			this->m_Match.GameMode = static_cast<int>(gPugCvar.m_PlayGameMode->value);
 
-            // Match will have Knife Round
-            this->m_Match.KnifeRound = static_cast<int>(gPugCvar.m_PlayKnifeRound->value);
+			// Match will have Knife Round
+			this->m_Match.KnifeRound = static_cast<int>(gPugCvar.m_PlayKnifeRound->value);
 
 			// Mininum Players
 			this->m_Match.MinPlayers = static_cast<int>(gPugCvar.m_PlayersMin->value);
@@ -112,28 +112,28 @@ void CPugStats::SetState()
 			// Maximum Players
 			this->m_Match.MaxPlayers = static_cast<int>(gPugCvar.m_PlayersMax->value);
             
-            // Loop each player
-            for (auto& Player : this->m_Player)
-            {
-                // Clear player stats
-                Player.second.Stats[State].Reset();
+			// Loop each player
+			for (auto& Player : this->m_Player)
+			{
+				// Clear player stats
+				Player.second.Stats[State].Reset();
 
-                // Clear overtime stats of the previous match
-                Player.second.Stats[STATE_OVERTIME].Reset();
+				// Clear overtime stats of the previous match
+				Player.second.Stats[STATE_OVERTIME].Reset();
 
-                // Clear Chat Log
-                Player.second.ChatLog.clear();
+				// Clear Chat Log
+				Player.second.ChatLog.clear();
             
-                // Clear player round stats
-                Player.second.Round.Reset();
-            }
+				// Clear player round stats
+				Player.second.Round.Reset();
+			}
 
-            // Clear event data
-            this->m_RoundEvent.clear();
-            break;
-        }
-        case STATE_HALFTIME:
-        {
+			// Clear event data
+			this->m_RoundEvent.clear();
+			break;
+		}
+		case STATE_HALFTIME:
+		{
 			if (gPugMod.GetRound() >= static_cast<int>(gPugCvar.m_Rounds->value))
 			{
 				if (gPugMod.GetScore(TERRORIST) == gPugMod.GetScore(CT))
@@ -143,59 +143,59 @@ void CPugStats::SetState()
 			}
 
 			this->m_Match.SwapScores();
-            break;
-        }
-        case STATE_SECOND_HALF:
-        {
-            // Loop each player
-            for (auto& Player : this->m_Player)
-            {
-                // Clear player stats
-                Player.second.Stats[State].Reset();
+			break;
+		}
+		case STATE_SECOND_HALF:
+		{
+			// Loop each player
+			for (auto& Player : this->m_Player)
+			{
+				// Clear player stats
+				Player.second.Stats[State].Reset();
 
-                // Clear player round stats
-                Player.second.Round.Reset();
-            }
-            break;
-        }
-        case STATE_OVERTIME:
-        {
-            // Loop each player
-            for (auto& Player : this->m_Player)
-            {
-                // Clear player round stats
-                Player.second.Round.Reset();
-            }
-            break;
-        }
-        case STATE_END:
-        {
-            // Set end time
-            this->m_Match.EndTime = time(NULL);
+				// Clear player round stats
+				Player.second.Round.Reset();
+			}
+			break;
+		}
+		case STATE_OVERTIME:
+		{
+			// Loop each player
+			for (auto& Player : this->m_Player)
+			{
+				// Clear player round stats
+				Player.second.Round.Reset();
+			}
+			break;
+		}
+		case STATE_END:
+		{
+			// Set end time
+			this->m_Match.EndTime = time(NULL);
 
 			// Generate Data
 			this->DumpData();
-            break;
-        }
-    }
+			break;
+		}
+	}
 }
 
 const char* CPugStats::GetAuthId(CBasePlayer *Player)
 {
-    if (Player)
-    {
-        if (!FNullEnt(Player->edict()))
-        {
-            if (!(Player->edict()->v.flags & FL_FAKECLIENT))
-            {
-                return GETPLAYERAUTHID(Player->edict());
-            }
+	if (Player)
+	{
+		if (!FNullEnt(Player->edict()))
+		{
+			if (!(Player->edict()->v.flags & FL_FAKECLIENT))
+			{
+				return GETPLAYERAUTHID(Player->edict());
+			}
 
-            return STRING(Player->edict()->v.netname);
-        }
-    }
+			return STRING(Player->edict()->v.netname);
+		}
+	}
 
-    return "";
+	return "";
 }
 
 void CPugStats::GetIntoGame(CBasePlayer *Player)
@@ -216,17 +216,17 @@ void CPugStats::GetIntoGame(CBasePlayer *Player)
 
 void CPugStats::DropClient(edict_t *pEntity)
 {
-    auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
+	auto Player = UTIL_PlayerByIndexSafe(ENTINDEX(pEntity));
 
-    if (Player)
-    {
-        auto Auth = this->GetAuthId(Player);
+	if (Player)
+	{
+		auto Auth = this->GetAuthId(Player);
 
-        if (Auth)
-        {
-            this->m_Player[Auth].DisconnectTime = time(NULL);
-        }
-    }
+		if (Auth)
+		{
+			this->m_Player[Auth].DisconnectTime = time(NULL);
+		}
+	}
 }
 
 void CPugStats::ChooseTeam(CBasePlayer* Player)
@@ -959,9 +959,9 @@ bool CPugStats::SayText(int msg_dest, int msg_type, const float* pOrigin, edict_
 							// Get State
 							auto State = gPugMod.GetState();
 
-                            // If match is running
-                            if (State != STATE_DEAD)
-                            {
+							// If match is running
+							if (State != STATE_DEAD)
+							{
 								// Get player auth
 								auto Auth = gPugStats.GetAuthId(Player);
 
@@ -989,7 +989,7 @@ bool CPugStats::SayText(int msg_dest, int msg_type, const float* pOrigin, edict_
 									// Push to vector
 									gPugStats.m_Player[Auth].ChatLog.push_back(Chat);
 								}
-                            }
+							}
 						}
 					}
 				}
@@ -1586,10 +1586,10 @@ void CPugStats::UploadData(const nlohmann::json &Data)
 		{
 			if (gPugCvar.m_API_Address->string)
 			{
-                if (gPugCvar.m_API_Address->string[0u] != '\0')
-                {
-                    gPugCurl.PostJSON(gPugCvar.m_API_Address->string, (long)(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace));
-                }
+				if (gPugCvar.m_API_Address->string[0u] != '\0')
+				{
+					gPugCurl.PostJSON(gPugCvar.m_API_Address->string, (long)(gPugCvar.m_API_Timeout->value), gPugCvar.m_API_Bearer->string, Data.dump(-1, ' ', false, nlohmann::json::error_handler_t::replace));
+				}
 			}
 		}
 	}

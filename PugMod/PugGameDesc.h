@@ -3,7 +3,7 @@
 class CPugGameDesc
 {
 public:
-    void Update();
+	void Update();
 };
 
 extern CPugGameDesc gPugGameDesc;
