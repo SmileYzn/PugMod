@@ -111,21 +111,33 @@ void CPugStats::SetState()
 
 			// Maximum Players
 			this->m_Match.MaxPlayers = static_cast<int>(gPugCvar.m_PlayersMax->value);
-            
-			// Loop each player
-			for (auto& Player : this->m_Player)
+
+			// Start the match with only the players who are on a team now
+			this->m_Player.clear();
+
+			// Get Players
+			auto Players = gPugUtil.GetPlayers();
+
+			// Loop
+			for (auto Team : {TERRORIST, CT})
 			{
-				// Clear player stats
-				Player.second.Stats[State].Reset();
+				for (auto const &Player : Players[Team])
+				{
+					auto Auth = this->GetAuthId(Player);
 
-				// Clear overtime stats of the previous match
-				Player.second.Stats[STATE_OVERTIME].Reset();
+					if (Auth)
+					{
+						auto &Data = this->m_Player[Auth];
 
-				// Clear Chat Log
-				Player.second.ChatLog.clear();
-            
-				// Clear player round stats
-				Player.second.Round.Reset();
+						Data.JoinGameTime = time(NULL);
+
+						Data.Name = STRING(Player->edict()->v.netname);
+
+						Data.Team = static_cast<int>(Player->m_iTeam);
+
+						Data.IsBot = Player->IsBot() ? 1 : 0;
+					}
+				}
 			}
 
 			// Clear event data

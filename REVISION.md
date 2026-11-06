@@ -22,7 +22,7 @@ Legend:
 |---|---|---|
 | Build (B) | B1, B2, B3, B6, B8, B9 (B4, B7 skipped) | B5, B10, B11, B12 🆕 |
 | High (A) | A1–A15 | — |
-| Medium (M) | M1–M12, M14, M15, M21–M23, M28, M29, M31, M37 | M13, M16–M20, M24–M27, M30, M32–M36 🆕 |
+| Medium (M) | M1–M15, M21–M23, M28, M29, M31, M37 | M16–M20, M24–M27, M30, M32–M36 🆕 |
 | Low (L) | L2, L4, L5, L8, L11–L15 | L1, L3, L6, L7, L9, L10 🆕 |
 
 M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other checked items, in the 2026-11-05 fixes.
@@ -97,9 +97,10 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
   - OT accumulates across all overtimes and is reset at the start of the match (FIRST_HALF).
   - `RestartRound` no longer resets OT.
   - `SetAnimation`, `TakeDamage` and `SendDeathMessage` only count with `m_bGameStarted`, which ignores the LO3.
-- [ ] **M13 ✔** `PugStats.cpp:40-60` — `m_Player` is only cleared in STATE_DEAD and in ServerActivate.
+- [x] **M13 ✔** `PugStats.cpp:40-60` — `m_Player` is only cleared in STATE_DEAD and in ServerActivate.
   - On END → VOTEMAP/DEATHMATCH on the same map, players from the previous match stay in the next match's JSON.
   - Those players carry the old Team, Winner and JoinGameTime, and also the old `Stats[OVERTIME]` if the new match has no OT.
+  - Fixed: on `STATE_FIRST_HALF`, `m_Player` is cleared and rebuilt with only the players on TR/CT at that moment (fresh entries, `JoinGameTime` = match start). Players who left or only played deathmatch no longer show up, and their `Winner` is no longer recalculated against the new match (validated 2026-11-06, Windows build OK).
 - [x] **M14** `PugStats.cpp` — JSON with `replace` and `ofstream` checked.
 - [x] **M15 ✔** `PugStats.cpp:1278` — `Result.Survives +=` (validated 2026-11-05).
 - [ ] **M16 ✔** (description revised) `PugStats.cpp:392-406` — the trade test (`Victim.KillTime <= 3s`) is **nested** inside `if (Killer.KillTime > 0)`. A trade only counts if the killer had already killed someone that round. Move the trade block out of that `if`.
