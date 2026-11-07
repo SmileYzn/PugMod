@@ -41,11 +41,9 @@ public:
 	void Set(std::string Auth, std::string Name, std::string Flag);
 	int ReadFlags(const char* Flags);
 	void PutInServer(edict_t* pEntity);
-	int GetFlags(int EntityIndex);
 	int Access(int EntityIndex, int Level);
-	int Access(std::string Auth, int Level);
-	std::string GetFlags(edict_t* pEdict);
 	bool CheckAccess(CBasePlayer *Player, int Level);
+	bool IsAdmin(int EntityIndex);
 private:
 	std::map<std::string, P_ADMIN> m_Data = {};
 	std::map<int, int> m_Flag = {};

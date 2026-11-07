@@ -51,20 +51,12 @@ void CPugAdmin::PutInServer(edict_t* pEntity)
 
 		if (Auth)
 		{
-			if (Auth[0] != '\0')
+			if (this->m_Data.find(Auth) != this->m_Data.end())
 			{
-				if (this->m_Data.find(Auth) != this->m_Data.end())
-				{
-					this->m_Flag[EntityIndex] |= this->ReadFlags(this->m_Data[Auth].Flag.c_str());
-				}
+				this->m_Flag[EntityIndex] |= this->ReadFlags(this->m_Data[Auth].Flag.c_str());
 			}
 		}
 	}
-}
-
-int CPugAdmin::GetFlags(int EntityIndex)
-{
-	return this->m_Flag[EntityIndex];
 }
 
 int CPugAdmin::Access(int EntityIndex, int Level)
@@ -74,39 +66,14 @@ int CPugAdmin::Access(int EntityIndex, int Level)
 		return 1;
 	}
 
-	return (this->m_Flag[EntityIndex] & Level);
-}
+	auto Flag = this->m_Flag.find(EntityIndex);
 
-int CPugAdmin::Access(std::string Auth, int Level)
-{
-	auto Admin = this->m_Data.find(Auth);
-
-	if (Admin != this->m_Data.end())
+	if (Flag != this->m_Flag.end())
 	{
-		if (Level == ADMIN_ALL)
-		{
-			return 1;
-		}
-
-		return (this->ReadFlags(Admin->second.Flag.c_str()) & Level);
+		return (Flag->second & Level);
 	}
 
 	return 0;
-}
-
-std::string CPugAdmin::GetFlags(edict_t* pEdict)
-{
-	auto Auth = GETPLAYERAUTHID(pEdict);
-
-	if (Auth)
-	{
-		if (this->m_Data.find(Auth) != this->m_Data.end())
-		{
-			return this->m_Data[Auth].Flag;
-		}
-	}
-
-	return "z";
 }
 
 bool CPugAdmin::CheckAccess(CBasePlayer *Player, int Level)
@@ -118,4 +85,20 @@ bool CPugAdmin::CheckAccess(CBasePlayer *Player, int Level)
 	}
 
 	return true;
+}
+
+bool CPugAdmin::IsAdmin(int EntityIndex)
+{
+	auto Flag = this->m_Flag.find(EntityIndex);
+
+	if (Flag != this->m_Flag.end())
+	{
+		// Any flag counts as admin, except the default "z" (ADMIN_USER) alone
+		if (Flag->second > ADMIN_ALL)
+		{
+			return (Flag->second != ADMIN_USER);
+		}
+	}
+
+	return false;
 }

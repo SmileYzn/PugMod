@@ -55,7 +55,7 @@ void CPugRageBan::DropClient(edict_t *pEntity, IGameClient *client)
 			{
 				if (Player->m_iTeam == TERRORIST || Player->m_iTeam == CT)
 				{
-					if (!Player->IsBot())
+					if (!Player->IsBot() && !gPugAdmin.IsAdmin(Player->entindex()))
 					{
 						auto AuthId = GETPLAYERAUTHID(pEntity);
 
