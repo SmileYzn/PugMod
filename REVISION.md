@@ -22,7 +22,7 @@ Legend:
 |---|---|---|
 | Build (B) | B1, B2, B3, B6, B8, B9 (B4, B7 skipped) | B5, B10, B11, B12 🆕 |
 | High (A) | A1–A15 | — |
-| Medium (M) | M1–M16, M21–M23, M28, M29, M31, M37 | M17–M20, M24–M27, M30, M32–M36 🆕 |
+| Medium (M) | M1–M17, M21–M23, M28, M29, M31, M37 | M18–M20, M24–M27, M30, M32–M36 🆕 |
 | Low (L) | L2, L4, L5, L8, L11–L15 | L1, L3, L6, L7, L9, L10 🆕 |
 
 M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other checked items, in the 2026-11-05 fixes.
@@ -105,7 +105,8 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
 - [x] **M15 ✔** `PugStats.cpp:1278` — `Result.Survives +=` (validated 2026-11-05).
 - [x] **M16 ✔** (description revised) `PugStats.cpp:392-406` — the trade test (`Victim.KillTime <= 3s`) is **nested** inside `if (Killer.KillTime > 0)`. A trade only counts if the killer had already killed someone that round. Move the trade block out of that `if`.
   - Fixed: the trade test is no longer nested in the double kill check, and it requires the victim to have a kill this round (`Victim.KillTime > 0`). `TradeDeaths` now follows the HLTV/Leetify meaning: it goes to the teammate whose death was avenged (new `P_ROUND_STATS::LastVictim`, set only on enemy kills), not to the player killed in the trade. Only the last victim is credited if the traded player killed several in a row (validated 2026-11-06, Windows build OK; not tested on a server).
-- [ ] **M17 ✔** `PugSpawnEdit.cpp:477` — `Index = size() + 1` can overwrite an existing spawn (keys are not contiguous after deletions). `:493-499` compares `m_Spawns[EntityIndex]` (the player's index) instead of the marked spawn.
+- [x] **M17 ✔** `PugSpawnEdit.cpp:477` — `Index = size() + 1` can overwrite an existing spawn (keys are not contiguous after deletions). `:493-499` compares `m_Spawns[EntityIndex]` (the player's index) instead of the marked spawn.
+  - Fixed: `-1` now always means "no spawn" (`ClosestSpawn`, `m_Marked`). `AddSpawn` uses the highest key + 1. `EditSpawn` moves the marked spawn directly and keeps its team (no more empty spawns at 0,0,0; spawn 0 is editable). `DeleteSpawn` does nothing without a marked spawn (pressing delete twice no longer wipes every spawn). `RemoveEntity` unmarks the players who had that spawn marked. `GlowEnt`/`UnGlowEnt` use `find` (validated 2026-11-06, Windows build OK; not tested on a server).
 - [ ] **M18 ✔** `PugSpread.cpp:35` — `Q_fabs(m_flNextPrimaryAttack) > 0.0f` is almost always true and zeroes the spread. There is also no cvar and no state check: it applies even in the first and second halves. Suggestion: `pug_spread_fix` cvar (default 0) plus a state check.
 - [ ] **M19 ✔** `PugRestrictItem.cpp:24` — `m_RestrictItem->string[Item]` without checking `strlen`.
 - [ ] **M20 ✔** `PugRageBan.cpp` — `m_Data` is not cleared on map change.

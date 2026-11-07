@@ -50,12 +50,16 @@ void CPugSpawnEdit::Menu(CBasePlayer* Player, int Page)
 
 	gPugMenu[Player->entindex()].AddItem(1, false, 0, _T("Add Spawn at current position"));
 
+	auto Marked = this->m_Marked.find(Player->entindex());
+
+	auto Entity = (Marked != this->m_Marked.end()) ? this->m_Entities.find(Marked->second) : this->m_Entities.end();
+
 	if (this->m_Spawns.empty())
 	{
 		gPugMenu[Player->entindex()].AddItem(2, true, 0, _T("Edit Spawn - No Spawn"));
 		gPugMenu[Player->entindex()].AddItem(3, true, 0, _T("Delete Spawn - No Spawn"));
 	}
-	else if (FNullEnt(this->m_Entities[this->m_Marked[Player->entindex()]]))
+	else if (Entity == this->m_Entities.end() || FNullEnt(Entity->second))
 	{
 		gPugMenu[Player->entindex()].AddItem(2, true, 0, _T("Edit Spawn - No Spawn Selected"));
 		gPugMenu[Player->entindex()].AddItem(3, true, 0, _T("Delete Spawn - No Spawn Selected"));
@@ -64,7 +68,7 @@ void CPugSpawnEdit::Menu(CBasePlayer* Player, int Page)
 	{
 		gPugMenu[Player->entindex()].AddItem(2, false, 0, _T("Move nearest Spawn (^yYellow^w) to current position"));
 
-		if ((Player->edict()->v.origin - this->m_Entities[this->m_Marked[Player->entindex()]]->v.origin).Length() > 200.0f)
+		if ((Player->edict()->v.origin - Entity->second->v.origin).Length() > 200.0f)
 		{
 			gPugMenu[Player->entindex()].AddItem(3, true, 0, _T("Delete Spawn - Selected Spawn too far"));
 		}
@@ -381,22 +385,40 @@ void CPugSpawnEdit::RemoveEntity(int EntityIndex)
 	}
 	else
 	{
-		if (!FNullEnt(this->m_Entities[EntityIndex]))
+		auto Entity = this->m_Entities.find(EntityIndex);
+
+		if (Entity != this->m_Entities.end())
 		{
-			REMOVE_ENTITY(this->m_Entities[EntityIndex]);
+			if (!FNullEnt(Entity->second))
+			{
+				REMOVE_ENTITY(Entity->second);
+			}
+
+			this->m_Entities.erase(Entity);
 		}
 
 		this->m_Spawns.erase(EntityIndex);
 
-		this->m_Entities[EntityIndex] = nullptr;
-
-		this->m_Marked[EntityIndex] = -1;
+		for (auto &Marked : this->m_Marked)
+		{
+			if (Marked.second == EntityIndex)
+			{
+				Marked.second = -1;
+			}
+		}
 	}
 }
 
 void CPugSpawnEdit::GlowEnt(int EntityIndex, vec3_t Color)
 {
-	auto pEntity = this->m_Entities[EntityIndex];
+	auto Entity = this->m_Entities.find(EntityIndex);
+
+	if (Entity == this->m_Entities.end())
+	{
+		return;
+	}
+
+	auto pEntity = Entity->second;
 
 	if (!FNullEnt(pEntity))
 	{
@@ -414,7 +436,14 @@ void CPugSpawnEdit::GlowEnt(int EntityIndex, vec3_t Color)
 
 void CPugSpawnEdit::UnGlowEnt(int EntityIndex)
 {
-	auto pEntity = this->m_Entities[EntityIndex];
+	auto Entity = this->m_Entities.find(EntityIndex);
+
+	if (Entity == this->m_Entities.end())
+	{
+		return;
+	}
+
+	auto pEntity = Entity->second;
 
 	if (!FNullEnt(pEntity))
 	{
@@ -474,7 +503,7 @@ void CPugSpawnEdit::AddSpawn(CBasePlayer* Player, int Team)
 
 	Info.VAngles = Player->edict()->v.v_angle;
 
-	size_t Index = this->m_Spawns.size() + 1;
+	int Index = this->m_Spawns.empty() ? 0 : (this->m_Spawns.rbegin()->first + 1);
 
 	this->m_Spawns[Index] = Info;
 
@@ -488,57 +517,40 @@ void CPugSpawnEdit::AddSpawn(CBasePlayer* Player, int Team)
 
 void CPugSpawnEdit::EditSpawn(CBasePlayer *Player)
 {
-	auto EntityIndex = Player->entindex();
+	auto Marked = this->m_Marked.find(Player->entindex());
 
-	auto pEntity = this->m_Marked[EntityIndex];
-
-	if (!FNullEnt(pEntity))
+	if (Marked != this->m_Marked.end() && Marked->second >= 0)
 	{
-		for (auto const& Spawn : this->m_Spawns)
+		auto Spawn = this->m_Spawns.find(Marked->second);
+
+		if (Spawn != this->m_Spawns.end())
 		{
-			if ((this->m_Spawns[EntityIndex].Vecs[0] == Spawn.second.Vecs[0]) && (this->m_Spawns[EntityIndex].Vecs[1] == Spawn.second.Vecs[1]) && ((this->m_Spawns[EntityIndex].Vecs[2] - Spawn.second.Vecs[2]) <= 15.0f))
-			{
-				this->RemoveEntity(this->m_Marked[EntityIndex]);
+			Spawn->second.Vecs = Player->edict()->v.origin;
 
-				this->m_Spawns[this->m_Marked[EntityIndex]].Vecs = Player->edict()->v.origin;
+			Spawn->second.Angles = Player->edict()->v.angles;
 
-				this->m_Spawns[this->m_Marked[EntityIndex]].Angles = Player->edict()->v.angles;
+			Spawn->second.VAngles = Player->edict()->v.v_angle;
 
-				this->m_Spawns[this->m_Marked[EntityIndex]].Team = 0;
+			this->MakeEntity(Spawn->first);
 
-				this->m_Spawns[this->m_Marked[EntityIndex]].VAngles = Player->edict()->v.v_angle;
-
-				this->MakeEntity(this->m_Marked[EntityIndex]);
-
-				this->GlowEnt(this->m_Marked[EntityIndex], Vector(255.0f, 0.0f, 0.0f));
-
-				break;
-			}
+			this->GlowEnt(Spawn->first, Vector(255.0f, 0.0f, 0.0f));
 		}
 	}
 }
 
-void CPugSpawnEdit::DeleteSpawn(int EntityIndex)
+void CPugSpawnEdit::DeleteSpawn(int PlayerIndex)
 {
-	this->UnGlowEnt(this->m_Marked[EntityIndex]);
+	auto Marked = this->m_Marked.find(PlayerIndex);
 
-	this->RemoveEntity(this->m_Marked[EntityIndex]);
-
-	auto it = this->m_Spawns.find(this->m_Marked[EntityIndex]);
-
-	if (it != this->m_Spawns.end())
+	if (Marked != this->m_Marked.end() && Marked->second >= 0)
 	{
-		this->m_Spawns.erase(it);
+		this->RemoveEntity(Marked->second);
 	}
-
-	this->MakeEntity(-1);
-
-	this->m_Marked[EntityIndex] = -1;
 }
 
 int CPugSpawnEdit::ClosestSpawn(edict_t* pEdict)
 {
-	auto Result = 0;
+	auto Result = -1;
 
 	if (!FNullEnt(pEdict))
 	{

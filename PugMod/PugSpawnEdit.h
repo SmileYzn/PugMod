@@ -21,7 +21,7 @@ public:
 	void SetPosition(int EntityIndex);
 	void AddSpawn(CBasePlayer* Player, int Team);
 	void EditSpawn(CBasePlayer *Player);
-	void DeleteSpawn(int EntityIndex);
+	void DeleteSpawn(int PlayerIndex);
 	int ClosestSpawn(edict_t* pEdict);
 	void Refresh(CBasePlayer* Player);
 	void ShowStats(CBasePlayer* Player);
