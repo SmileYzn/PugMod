@@ -20,7 +20,7 @@ Legend:
 
 | Group | Done | Pending |
 |---|---|---|
-| Build (B) | B1, B2, B3, B6, B8, B9 (B4, B7 skipped) | B5, B10, B11, B12 🆕 |
+| Build (B) | B1, B2, B3, B6, B8, B9, B10 (B4, B7 skipped) | B5, B11, B12 🆕 |
 | High (A) | A1–A15 | — |
 | Medium (M) | M1–M23, M28, M29, M31, M37 | M24–M27, M30, M32–M36 🆕 |
 | Low (L) | L2, L4, L5, L8, L11–L15 | L1, L3, L6, L7, L9, L10 🆕 |
@@ -45,7 +45,8 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
   - Real precompiled header (`precompiled.h.gch`, generated once; `*.gch` in `.gitignore`, removed by `make clean`). The `#pragma once` in `precompiled.h` became an include guard, because GCC 7 warns "#pragma once in main file".
   - `-isystem` for Metamod and CSSDK: warnings from inside the SDK no longer show up.
   - Result: 60 s → 19 s on Arch (4 cores) and 16 s in the CI container, **0 warnings**. The `.so` is the same (1.08 MB, 57 exported symbols, GLIBC_2.4).
-- [ ] **B10 🆕** `PugMod.vcxproj:61, 83`: `PrecompiledHeader` is set to `Create` at project level, so every `.cpp` recreates the PCH. It should be `Use` at project level and `Create` only on `precompiled.cpp` (which already has `Create` on lines 103-104). Do it together with B5, on Windows.
+- [x] **B10 🆕** `PugMod.vcxproj:61, 83`: `PrecompiledHeader` is set to `Create` at project level, so every `.cpp` recreates the PCH. It should be `Use` at project level and `Create` only on `precompiled.cpp` (which already has `Create` on lines 103-104). Do it together with B5, on Windows.
+  - Fixed: `Use` at project level, `Create` only on `precompiled.cpp` (a separate `ClCompile` item; the old `$(Identity)` condition never matched, so the file never got `Create`), and `MultiProcessorCompilation` on. The D9030 warning is gone. Release Rebuild: 80.1 s → 10.4 s (validated 2026-11-07).
 - [ ] **B11 🆕 ✔** `PostBuild.sh:16, 47`: with several network interfaces (e.g. Docker bridges, 172.17.x/172.18.x/172.19.x), `ipAddress` gets several IPs, one per line, and `eval` breaks ("192.168.100.182: command not found"). The script has already killed hlds and copied the `.so` before failing, so the server does not start. Fix: take only the first IP (`... | head -n1`) or the default route IP (`ip -4 route get 1.1.1.1 | grep -oP '(?<=src )[\d.]+'`).
 - [ ] **B12 🆕 ✔** `PostBuild.ps1:28`: same problem as B11 on Windows. With Ethernet and Wi-Fi both `Preferred`, `$hldsIP` becomes an array of IPs. Fix: `Select-Object -First 1`. The HLDS path is also hardcoded in the versioned script.
 
