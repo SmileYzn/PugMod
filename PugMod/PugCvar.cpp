@@ -179,8 +179,8 @@ void CPugCvar::ServerActivate()
 	// 0 Disable restriction on slot
 	// 1 Enable restriction on slot 
 	//
-	// Default "000000000000000000000000000000000000000"
-	this->m_RestrictItem = this->Register("pug_restrict_item", "000000000000000000000000000000000000000");
+	// Default "0000000000000000000000000000000000000000"
+	this->m_RestrictItem = this->Register("pug_restrict_item", "0000000000000000000000000000000000000000");
 
 	// Enable Sounds
 	//

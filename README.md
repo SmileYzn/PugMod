@@ -97,7 +97,7 @@
 | pug_ready_time_limit | 60.0 | Time in seconds before starting once all players are in game |
 | pug_team_type | 0 | Team selection mode (Vote, Captains, Shuffle, etc.) |
 | pug_team_option | abcdef | Options available in team vote menu |
-| pug_restrict_item | 000000000000000000000000000000000000000 | Weapon/item restriction per slot |
+| pug_restrict_item | 0000000000000000000000000000000000000000 | Weapon/item restriction per slot |
 | pug_sound_enable | 1 | Enable sounds |
 | pug_vote_delay | 15.0 | Vote time limit |
 | pug_vote_percent | 0.70 | Vote success percentage requirement |
