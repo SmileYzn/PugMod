@@ -22,7 +22,7 @@ Legend:
 |---|---|---|
 | Build (B) | B1, B2, B3, B6, B8, B9, B10 (B4, B7 skipped) | B5, B11, B12 🆕 |
 | High (A) | A1–A15 | — |
-| Medium (M) | M1–M23, M28, M29, M31, M37 | M24–M27, M30, M32–M36 🆕 |
+| Medium (M) | M1–M24, M28, M29, M31, M37 | M25–M27, M30, M32–M36 🆕 |
 | Low (L) | L2, L4, L5, L8, L11–L15 | L1, L3, L6, L7, L9, L10 🆕 |
 
 M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other checked items, in the 2026-11-05 fixes.
@@ -123,9 +123,10 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
 - [x] **M21 🆕 ✔** `PugVoteMap.cpp:41` — with an empty maplist, the switch to VOTETEAM is now scheduled with `gPugTask.Create(SET_STATE, 1.0f, ...)`, with no recursive `SetState`. The translation of the optional message "Map list is empty, skipping map vote." is in `language.cfg` (validated 2026-11-05).
 - [x] **M22 🆕 ✔** `PugVoteMap.cpp` — an empty map menu (every map was the current or the last one) caused a vote loop. Fixed: `LoadMaps()` does not load the current or the last map; with an empty list, it goes to VOTETEAM with the message "No maps available to vote, skipping map vote." (translated in `language.cfg`). `This`/`Last` removed, `GetRandom()` simplified (validated 2026-11-05, clean build OK).
 - [x] **M23 🆕 ✔** `PugAdmin.cpp` — `Access(..., ADMIN_ADMIN)` by index was always false (everyone gets "z"). Fixed: "y" is now tested as a regular flag (`Flags & Level`) in both versions of `Access`; "z" is still given to everyone. `adminlist.cfg` documents "d" and "v" (validated 2026-11-05).
-- [ ] **M24 🆕** `PugAdminMenu.cpp:130-134, 177-210, 256-296, 341-369` and `PugVoteMenu.cpp:191-242` — the kick/ban/slap/vote kick target is identified only by entindex.
+- [x] **M24 🆕** `PugAdminMenu.cpp:130-134, 177-210, 256-296, 341-369` and `PugVoteMenu.cpp:191-242` — the kick/ban/slap/vote kick target is identified only by entindex.
   - If the target leaves and another player (or an immune admin) takes the same slot before the click, the new occupant is punished.
   - Fix: store `GETPLAYERUSERID` in the item and, in the handler, validate the userid and check `ADMIN_IMMUNITY` again.
+  - Fixed: kick, ban, slap, team and vote kick menus store the target userid (unique per connection) instead of the slot. Handlers find the player with the new `CPugUtil::GetPlayerByUserId` and check `ADMIN_IMMUNITY` again (`CPugAdminMenu::GetTarget`), with the messages "No player found." and the new "has immunity.". Also: the team menu ignores the disabled current-team item, ban duration items use `"%s"`, and the ban commands no longer go through `_T()` (validated 2026-11-07, Windows build OK; not tested on a server).
 - [ ] **M25 🆕** Generic AuthIds treated as unique:
   - `PugAdminMenu.cpp:206`: `banid` with `STEAM_ID_LAN`/`STEAM_ID_PENDING`/`HLTV` bans everyone with the same ID.
   - `PugStats.cpp:191`: those players' stats are added together.

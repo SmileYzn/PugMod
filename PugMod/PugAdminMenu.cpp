@@ -109,7 +109,7 @@ void CPugAdminMenu::Kick(CBasePlayer *Player)
 			{
 				if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
 				{
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, "%s", STRING(Target->edict()->v.netname));
+					gPugMenu[Player->entindex()].AddItem(GETPLAYERUSERID(Target->edict()), false, 0, "%s", STRING(Target->edict()->v.netname));
 				}
 			}
 
@@ -130,7 +130,7 @@ void CPugAdminMenu::KickHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 	{
 		if (gPugAdmin.CheckAccess(Player, ADMIN_KICK))
 		{
-			auto Target = UTIL_PlayerByIndexSafe(Item.Info);
+			auto Target = this->GetTarget(Player, Item.Info);
 
 			if (Target)
 			{
@@ -156,7 +156,7 @@ void CPugAdminMenu::Ban(CBasePlayer *Player)
 			{
 				if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
 				{
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, "%s", STRING(Target->edict()->v.netname));
+					gPugMenu[Player->entindex()].AddItem(GETPLAYERUSERID(Target->edict()), false, -1, "%s", STRING(Target->edict()->v.netname));
 				}
 			}
 
@@ -177,7 +177,7 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 	{
 		if (gPugAdmin.CheckAccess(Player, ADMIN_BAN|ADMIN_BAN_TEMP))
 		{
-			auto Target = UTIL_PlayerByIndexSafe(Item.Info);
+			auto Target = this->GetTarget(Player, Item.Info);
 
 			if (Target)
 			{
@@ -198,7 +198,7 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 
 						if (TimeUnit.length() > 0)
 						{
-							gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, Time, TimeUnit.c_str());
+							gPugMenu[Player->entindex()].AddItem(GETPLAYERUSERID(Target->edict()), false, Time, "%s", TimeUnit.c_str());
 						}
 					}
 
@@ -206,14 +206,18 @@ void CPugAdminMenu::BanHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 				}
 				else
 				{
-					gPugUtil.ServerCommand(_T("banid %d %s"), Item.Extra, GETPLAYERAUTHID(Target->edict()));
+					gPugUtil.ServerCommand("banid %d %s", Item.Extra, GETPLAYERAUTHID(Target->edict()));
 
-					gPugUtil.ServerCommand(_T("wait;wait;writeid;writeip"));
+					gPugUtil.ServerCommand("wait;wait;writeid");
 
 					gPugUtil.ClientDrop(Target->entindex(), _T("You have been banned from the server"));
 
 					this->Ban(Player);
 				}
+			}
+			else
+			{
+				this->Ban(Player);
 			}
 		}
 	}
@@ -241,7 +245,7 @@ void CPugAdminMenu::Slap(CBasePlayer *Player)
 			{
 				if (Target->IsAlive())
 				{
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, -1, "%s", STRING(Target->edict()->v.netname));
+					gPugMenu[Player->entindex()].AddItem(GETPLAYERUSERID(Target->edict()), false, -1, "%s", STRING(Target->edict()->v.netname));
 				}
 			}
 		}
@@ -256,27 +260,29 @@ void CPugAdminMenu::SlapHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 	{
 		if (gPugAdmin.CheckAccess(Player, ADMIN_SLAY))
 		{
-			auto Target = UTIL_PlayerByIndexSafe(Item.Info);
+			auto Target = this->GetTarget(Player, Item.Info);
 
 			if (Target)
 			{
 				if (Item.Extra < 0)
 				{
+					auto UserId = GETPLAYERUSERID(Target->edict());
+
 					gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_SLAP, _T("Slap: ^w%s^y"), STRING(Target->edict()->v.netname));
 
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 0, _T("No Damage"));
+					gPugMenu[Player->entindex()].AddItem(UserId, false, 0, _T("No Damage"));
 
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 1, _T("Slap 1 HP"));
+					gPugMenu[Player->entindex()].AddItem(UserId, false, 1, _T("Slap 1 HP"));
 
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 5, _T("Slap 5 HP"));
+					gPugMenu[Player->entindex()].AddItem(UserId, false, 5, _T("Slap 5 HP"));
 
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 10, _T("Slap 10 HP"));
+					gPugMenu[Player->entindex()].AddItem(UserId, false, 10, _T("Slap 10 HP"));
 
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 25, _T("Slap 25 HP"));
+					gPugMenu[Player->entindex()].AddItem(UserId, false, 25, _T("Slap 25 HP"));
 
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 50, _T("Slap 50 HP"));
+					gPugMenu[Player->entindex()].AddItem(UserId, false, 50, _T("Slap 50 HP"));
 
-					gPugMenu[Player->entindex()].AddItem(Target->entindex(), false, 100, _T("Kill Player"));
+					gPugMenu[Player->entindex()].AddItem(UserId, false, 100, _T("Kill Player"));
 
 					gPugMenu[Player->entindex()].Show(Player);
 				}
@@ -326,7 +332,7 @@ void CPugAdminMenu::Team(CBasePlayer *Player)
 			{
 				if (!gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
 				{
-					gPugMenu[Player->entindex()].AddItem(0, false, Target->entindex(), "%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamNameShort[Target->m_iTeam]);
+					gPugMenu[Player->entindex()].AddItem(0, false, GETPLAYERUSERID(Target->edict()), "%s \\R\\y%s", STRING(Target->edict()->v.netname), g_Pug_TeamNameShort[Target->m_iTeam]);
 				}
 			}
 		}
@@ -341,21 +347,28 @@ void CPugAdminMenu::TeamHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 	{
 		if (gPugAdmin.CheckAccess(Player, ADMIN_LEVEL_A))
 		{
-			auto Target = UTIL_PlayerByIndexSafe(Item.Extra);
+			auto Target = this->GetTarget(Player, Item.Extra);
 
 			if (Target)
 			{
 				if (Item.Info == 0)
 				{
+					auto UserId = GETPLAYERUSERID(Target->edict());
+
 					gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU_TEAM, _T("Transfer Team: ^w%s^y"), STRING(Target->edict()->v.netname));
 
-					gPugMenu[Player->entindex()].AddItem(TERRORIST, Target->m_iTeam == TERRORIST, Target->entindex(), g_Pug_TeamName[TERRORIST]);
+					gPugMenu[Player->entindex()].AddItem(TERRORIST, Target->m_iTeam == TERRORIST, UserId, "%s", g_Pug_TeamName[TERRORIST]);
 
-					gPugMenu[Player->entindex()].AddItem(CT, Target->m_iTeam == CT, Target->entindex(), g_Pug_TeamName[CT]);
+					gPugMenu[Player->entindex()].AddItem(CT, Target->m_iTeam == CT, UserId, "%s", g_Pug_TeamName[CT]);
 
-					gPugMenu[Player->entindex()].AddItem(SPECTATOR, Target->m_iTeam == SPECTATOR, Target->entindex(), g_Pug_TeamName[SPECTATOR]);
+					gPugMenu[Player->entindex()].AddItem(SPECTATOR, Target->m_iTeam == SPECTATOR, UserId, "%s", g_Pug_TeamName[SPECTATOR]);
 
 					gPugMenu[Player->entindex()].Show(Player);
+				}
+				else if (Target->m_iTeam == Item.Info)
+				{
+					// Disabled item: the player is already on this team
+					this->Team(Player);
 				}
 				else
 				{
@@ -457,4 +470,25 @@ void CPugAdminMenu::PugHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 			}
 		}
 	}
+}
+
+CBasePlayer *CPugAdminMenu::GetTarget(CBasePlayer *Player, int UserId)
+{
+	// The menu stores the target userid: a player who took the same slot is not the target
+	auto Target = gPugUtil.GetPlayerByUserId(UserId);
+
+	if (!Target)
+	{
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No player found."), gPugCvar.m_Tag->string);
+		return nullptr;
+	}
+
+	// Immunity can change after the menu was built (e.g. an admin list reload on map change)
+	if (gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
+	{
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 has immunity."), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname));
+		return nullptr;
+	}
+
+	return Target;
 }

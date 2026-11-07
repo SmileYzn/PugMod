@@ -769,6 +769,28 @@ void CPugUtil::DrawLine(Vector Start, Vector End, int Life, int Red, int Green, 
 	MESSAGE_END();
 }
 
+CBasePlayer *CPugUtil::GetPlayerByUserId(int UserId)
+{
+	// The userid is unique per connection: a player who takes the same slot later gets another one
+	if (UserId > 0)
+	{
+		for (int i = 1; i <= gpGlobals->maxClients; ++i)
+		{
+			auto Player = UTIL_PlayerByIndexSafe(i);
+
+			if (Player)
+			{
+				if (!Player->IsDormant() && GETPLAYERUSERID(Player->edict()) == UserId)
+				{
+					return Player;
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 std::vector<CBasePlayer *> CPugUtil::GetPlayers(bool InGame, bool Bots)
 {
 	std::vector<CBasePlayer *> Players = {};

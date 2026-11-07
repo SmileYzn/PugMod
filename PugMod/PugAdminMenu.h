@@ -36,6 +36,9 @@ public:
 
 	void Pug(CBasePlayer *Player);
 	void PugHandle(CBasePlayer *Player, P_MENU_ITEM Item);
+
+private:
+	CBasePlayer *GetTarget(CBasePlayer *Player, int UserId);
 };
 
 extern CPugAdminMenu gPugAdminMenu;

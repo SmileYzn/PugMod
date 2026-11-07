@@ -168,7 +168,7 @@ bool CPugVoteMenu::VoteKick(CBasePlayer *Player)
 							}
 						}
 
-						gPugMenu[Player->entindex()].AddItem(Target->entindex(), this->m_VoteKick[Player->entindex()][Target->entindex()], 0, "%s \\y\\R%2.0f%%", STRING(Target->edict()->v.netname), ((Count * 100.0f) / Needs));
+						gPugMenu[Player->entindex()].AddItem(GETPLAYERUSERID(Target->edict()), this->m_VoteKick[Player->entindex()][Target->entindex()], 0, "%s \\y\\R%2.0f%%", STRING(Target->edict()->v.netname), ((Count * 100.0f) / Needs));
 					}
 				}
 			}
@@ -188,7 +188,25 @@ bool CPugVoteMenu::VoteKick(CBasePlayer *Player)
 
 bool CPugVoteMenu::VoteKickHandle(CBasePlayer *Player, P_MENU_ITEM Item)
 {
-	auto Target = UTIL_PlayerByIndexSafe(Item.Info);
+	// The menu stores the target userid: a player who took the same slot is not the target
+	auto Target = gPugUtil.GetPlayerByUserId(Item.Info);
+
+	if (!Target)
+	{
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 No player found."), gPugCvar.m_Tag->string);
+		return false;
+	}
+
+	if (Target == Player)
+	{
+		return false;
+	}
+
+	if (gPugAdmin.Access(Target->entindex(), ADMIN_IMMUNITY))
+	{
+		gPugUtil.PrintColor(Player->edict(), E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 has immunity."), gPugCvar.m_Tag->string, STRING(Target->edict()->v.netname));
+		return false;
+	}
 
 	if (Target)
 	{
