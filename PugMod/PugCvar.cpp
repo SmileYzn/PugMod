@@ -155,7 +155,7 @@ void CPugCvar::ServerActivate()
 	// 1 Enabled
 	//
 	// Default "0"
-	this->m_ReadyForce = this->Register("pug_ready_list_force", "0");
+	this->m_ReadyForce = this->Register("pug_ready_force", "0");
 
 	// Team system mode
 	// 
