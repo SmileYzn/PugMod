@@ -148,6 +148,15 @@ void CPugCvar::ServerActivate()
 	// Default "60.0"
 	this->m_ReadyTimeLimit = this->Register("pug_ready_time_limit", "60.0");
 
+	// Force players use ready system on swap teams to continue match
+	// This will enable ready system even if teams are complete in halftime
+	//
+	// 0 Disabled
+	// 1 Enabled
+	//
+	// Default "0"
+	this->m_ReadyForce = this->Register("pug_ready_list_force", "0");
+
 	// Team system mode
 	// 
 	// 0 Vote

@@ -205,7 +205,14 @@ int CPugMod::SetState(int State)
 			}
 			else
 			{
-				gPugTask.Create(E_TASK::SET_STATE, 3.0f, false, NextState);
+				if (gPugCvar.m_ReadyForce->value != 0.0f)
+				{
+					gPugReady.Init(NextState);
+				}
+				else
+				{
+					gPugTask.Create(E_TASK::SET_STATE, 3.0f, false, NextState);
+				}
 			}
             
 			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 started: Get ready!!"), gPugCvar.m_Tag->string, gPugMod.GetString(State));

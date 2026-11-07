@@ -38,6 +38,7 @@ public:
 	cvar_t* m_ReadyType;
 	cvar_t* m_ReadyList;
 	cvar_t* m_ReadyTimeLimit;
+	cvar_t* m_ReadyForce;
 	cvar_t* m_TeamType;
 	cvar_t* m_TeamOption;
 	cvar_t* m_RestrictItem;

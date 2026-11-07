@@ -95,6 +95,7 @@
 | pug_ready_type | 1 | Ready system mode (0 Off / 1 Auto / 2 Manual) |
 | pug_ready_list | 0 | Ready list display type (0 Full list / 1 Only numbers) |
 | pug_ready_time_limit | 60.0 | Time in seconds before starting once all players are in game |
+| pug_ready_list_force | 0 | Force the ready system at halftime even if teams are complete (0 Disabled / 1 Enabled) |
 | pug_team_type | 0 | Team selection mode (Vote, Captains, Shuffle, etc.) |
 | pug_team_option | abcdef | Options available in team vote menu |
 | pug_restrict_item | 0000000000000000000000000000000000000000 | Weapon/item restriction per slot |
