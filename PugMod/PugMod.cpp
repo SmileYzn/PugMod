@@ -188,33 +188,28 @@ int CPugMod::SetState(int State)
 		{
 			this->SwapTeams();
 
-			auto Players = gPugUtil.GetPlayers(true, true);
+			auto Players = gPugUtil.GetPlayers();
 
-			auto NextState = (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value)) ? STATE_SECOND_HALF : STATE_OVERTIME;
+			auto PlayersMin = static_cast<size_t>(gPugCvar.m_PlayersMin->value);
 
-			if (Players.size() < static_cast<size_t>(gPugCvar.m_PlayersMin->value * 2.0f))
+			auto NewState = (this->GetRound() < static_cast<int>(gPugCvar.m_Rounds->value)) ? STATE_SECOND_HALF : STATE_OVERTIME;
+
+			if ((Players[TERRORIST].size() < PlayersMin) || (Players[CT].size() < PlayersMin) || gPugCvar.m_ReadyForce->value != 0.0f)
 			{
-				if (gPugCvar.m_ReadyType->value == 1.0f)
+				if (gPugCvar.m_ReadyType->value == 1.0f && gPugCvar.m_ReadyForce->value == 0.0f)
 				{
-					gPugTimer.Init(NextState);
+					gPugTimer.Init(NewState);
 				}
-				else if (gPugCvar.m_ReadyType->value == 2.0f)
+				else
 				{
-					gPugReady.Init(NextState);
+					gPugReady.Init(NewState);
 				}
 			}
 			else
 			{
-				if (gPugCvar.m_ReadyForce->value != 0.0f)
-				{
-					gPugReady.Init(NextState);
-				}
-				else
-				{
-					gPugTask.Create(E_TASK::SET_STATE, 3.0f, false, NextState);
-				}
+				gPugTask.Create(E_TASK::SET_STATE, 3.0f, false, NewState);
 			}
-            
+
 			gPugUtil.PrintColor(nullptr, E_PRINT_TEAM::DEFAULT, _T("^4[%s]^1 ^3%s^1 started: Get ready!!"), gPugCvar.m_Tag->string, gPugMod.GetString(State));
 			break;
 		}
