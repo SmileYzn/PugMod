@@ -322,6 +322,7 @@ typedef struct S_PLAYER_DATA
 	int Team;					// BETA: Plyer Team
 	int	Winner;					// BETA: Is Winner of match
 	int IsBot;					// BETA: Is BOT
+	int RageQuit;				// BETA: Rage Quit
 
 	// Player Stats (Per Half)
 	std::map<int, P_PLAYER_STATS> Stats;
@@ -359,6 +360,7 @@ public:
 	const char* GetAuthId(CBasePlayer* Player);
 	void GetIntoGame(CBasePlayer* Player);
 	void DropClient(edict_t *pEntity);
+	void SetRageQuit(const char *Auth);
 	void ChooseTeam(CBasePlayer* Player);
 	void SwitchTeam(CBasePlayer* Player);
 	void SetAnimation(CBasePlayer* Player, PLAYER_ANIM playerAnim);

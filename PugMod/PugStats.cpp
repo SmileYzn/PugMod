@@ -136,6 +136,8 @@ void CPugStats::SetState()
 						Data.Team = static_cast<int>(Player->m_iTeam);
 
 						Data.IsBot = Player->IsBot() ? 1 : 0;
+
+						Data.RageQuit = 0;
 					}
 				}
 			}
@@ -223,6 +225,8 @@ void CPugStats::GetIntoGame(CBasePlayer *Player)
 		this->m_Player[Auth].Team = static_cast<int>(Player->m_iTeam);
 
 		this->m_Player[Auth].IsBot = Player->IsBot() ? 1 : 0;
+
+		this->m_Player[Auth].RageQuit = 0;
 	}
 }
 
@@ -237,6 +241,20 @@ void CPugStats::DropClient(edict_t *pEntity)
 		if (Auth)
 		{
 			this->m_Player[Auth].DisconnectTime = time(NULL);
+		}
+	}
+}
+
+void CPugStats::SetRageQuit(const char *Auth)
+{
+	if (Auth)
+	{
+		// Only players who took part in the match (no new entry is created)
+		auto Player = this->m_Player.find(Auth);
+
+		if (Player != this->m_Player.end())
+		{
+			Player->second.RageQuit = 1;
 		}
 	}
 }
@@ -1279,6 +1297,7 @@ void CPugStats::DumpData()
 				{"Team", Player.second.Team},
 				{"Winner", Player.second.Winner},
 				{"IsBot", Player.second.IsBot},
+				{"RageQuit", Player.second.RageQuit}
 			};
 			//
 			// Player Stats (OK)

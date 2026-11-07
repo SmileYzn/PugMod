@@ -131,6 +131,8 @@ void DLL_POST_ServerActivate(edict_t *pEdictList, int edictCount, int clientMax)
 
 	gPugTask.ServerActivate();
 
+	gPugRageBan.ServerActivate();
+
 	gPugLang.ServerActivate();
 
 	gPugAdmin.ServerActivate();

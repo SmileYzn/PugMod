@@ -22,7 +22,7 @@ Legend:
 |---|---|---|
 | Build (B) | B1, B2, B3, B6, B8, B9 (B4, B7 skipped) | B5, B10, B11, B12 🆕 |
 | High (A) | A1–A15 | — |
-| Medium (M) | M1–M19, M21–M23, M28, M29, M31, M37 | M20, M24–M27, M30, M32–M36 🆕 |
+| Medium (M) | M1–M23, M28, M29, M31, M37 | M24–M27, M30, M32–M36 🆕 |
 | Low (L) | L2, L4, L5, L8, L11–L15 | L1, L3, L6, L7, L9, L10 🆕 |
 
 M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other checked items, in the 2026-11-05 fixes.
@@ -111,10 +111,11 @@ M7, M8, M9 and M10 were done in commits `c55a316` and `2cea70d`; the other check
   - Fixed: new cvar `pug_spread_fix` (default 1, valid in every state while on). With it on, a player standing still (on the ground, at most half speed) has no spread on the first shot of a burst (`m_iShotsFired <= 1`); snipers only when scoped. The spray keeps the normal spread. `IsPlayer()` check added. Documented in `pugmod.cfg` and README (validated 2026-11-06, Windows build OK; not tested on a server).
 - [x] **M19 ✔** `PugRestrictItem.cpp:24` — `m_RestrictItem->string[Item]` without checking `strlen`.
   - Fixed: slots beyond the end of the cvar string are not restricted (no read past the string; the 39-character default no longer blocks slot 39), only `'1'` restricts, and the "Weapon not available" message is shown only when buying (touching a weapon on the ground no longer spams it every frame). Wrong comment in `pugmod.cfg` fixed (validated 2026-11-06, Windows build OK).
-- [ ] **M20 ✔** `PugRageBan.cpp` — `m_Data` is not cleared on map change.
+- [x] **M20 ✔** `PugRageBan.cpp` — `m_Data` is not cleared on map change.
   - `CheckTime` uses the previous map's `gpGlobals->time`.
   - `banid` with a generic authid (`STEAM_ID_LAN`, `STEAM_ID_PENDING`, `VALVE_ID_LAN`) bans everyone with the same ID.
   - Messages do not go through `_T()`, so they are not translated.
+  - Fixed: the deadline uses the real clock (`time()`), and `ServerActivate` resumes the check after a map change. The SteamID and the IP (from the ReHLDS `IGameClient`) are stored; a normal SteamID gets `banid` + `addip`, a generic one (`*_ID_LAN`, `*_ID_PENDING`, `HLTV`, ...) only `addip`, and the player is identified by IP when coming back. Banned players get `RageQuit 1` in the match stats (`CPugStats::SetRageQuit`). Messages use `_T()` with new translations; the server commands no longer do (validated 2026-11-06, Windows build OK; not tested on a server).
 
 ### New
 
