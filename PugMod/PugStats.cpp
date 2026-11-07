@@ -415,17 +415,30 @@ void CPugStats::SendDeathMessage(CBaseEntity *KillerBaseEntity, CBasePlayer *Vic
 							{
 								this->m_Player[KillerAuth].Stats[State].DoubleKill++;
 							}
-	
-							if (Killer->m_iTeam != Victim->m_iTeam)
+						}
+
+						if (Killer->m_iTeam != Victim->m_iTeam)
+						{
+							// Trade: the victim killed one of the killer's teammates in the last 3 seconds
+							if (this->m_Player[VictimAuth].Round.KillTime > 0.0f)
 							{
 								if ((gpGlobals->time - this->m_Player[VictimAuth].Round.KillTime) <= 3.0f)
 								{
 									this->m_Player[KillerAuth].Stats[State].TradeKills++;
-									this->m_Player[VictimAuth].Stats[State].TradeDeaths++;
+
+									// The teammate whose death was avenged gets the traded death
+									auto Traded = this->m_Player.find(this->m_Player[VictimAuth].Round.LastVictim);
+
+									if (Traded != this->m_Player.end())
+									{
+										Traded->second.Stats[State].TradeDeaths++;
+									}
 								}
 							}
+
+							this->m_Player[KillerAuth].Round.LastVictim = VictimAuth;
 						}
-	
+
 						this->m_Player[KillerAuth].Round.KillTime = gpGlobals->time;
 	
 						this->m_Player[VictimAuth].Round.DeathTime = gpGlobals->time;

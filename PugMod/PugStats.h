@@ -120,6 +120,7 @@ typedef struct S_ROUND_STATS
 	int Versus;				// BETA: Player is versus X players
 	float KillTime;			// BETA: Last Kill Time
 	float DeathTime;		// BETA: Last Death Time
+	std::string LastVictim;	// BETA: Auth of the last enemy killed this round
 
 	// Damage dealt to other players
 	std::map<std::string, int> PlayerDamage;
@@ -140,6 +141,7 @@ typedef struct S_ROUND_STATS
 		this->Versus = 0;
 		this->KillTime = 0;
 		this->DeathTime = 0;
+		this->LastVictim.clear();
 		this->PlayerDamage.clear();
 	}
 } P_ROUND_STATS, *LP_ROUND_STATS;
