@@ -196,6 +196,11 @@ int CPugMod::SetState(int State)
 
 			if ((Players[TERRORIST].size() < PlayersMin) || (Players[CT].size() < PlayersMin) || gPugCvar.m_ReadyForce->value != 0.0f)
 			{
+				if (gPugCvar.m_DM_Enable->value)
+				{
+					gPugDM.Init();
+				}
+
 				if (gPugCvar.m_ReadyType->value == 1.0f && gPugCvar.m_ReadyForce->value == 0.0f)
 				{
 					gPugTimer.Init(NewState);
