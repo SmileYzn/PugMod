@@ -6,25 +6,28 @@ void CPugAdminMenu::Menu(CBasePlayer *Player)
 {
 	if (gPugAdmin.CheckAccess(Player, ADMIN_MENU))
 	{
-		gPugMenu[Player->entindex()].Create(true, E_MENU::ME_ADMIN_MENU, _T("Pug Mod Menu:"));
+		auto EntityIndex = Player->entindex();
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_KICK, false, ADMIN_KICK, _T("Kick Player"));
+		gPugMenu[EntityIndex].Create(true, E_MENU::ME_ADMIN_MENU, _T("Pug Mod Menu:"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_BAN, false, ADMIN_BAN|ADMIN_BAN_TEMP, _T("Ban Player"));
+		// Items without access are shown disabled (the handler checks the access again)
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_KICK, !gPugAdmin.Access(EntityIndex, ADMIN_KICK), ADMIN_KICK, _T("Kick Player"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_SLAP, false, ADMIN_SLAY, _T("Slap Player"));
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_BAN, !gPugAdmin.Access(EntityIndex, ADMIN_BAN|ADMIN_BAN_TEMP), ADMIN_BAN|ADMIN_BAN_TEMP, _T("Ban Player"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_TEAM, false, ADMIN_LEVEL_A, _T("Player Team"));
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_SLAP, !gPugAdmin.Access(EntityIndex, ADMIN_SLAY), ADMIN_SLAY, _T("Slap Player"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_MAP, false, ADMIN_MAP, _T("Change Map"));
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_TEAM, !gPugAdmin.Access(EntityIndex, ADMIN_LEVEL_A), ADMIN_LEVEL_A, _T("Player Team"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PUG, false, ADMIN_VOTE|ADMIN_LEVEL_B, _T("Control Pug"));
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_MAP, !gPugAdmin.Access(EntityIndex, ADMIN_MAP), ADMIN_MAP, _T("Change Map"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_CVAR, false, ADMIN_CVAR, _T("Control Cvars"));
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_PUG, !gPugAdmin.Access(EntityIndex, ADMIN_VOTE|ADMIN_LEVEL_B), ADMIN_VOTE|ADMIN_LEVEL_B, _T("Control Pug"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_PAUSE, false, ADMIN_VOTE|ADMIN_LEVEL_B, _T("Pause Match"));
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_CVAR, !gPugAdmin.Access(EntityIndex, ADMIN_CVAR), ADMIN_CVAR, _T("Control Cvars"));
 
-		gPugMenu[Player->entindex()].AddItem(ADMIN_MENU_SPAWN_EDIT, false, ADMIN_LEVEL_D, _T("CSDM: Spawn Manager"));
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_PAUSE, !gPugAdmin.Access(EntityIndex, ADMIN_LEVEL_B), ADMIN_LEVEL_B, _T("Pause Match"));
+
+		gPugMenu[EntityIndex].AddItem(ADMIN_MENU_SPAWN_EDIT, !gPugAdmin.Access(EntityIndex, ADMIN_LEVEL_D), ADMIN_LEVEL_D, _T("CSDM: Spawn Manager"));
 
 		gPugMenu[Player->entindex()].Show(Player);
 	}

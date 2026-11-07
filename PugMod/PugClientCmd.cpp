@@ -324,7 +324,8 @@ bool CPugClientCmd::Help(CBasePlayer *Player)
 
 bool CPugClientCmd::HelpAdmin(CBasePlayer *Player)
 {
-	if (gPugAdmin.Access(Player->entindex(), ADMIN_LEVEL_C))
+	// Same flag as the !help admin command in clientcmd.cfg ("u")
+	if (gPugAdmin.Access(Player->entindex(), ADMIN_MENU))
 	{
 		if (gPugCvar.m_MotdFileAdmin->string)
 		{
