@@ -121,6 +121,7 @@
 | pug_player_vote_surrender | 1 | Allow players to vote to surrender |
 | pug_pause_timeout | 60 | Allowed pause duration |
 | pug_smoke_bug_fix | 1 | Fix smoke grenade multiple-cloud bug |
+| pug_spread_fix | 1 | First shot accuracy: no spread on the first shot while standing still (snipers only when scoped) |
 | pug_dm_enable | 1 | Enable Deathmatch mode |
 | pug_dm_spawn_distance | 250.0 | Minimum distance between players to respawn (minimum recommended 250.0) |
 | pug_dm_hide_kill_feed | 0 | Hide kill feed from players |

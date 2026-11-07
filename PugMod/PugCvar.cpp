@@ -382,6 +382,11 @@ void CPugCvar::ServerActivate()
 	// Default "1"
 	this->m_SmokeBugFix = this->Register("pug_smoke_bug_fix", "1");
 
+	// First shot accuracy: no spread on the first shot while standing still
+	//
+	// Default "1"
+	this->m_SpreadFix = this->Register("pug_spread_fix", "1");
+
 	// Enable Deathmatch mode
 	// If inactive, it will be regular warmup mode
 	//

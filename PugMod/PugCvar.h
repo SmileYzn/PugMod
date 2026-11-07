@@ -67,6 +67,7 @@ public:
 	cvar_t* m_PlayerVoteSurrender;
 	cvar_t* m_PauseTimeout;
 	cvar_t* m_SmokeBugFix;
+	cvar_t* m_SpreadFix;
 
 	cvar_t* m_DM_Enable;
 	cvar_t* m_DM_SpawnDistance;
